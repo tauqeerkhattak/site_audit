@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:site_audit/screens/auth/login.dart';
+
+import 'screens/auth_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
             headline4: TextStyle(fontWeight: FontWeight.w700),
         )
       ),
-      home: LoginScreen(),
+      home: AuthScreen(),
     );
   }
 }
