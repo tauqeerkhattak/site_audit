@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:site_audit/utils/size_config.dart';
 import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
@@ -21,14 +22,17 @@ class LoginScreen extends StatelessWidget {
           SizedBox(height: 10,),
           Text('Site Audit\nApp\nLogin:', style: _theme.textTheme.headline4,),
           SizedBox(height: 10,),
-          Text('Please enter the Engineer ID and Password that were supplied to you....',
-              // textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20,
-                // fontWeight: FontWeight.w400
-              )),
+          DecoratedBox(
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+            child: Text('Please enter the Engineer ID and Password that were supplied to you....',
+                // textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: SizeConfig.textMultiplier * 3.0,
+                  // fontWeight: FontWeight.w400
+                )),
+          ),
 
-          SizedBox(height: 30,),
+          SizedBox(height: 20,),
           InputField(placeHolder: "Email",),
           SizedBox(height: 20,),
           InputField(placeHolder: "Password",),

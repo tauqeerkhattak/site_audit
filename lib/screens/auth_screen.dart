@@ -34,7 +34,7 @@ class _AuthScreenState extends State<AuthScreen> {
               controller: pageController,
               children: [
                 LoginScreen(action: handleNext,),
-                ConfirmDetail(),
+                ConfirmDetail(action: handleNext,),
                 SiteDetail()
               ],
             ),

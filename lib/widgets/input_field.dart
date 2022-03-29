@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:site_audit/utils/size_config.dart';
 
 class InputField extends StatelessWidget {
   const InputField({Key? key, this.onTap, this.placeHolder, this.readOnly, this.icon, this.vertical, this.horizontal, this.lines}) : super(key: key);
@@ -15,7 +16,7 @@ class InputField extends StatelessWidget {
     return Container(
       decoration:  BoxDecoration(
           color: Colors.white,
-          borderRadius: new BorderRadius.circular(20.0),
+          borderRadius: new BorderRadius.circular(18.0),
           boxShadow: [
             BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 10.0, spreadRadius: 0.4, offset: Offset(0, 6.0))
           ]),
@@ -25,6 +26,7 @@ class InputField extends StatelessWidget {
         readOnly: readOnly ?? false,
         onTap: onTap,
         maxLines: lines ?? null,
+        style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.4),
         decoration: InputDecoration(
           // isDense: true,
           filled: true,
@@ -34,11 +36,11 @@ class InputField extends StatelessWidget {
           prefixIcon: icon,
           hintStyle: TextStyle(fontFamily: 'Ubuntu', color: Colors.grey.withOpacity(0.8), fontWeight: FontWeight.w500),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20.0),
+            borderRadius: BorderRadius.circular(18.0),
             borderSide: BorderSide(color: Color(0xffBDBDBD).withOpacity(0.5)),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20.0),
+            borderRadius: BorderRadius.circular(18.0),
             // borderSide: BorderSide(color: Color(0xffE8E8E8)),
             borderSide: BorderSide(color: Colors.white),
           ),
