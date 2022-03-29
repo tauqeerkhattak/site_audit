@@ -14,9 +14,9 @@ class LoginScreen extends StatelessWidget {
       child: Column(
         children: [
           Image.asset("assets/images/op_co_services.png", scale: 3.0,),
-          SizedBox(height: 30,),
+          SizedBox(height: 50,),
           Text('iServAudit', style: _theme.textTheme.headline3,),
-          SizedBox(height: 30,),
+          SizedBox(height: 50,),
           Text('Site Audit APP Login:', style: _theme.textTheme.headline4,),
           SizedBox(height: 30,),
           Text('Please enter the Engineer ID and Password that were supplied to you....',
