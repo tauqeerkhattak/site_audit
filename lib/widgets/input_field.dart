@@ -12,25 +12,36 @@ class InputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      // style: TextStyle(fontFamily: 'Heebo'),
-      readOnly: readOnly ?? false,
-      onTap: onTap,
-      maxLines: lines ?? null,
-      decoration: InputDecoration(
-        isDense: true,
-        filled: true,
-        fillColor: Color(0xffF6F6F6),
-        hintText: placeHolder.toString(),
-        prefixIcon: icon,
-        hintStyle: TextStyle(fontFamily: 'Heebo'),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(color: Color(0xffBDBDBD)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(color: Color(0xffE8E8E8)),
+    return Container(
+      decoration:  BoxDecoration(
+          color: Colors.white,
+          borderRadius: new BorderRadius.circular(20.0),
+          boxShadow: [
+            BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 10.0, spreadRadius: 0.4, offset: Offset(0, 6.0))
+          ]),
+      clipBehavior: Clip.antiAlias,
+      child: TextField(
+        // style: TextStyle(fontFamily: 'Heebo'),
+        readOnly: readOnly ?? false,
+        onTap: onTap,
+        maxLines: lines ?? null,
+        decoration: InputDecoration(
+          // isDense: true,
+          filled: true,
+          // fillColor: Color(0xffF6F6F6),
+          fillColor: Colors.white,
+          hintText: placeHolder.toString(),
+          prefixIcon: icon,
+          hintStyle: TextStyle(fontFamily: 'Ubuntu', color: Colors.grey.withOpacity(0.8), fontWeight: FontWeight.w500),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20.0),
+            borderSide: BorderSide(color: Color(0xffBDBDBD).withOpacity(0.5)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20.0),
+            // borderSide: BorderSide(color: Color(0xffE8E8E8)),
+            borderSide: BorderSide(color: Colors.white),
+          ),
         ),
       ),
     );

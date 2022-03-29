@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:site_audit/utils/constants.dart';
 
 import 'screens/auth_screen.dart';
 
@@ -14,9 +15,15 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'Ubuntu',
         textTheme: TextTheme(
-            headline3: TextStyle(fontWeight: FontWeight.w600),
-            headline4: TextStyle(fontWeight: FontWeight.w700),
+            headline3: TextStyle(fontWeight: FontWeight.w800, fontFamily: 'NanumMyeongjo', color: Constants.primaryColor),
+            headline4: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontFamily: 'NanumMyeongjo',
+                color: Constants.primaryColor.withOpacity(0.8),
+                height: 1.5
+            ),
         )
       ),
       home: AuthScreen(),

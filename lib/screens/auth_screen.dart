@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:site_audit/screens/auth/confirm_detail.dart';
 import 'package:site_audit/screens/auth/login.dart';
 import 'package:site_audit/screens/auth/site_detail.dart';
-import 'package:site_audit/widgets/rounded_button.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -20,51 +19,26 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
-          ConstrainedBox(
-              constraints: const BoxConstraints.expand(),
-              child: new Image.asset("assets/images/transmission-tower-6504538_1280.png", fit: BoxFit.cover,),
+          Positioned(
+              bottom: 0,
+              right: 0,
+              child: Image.asset("assets/images/hand-drawn-5g.jpg", height: 300,)
           ),
 
-          Center(
-            child: new ClipRect(
-              child: new BackdropFilter(
-                filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                child: new Container(
-                  // width: 200.0,
-                  // height: 200.0,
-                  decoration: new BoxDecoration(color: Colors.grey.shade200.withOpacity(0.5)),
-                  child: Container(
-                    child: PageView(
-                      physics: NeverScrollableScrollPhysics(),
-                      controller: pageController,
-                      children: [
-                        LoginScreen(),
-                        ConfirmDetail(),
-                        SiteDetail()
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+          Container(
+            child: PageView(
+              physics: NeverScrollableScrollPhysics(),
+              controller: pageController,
+              children: [
+                LoginScreen(action: handleNext,),
+                ConfirmDetail(),
+                SiteDetail()
+              ],
             ),
           ),
-
-          if(index <= 1)
-            Positioned(
-              bottom: 20,
-              left: 20,
-              right: 20,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  RoundedButton(text: 'Help', onPressed: () => null,),
-                  RoundedButton(text: 'Next', onPressed: handleNext),
-                ],
-              ),
-            ),
-
         ],
       ),
       // bottomNavigationBar: index > 1 ? null : Padding(
