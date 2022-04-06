@@ -10,7 +10,7 @@ class ConfirmDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData _theme = Theme.of(context);
     return SingleChildScrollView(
-      padding: EdgeInsets.only(left: 30, right: 30, top: 70, bottom: 30),
+      padding: EdgeInsets.only(left: 30, right: 30, top: 50, bottom: 30),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

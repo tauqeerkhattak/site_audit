@@ -12,7 +12,7 @@ class LoginScreen extends StatelessWidget {
     ThemeData _theme = Theme.of(context);
     return SingleChildScrollView(
       // height: MediaQuery.of(context).size.height,
-      padding: EdgeInsets.only(top: 70, left: 30, right: 30, bottom: 30),
+      padding: EdgeInsets.only(top: 40, left: 30, right: 30, bottom: 30),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -27,7 +27,7 @@ class LoginScreen extends StatelessWidget {
             child: Text('Please enter the Engineer ID and Password that were supplied to you....',
                 // textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: SizeConfig.textMultiplier * 3.0,
+                    fontSize: SizeConfig.textMultiplier * 2.8,
                   // fontWeight: FontWeight.w400
                 )),
           ),

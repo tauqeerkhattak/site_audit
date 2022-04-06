@@ -4,8 +4,9 @@ import 'package:site_audit/utils/size_config.dart';
 
 class RoundedButton extends StatelessWidget {
   final String text;
+  final Color? color;
   final VoidCallback? onPressed;
-  const RoundedButton({Key? key, required this.text, this.onPressed}) : super(key: key);
+  const RoundedButton({Key? key, required this.text, this.onPressed, this.color}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class RoundedButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
         padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-        primary: Constants.primaryColor,
+        primary: color ?? Constants.primaryColor,
         textStyle: TextStyle(fontSize: SizeConfig.textMultiplier * 2.8, fontFamily: 'Ubuntu', fontWeight: FontWeight.w500)
       ),
     );
