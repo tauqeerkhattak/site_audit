@@ -6,9 +6,8 @@ import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
 class LoginScreen extends StatelessWidget {
-  final action;
   final AuthController controller;
-  const LoginScreen({Key? key, this.action, required this.controller}) : super(key: key);
+  const LoginScreen({Key? key, required this.controller}) : super(key: key);
 
 
 
@@ -56,7 +55,6 @@ class LoginScreen extends StatelessWidget {
                   text: 'Login',
                   onPressed: controller.handleLogin,
                   loading: controller.loading(),
-                  // width: controller.loading() ? 100 : double.infinity,
                   width: controller.loading() ? 100 : Get.width,
                 )),
               ],

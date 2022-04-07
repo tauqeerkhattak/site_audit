@@ -8,12 +8,17 @@ import 'package:site_audit/service/services.dart';
 class AuthController extends GetxController {
   RxBool loading = false.obs;
   Rx<User> _user = User().obs;
+  PageController pageController = PageController();
+  int index = 0;
 
   // TEXT EDITING CONTROLLERS
   TextEditingController loginId = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController name = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController phone = TextEditingController();
 
-  User get user => _user.value;
+  User? get user => _user.value;
 
   final formKey = GlobalKey<FormState>();
 
@@ -35,7 +40,7 @@ class AuthController extends GetxController {
     return null;
   }
 
-  void handleLogin() async {
+  Future handleLogin() async {
     if (formKey.currentState!.validate()) {
       try{
         FocusManager.instance.primaryFocus?.unfocus();
@@ -47,10 +52,50 @@ class AuthController extends GetxController {
         var res = await AppService.login(payload: payload);
         if(res != null) {
           _user.value = userFromMap(jsonEncode(res['user']));
-          loading.value = false;
+          setUpdateDetails();
+          pageController.animateToPage(
+            1,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.linear,
+          );
+          // loading.value = false;
         }
-        else {
-          loading.value = false;
+      }
+      catch (e) {
+        print(e);
+      }
+      finally {
+        loading.value = false;
+      }
+    }
+  }
+
+  void setUpdateDetails() {
+   name.text = user!.name!;
+   email.text = user!.email!;
+   phone.text = user!.phone!;
+  }
+
+  Future submitDetails() async {
+    if (formKey.currentState!.validate()) {
+      try{
+        FocusManager.instance.primaryFocus?.unfocus();
+        loading.value = true;
+        var payload = {
+          "engineer_id": user!.id,
+          "engineer_name": name.text,
+          "engineer_email": email.text,
+          "engineer_contact": phone.text,
+        };
+        var res = await AppService.updateDetails(payload: payload);
+        if(res != null) {
+          _user.value = userFromMap(jsonEncode(res['data']));
+          pageController.animateToPage(
+            2,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.linear,
+          );
+          // loading.value = false;
         }
       }
       catch (e) {

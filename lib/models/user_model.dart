@@ -15,18 +15,18 @@ class User {
     this.lastChangedBy,
     this.assignedToAuditCompany,
     this.assignedToProjectId,
-    this.engineerStatus,
+    this.status,
     this.worksForCompanyPrefix,
-    this.engineeringTeamNumber,
-    this.engineeringAuditTeamId,
-    this.engineerName,
-    this.engineerMobileNumber,
-    this.engineerEmailAddress,
+    this.teamNumber,
+    this.auditTeamId,
+    this.name,
+    this.phone,
+    this.email,
     this.locationManagedFrom,
-    this.engineerSkills,
-    this.engineerCertifications,
-    this.engineerToolsCarried,
-    this.password,
+    this.skills,
+    this.certifications,
+    this.toolsCarried,
+    // this.password,
     this.engineerIdCopy,
   });
 
@@ -35,18 +35,18 @@ class User {
   String? lastChangedBy;
   int? assignedToAuditCompany;
   int? assignedToProjectId;
-  String? engineerStatus;
+  String? status;
   String? worksForCompanyPrefix;
-  String? engineeringTeamNumber;
-  String? engineeringAuditTeamId;
-  String? engineerName;
-  String? engineerMobileNumber;
-  String? engineerEmailAddress;
+  String? teamNumber;
+  String? auditTeamId;
+  String? name;
+  String? phone;
+  String? email;
   String? locationManagedFrom;
-  String? engineerSkills;
-  String? engineerCertifications;
-  String? engineerToolsCarried;
-  String? password;
+  String? skills;
+  String? certifications;
+  String? toolsCarried;
+  // String? password;
   String? engineerIdCopy;
 
   factory User.fromMap(Map<String, dynamic> json) => User(
@@ -55,18 +55,18 @@ class User {
     lastChangedBy: json["last_changed_by"] == null ? null : json["last_changed_by"],
     assignedToAuditCompany: json["assigned_to_audit_company"] == null ? null : json["assigned_to_audit_company"],
     assignedToProjectId: json["assigned_to_project_id"] == null ? null : json["assigned_to_project_id"],
-    engineerStatus: json["engineer_status"] == null ? null : json["engineer_status"],
+    status: json["engineer_status"] == null ? null : json["engineer_status"],
     worksForCompanyPrefix: json["works_for_company_prefix"] == null ? null : json["works_for_company_prefix"],
-    engineeringTeamNumber: json["engineering_team_number"] == null ? null : json["engineering_team_number"],
-    engineeringAuditTeamId: json["engineering_audit_team_id"] == null ? null : json["engineering_audit_team_id"],
-    engineerName: json["engineer_name"] == null ? null : json["engineer_name"],
-    engineerMobileNumber: json["engineer_mobile_number"] == null ? null : json["engineer_mobile_number"],
-    engineerEmailAddress: json["engineer_email_address"] == null ? null : json["engineer_email_address"],
+    teamNumber: json["engineering_team_number"] == null ? null : json["engineering_team_number"],
+    auditTeamId: json["engineering_audit_team_id"] == null ? null : json["engineering_audit_team_id"],
+    name: json["engineer_name"] == null ? null : json["engineer_name"],
+    phone: json["engineer_mobile_number"] == null ? null : json["engineer_mobile_number"],
+    email: json["engineer_email_address"] == null ? null : json["engineer_email_address"],
     locationManagedFrom: json["location_managed_from"] == null ? null : json["location_managed_from"],
-    engineerSkills: json["engineer_skills"] == null ? null : json["engineer_skills"],
-    engineerCertifications: json["engineer_certifications"] == null ? null : json["engineer_certifications"],
-    engineerToolsCarried: json["engineer_tools_carried"] == null ? null : json["engineer_tools_carried"],
-    password: json["password"] == null ? null : json["password"],
+    skills: json["engineer_skills"] == null ? null : json["engineer_skills"],
+    certifications: json["engineer_certifications"] == null ? null : json["engineer_certifications"],
+    toolsCarried: json["engineer_tools_carried"] == null ? null : json["engineer_tools_carried"],
+    // password: json["password"] == null ? null : json["password"],
     engineerIdCopy: json["engineer_id_copy"] == null ? null : json["engineer_id_copy"],
   );
 
@@ -76,18 +76,18 @@ class User {
     "last_changed_by": lastChangedBy == null ? null : lastChangedBy,
     "assigned_to_audit_company": assignedToAuditCompany == null ? null : assignedToAuditCompany,
     "assigned_to_project_id": assignedToProjectId == null ? null : assignedToProjectId,
-    "engineer_status": engineerStatus == null ? null : engineerStatus,
+    "engineer_status": status == null ? null : status,
     "works_for_company_prefix": worksForCompanyPrefix == null ? null : worksForCompanyPrefix,
-    "engineering_team_number": engineeringTeamNumber == null ? null : engineeringTeamNumber,
-    "engineering_audit_team_id": engineeringAuditTeamId == null ? null : engineeringAuditTeamId,
-    "engineer_name": engineerName == null ? null : engineerName,
-    "engineer_mobile_number": engineerMobileNumber == null ? null : engineerMobileNumber,
-    "engineer_email_address": engineerEmailAddress == null ? null : engineerEmailAddress,
+    "engineering_team_number": teamNumber == null ? null : teamNumber,
+    "engineering_audit_team_id": auditTeamId == null ? null : auditTeamId,
+    "engineer_name": name == null ? null : name,
+    "engineer_mobile_number": phone == null ? null : phone,
+    "engineer_email_address": email == null ? null : email,
     "location_managed_from": locationManagedFrom == null ? null : locationManagedFrom,
-    "engineer_skills": engineerSkills == null ? null : engineerSkills,
-    "engineer_certifications": engineerCertifications == null ? null : engineerCertifications,
-    "engineer_tools_carried": engineerToolsCarried == null ? null : engineerToolsCarried,
-    "password": password == null ? null : password,
+    "engineer_skills": skills == null ? null : skills,
+    "engineer_certifications": certifications == null ? null : certifications,
+    "engineer_tools_carried": toolsCarried == null ? null : toolsCarried,
+    // "password": password == null ? null : password,
     "engineer_id_copy": engineerIdCopy == null ? null : engineerIdCopy,
   };
 }

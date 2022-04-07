@@ -30,7 +30,7 @@ class InputField extends StatelessWidget {
         validator: validator,
         readOnly: readOnly ?? false,
         onTap: onTap,
-        maxLines: lines ?? null,
+        maxLines: lines ?? 1,
         style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.4),
         decoration: InputDecoration(
           filled: true,

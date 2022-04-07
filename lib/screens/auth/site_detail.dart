@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:site_audit/controllers/auth_controller.dart';
 import 'package:site_audit/screens/home_screen.dart';
 import 'package:site_audit/utils/size_config.dart';
 import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
 class SiteDetail extends StatelessWidget {
-  const SiteDetail({Key? key}) : super(key: key);
+  final AuthController controller;
+  const SiteDetail({Key? key, required this.controller}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
