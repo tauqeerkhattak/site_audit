@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:site_audit/utils/constants.dart';
 
+import 'routes/pages.dart';
+import 'routes/routes.dart';
 import 'screens/auth_screen.dart';
 import 'utils/size_config.dart';
 
-void main() {
+void main() async {
+  await GetStorage.init();
   runApp(MyApp());
 }
 
@@ -16,7 +21,7 @@ class MyApp extends StatelessWidget {
       builder: (context, constraints) => OrientationBuilder(
       builder: (context, orientation) {
         SizeConfig().init(constraints, orientation);
-         return MaterialApp(
+         return GetMaterialApp(
             title: 'Site Audit',
             theme: ThemeData(
                 primarySwatch: Colors.blue,
@@ -34,7 +39,8 @@ class MyApp extends StatelessWidget {
                       color: Constants.primaryColor.withOpacity(0.8),
                       height: 1.5),
                 )),
-            home: AuthScreen(),
+           initialRoute: AppRoutes.AUTH,
+           getPages: AppPages.list,
           );
         },
       ),

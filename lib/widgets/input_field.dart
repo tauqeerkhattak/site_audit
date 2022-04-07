@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/size_config.dart';
 
 class InputField extends StatelessWidget {
-  const InputField({Key? key, this.onTap, this.placeHolder, this.readOnly, this.icon, this.vertical, this.horizontal, this.lines}) : super(key: key);
+  const InputField({Key? key, this.onTap, this.placeHolder, this.readOnly, this.icon, this.vertical, this.horizontal, this.lines, this.controller, this.validator}) : super(key: key);
 
   final String? placeHolder;
   final Widget? icon;
@@ -10,39 +11,49 @@ class InputField extends StatelessWidget {
   final double? vertical, horizontal;
   final VoidCallback? onTap;
   final int? lines;
+  final TextEditingController? controller;
+  final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration:  BoxDecoration(
-          color: Colors.white,
+          // color: Colors.white,
           borderRadius: new BorderRadius.circular(18.0),
-          boxShadow: [
-            BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 10.0, spreadRadius: 0.4, offset: Offset(0, 6.0))
-          ]),
+          // boxShadow: [
+          //   BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 2.0, spreadRadius: 0.2, offset: Offset(0.0, 0.0))
+          // ]
+          ),
       clipBehavior: Clip.antiAlias,
-      child: TextField(
-        // style: TextStyle(fontFamily: 'Heebo'),
+      child: TextFormField(
+        controller: controller,
+        validator: validator,
         readOnly: readOnly ?? false,
         onTap: onTap,
         maxLines: lines ?? null,
         style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.4),
         decoration: InputDecoration(
-          // isDense: true,
           filled: true,
-          // fillColor: Color(0xffF6F6F6),
           fillColor: Colors.white,
           hintText: placeHolder.toString(),
           prefixIcon: icon,
           hintStyle: TextStyle(fontFamily: 'Ubuntu', color: Colors.grey.withOpacity(0.8), fontWeight: FontWeight.w500),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(18.0),
-            borderSide: BorderSide(color: Color(0xffBDBDBD).withOpacity(0.5)),
+            borderSide: BorderSide(color: Constants.primaryColor),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(18.0),
-            // borderSide: BorderSide(color: Color(0xffE8E8E8)),
-            borderSide: BorderSide(color: Colors.white),
+            borderSide: BorderSide(color: Constants.primaryColor.withOpacity(0.4)),
+            // borderSide: BorderSide(color: Colors.white),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(18.0),
+            borderSide: BorderSide(color: Colors.redAccent.withOpacity(0.4)),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(18.0),
+            borderSide: BorderSide(color: Colors.red),
           ),
         ),
       ),
