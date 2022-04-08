@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:site_audit/controllers/auth_controller.dart';
 import 'package:site_audit/screens/home_screen.dart';
 import 'package:site_audit/utils/size_config.dart';
@@ -73,7 +74,13 @@ class SiteDetail extends StatelessWidget {
           SizedBox(height: 10,),
           input('Site Photo from main entrance', lines: 5),
           SizedBox(height: 20,),
-          RoundedButton(text: 'Submit', onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen(),))),
+          Obx(() => RoundedButton(
+              text: 'Submit',
+              onPressed: () => null,
+              loading: controller.loading(),
+              width: controller.loading() ? 100 : Get.width,
+          ))
+
         ],
       ),
     );
