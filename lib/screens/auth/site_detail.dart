@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/controllers/auth_controller.dart';
-import 'package:site_audit/screens/home_screen.dart';
 import 'package:site_audit/utils/size_config.dart';
 import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
