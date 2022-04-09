@@ -59,4 +59,24 @@ class AppService {
       return throw Exception(e);
     }
   }
+
+  //SITE DETAILS
+  static getSiteDetails () async {
+    try {
+      var header = {"Authorization" : "Bearer ${_box.read('token')}"};
+      String response = await Network.get(url: Api.siteDetails+'1',headers: header);
+      if (response != null) {
+        var data = jsonDecode(response);
+        return data;
+      }
+      else {
+        Get.rawSnackbar(title: 'Unable to get site details',backgroundColor: Colors.redAccent);
+        return null;
+      }
+    } on Exception catch (e) {
+      print("ERROR Getting Details: $e");
+      Get.rawSnackbar(message: "Error getting site details", backgroundColor: Colors.redAccent);
+      return throw Exception(e);
+    }
+  }
 }

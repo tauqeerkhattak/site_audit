@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:site_audit/models/site_detail_model.dart';
 import 'package:site_audit/models/user_model.dart';
 import 'package:site_audit/service/services.dart';
 
@@ -17,8 +18,22 @@ class AuthController extends GetxController {
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController phone = TextEditingController();
-
+  var siteDetails = SiteDetailModel().obs;
   User? get user => _user.value;
+
+  //Dropdown Lists
+  List <Datum> operators = <Datum>[].obs;
+  List <Region> regions = <Region>[].obs;
+  List <SubRegion> subRegions = <SubRegion>[].obs;
+  List <ClusterId> clusters = <ClusterId>[].obs;
+  List <SiteReference> siteIDs = <SiteReference>[].obs;
+
+  //Current Dropdown values
+  Rx<Datum> currentOperator = Datum().obs;
+  Rx<Region> currentRegion = Region().obs;
+  Rx<SubRegion> currentSubRegion = SubRegion().obs;
+  Rx<ClusterId> currentCluster = ClusterId().obs;
+  Rx<SiteReference> currentSite = SiteReference(id: '',name: '').obs;
 
   final formKey = GlobalKey<FormState>();
 
@@ -40,6 +55,15 @@ class AuthController extends GetxController {
     return null;
   }
 
+  Future getSiteDetails () async {
+    var response = await AppService.getSiteDetails();
+    print('Response: ${response}');
+    if (response != null) {
+      siteDetails.value = SiteDetailModel.fromJson(response);
+      operators = siteDetails.value.data!;
+    }
+  }
+
   Future handleLogin() async {
     if (formKey.currentState!.validate()) {
       try{
@@ -53,6 +77,7 @@ class AuthController extends GetxController {
         if(res != null) {
           _user.value = userFromMap(jsonEncode(res['user']));
           setUpdateDetails();
+          getSiteDetails();
           pageController.animateToPage(
             1,
             duration: Duration(milliseconds: 500),
