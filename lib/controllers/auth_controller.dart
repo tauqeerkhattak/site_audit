@@ -18,22 +18,29 @@ class AuthController extends GetxController {
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController phone = TextEditingController();
+  TextEditingController siteName = TextEditingController();
   var siteDetails = SiteDetailModel().obs;
   User? get user => _user.value;
 
   //Dropdown Lists
-  List <Datum> operators = <Datum>[].obs;
-  List <Region> regions = <Region>[].obs;
-  List <SubRegion> subRegions = <SubRegion>[].obs;
-  List <ClusterId> clusters = <ClusterId>[].obs;
-  List <SiteReference> siteIDs = <SiteReference>[].obs;
+  List<Datum> operators = <Datum>[].obs;
+  List<Region> regions = <Region>[].obs;
+  List<SubRegion> subRegions = <SubRegion>[].obs;
+  List<ClusterId> clusters = <ClusterId>[].obs;
+  List<SiteReference> siteIDs = <SiteReference>[].obs;
 
   //Current Dropdown values
   Rx<Datum> currentOperator = Datum().obs;
-  Rx<Region> currentRegion = Region().obs;
+  Rx<Region?> currentRegion = Region().obs;
   Rx<SubRegion> currentSubRegion = SubRegion().obs;
   Rx<ClusterId> currentCluster = ClusterId().obs;
-  Rx<SiteReference> currentSite = SiteReference(id: '',name: '').obs;
+  Rx<SiteReference> currentSite = SiteReference(id: '', name: '').obs;
+
+  //Dropdown Flags
+  bool isRegionSelected = false;
+  bool isSubRegionSelected = false;
+  bool isClusterSelected = false;
+  bool isSiteIDSelected = false;
 
   final formKey = GlobalKey<FormState>();
 
@@ -48,14 +55,13 @@ class AuthController extends GetxController {
   String? validator(String? value) {
     if (value!.isEmpty) {
       return 'Please this field must be filled';
-    }
-    else if (value.length < 3) {
+    } else if (value.length < 3) {
       return 'Length is too short';
     }
     return null;
   }
 
-  Future getSiteDetails () async {
+  Future getSiteDetails() async {
     var response = await AppService.getSiteDetails();
     print('Response: ${response}');
     if (response != null) {
@@ -66,7 +72,7 @@ class AuthController extends GetxController {
 
   Future handleLogin() async {
     if (formKey.currentState!.validate()) {
-      try{
+      try {
         FocusManager.instance.primaryFocus?.unfocus();
         loading.value = true;
         var payload = {
@@ -74,7 +80,7 @@ class AuthController extends GetxController {
           "password": password.text,
         };
         var res = await AppService.login(payload: payload);
-        if(res != null) {
+        if (res != null) {
           _user.value = userFromMap(jsonEncode(res['user']));
           setUpdateDetails();
           getSiteDetails();
@@ -85,25 +91,23 @@ class AuthController extends GetxController {
           );
           // loading.value = false;
         }
-      }
-      catch (e) {
+      } catch (e) {
         print(e);
-      }
-      finally {
+      } finally {
         loading.value = false;
       }
     }
   }
 
   void setUpdateDetails() {
-   name.text = user!.name!;
-   email.text = user!.email!;
-   phone.text = user!.phone!;
+    name.text = user!.name!;
+    email.text = user!.email!;
+    phone.text = user!.phone!;
   }
 
   Future submitDetails() async {
     if (formKey.currentState!.validate()) {
-      try{
+      try {
         FocusManager.instance.primaryFocus?.unfocus();
         loading.value = true;
         var payload = {
@@ -113,7 +117,7 @@ class AuthController extends GetxController {
           "engineer_contact": phone.text,
         };
         var res = await AppService.updateDetails(payload: payload);
-        if(res != null) {
+        if (res != null) {
           _user.value = userFromMap(jsonEncode(res['data']));
           pageController.animateToPage(
             2,
@@ -122,11 +126,9 @@ class AuthController extends GetxController {
           );
           // loading.value = false;
         }
-      }
-      catch (e) {
+      } catch (e) {
         print(e);
-      }
-      finally {
+      } finally {
         loading.value = false;
       }
     }
