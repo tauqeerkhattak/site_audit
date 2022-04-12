@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:site_audit/controllers/auth_controller.dart';
+import 'package:site_audit/screens/auth/temp_screen.dart';
+import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/size_config.dart';
 import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
@@ -9,10 +15,13 @@ import '../../models/site_detail_model.dart';
 
 class SiteDetail extends StatelessWidget {
   final AuthController controller;
+  static GetStorage _box = GetStorage();
   SiteDetail({Key? key, required this.controller}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    //TODO: Comment this
+    // setData();
     ThemeData _theme = Theme.of(context);
     return SingleChildScrollView(
       padding: EdgeInsets.only(left: 30, right: 30, top: 50, bottom: 30),
@@ -98,21 +107,39 @@ class SiteDetail extends StatelessWidget {
           SizedBox(
             height: 40,
           ),
-          input('Name of Site Kepper'),
+          input(
+            'Name of Site Keeper',
+            controller: controller.siteKeeper,
+          ),
           SizedBox(
             height: 10,
           ),
-          input('Phone Number of Site Kepper'),
+          input(
+            'Phone Number of Site Keeper',
+            controller: controller.siteKeeperPhone,
+          ),
           SizedBox(
             height: 30,
           ),
           Row(
             children: [
-              Expanded(child: operatorDrop('Physical Site Type', [])),
+              Expanded(
+                child: simpleDrop(
+                    label: 'Physical Site Type',
+                    items: controller.physicalSiteTypes,
+                    onChanged: (String? type) {
+                      controller.currentSiteTypes.value = type ?? 'Outdoor';
+                    }),
+              ),
               SizedBox(
                 width: 20,
               ),
-              Expanded(child: input('Survey Start')),
+              Expanded(
+                child: input(
+                  'Survey Start',
+                  controller: controller.surveyStart,
+                ),
+              ),
             ],
           ),
           SizedBox(
@@ -120,11 +147,21 @@ class SiteDetail extends StatelessWidget {
           ),
           Row(
             children: [
-              Expanded(child: input('Longitude')),
+              Expanded(
+                child: input(
+                  'Longitude',
+                  controller: controller.longitude,
+                ),
+              ),
               SizedBox(
                 width: 20,
               ),
-              Expanded(child: input('Latitude')),
+              Expanded(
+                child: input(
+                  'Latitude',
+                  controller: controller.latitude,
+                ),
+              ),
             ],
           ),
           SizedBox(
@@ -132,28 +169,104 @@ class SiteDetail extends StatelessWidget {
           ),
           Row(
             children: [
-              Expanded(child: operatorDrop('Weather', [])),
+              Expanded(
+                child: simpleDrop(
+                  label: 'Weather',
+                  items: controller.weatherType,
+                  onChanged: (String? weather) {
+                    controller.currentWeather.value = weather ?? "Sunny";
+                  },
+                ),
+              ),
               SizedBox(
                 width: 20,
               ),
-              Expanded(child: input('Temperature')),
+              Expanded(
+                child: input(
+                  'Temperature',
+                  controller: controller.temperature,
+                ),
+              ),
             ],
           ),
           SizedBox(
             height: 10,
           ),
-          input('Site Photo from main entrance', lines: 5),
+          imageInput('Site Photo from main entrance'),
           SizedBox(
             height: 20,
           ),
           Obx(() => RoundedButton(
                 text: 'Submit',
-                onPressed: () => null,
+                onPressed: () async {
+                  // await controller.submitSiteDetails();
+                  Get.to(() => TempScreen());
+                },
                 loading: controller.loading(),
                 width: controller.loading() ? 100 : Get.width,
               ))
         ],
       ),
+    );
+  }
+
+  Widget imageInput(label) {
+    return Column(
+      children: [
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(10)),
+          padding: EdgeInsets.symmetric(vertical: 5),
+          child: Text(label + "\t\t",
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                  // color: Colors.white,
+                  fontSize: SizeConfig.textMultiplier * 2.2)),
+        ),
+        Obx(
+          () => InkWell(
+            onTap: () {
+              controller.pickImage(ImageSource.gallery);
+            },
+            child: Container(
+              height: SizeConfig.screenHeight * 0.2,
+              width: Get.width,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(
+                  color: Constants.primaryColor,
+                ),
+              ),
+              clipBehavior: Clip.hardEdge,
+              child: controller.imagePath.value == ''
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.camera_alt,
+                          color: Constants.primaryColor,
+                          size: 30,
+                        ),
+                        Text(
+                          'Select a picture',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            // color: Colors.white,
+                            fontSize: SizeConfig.textMultiplier * 2.2,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Image.file(
+                      File(controller.imagePath.value),
+                      fit: BoxFit.fill,
+                    ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -176,6 +289,65 @@ class SiteDetail extends StatelessWidget {
           placeHolder: "",
           controller: controller,
           lines: lines,
+        ),
+      ],
+    );
+  }
+
+  Widget simpleDrop(
+      {label,
+      required List<String> items,
+      required Function(String?) onChanged}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(10)),
+          padding: EdgeInsets.symmetric(vertical: 5),
+          child: Text(label + "\t\t",
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                  // color: Colors.white,
+                  fontSize: SizeConfig.textMultiplier * 2.2)),
+        ),
+        // SizedBox(height: 5,),
+        Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: new BorderRadius.circular(18.0),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 10.0,
+                    spreadRadius: 0.4,
+                    offset: Offset(0, 6.0))
+              ]),
+          clipBehavior: Clip.antiAlias,
+          child: DropdownButtonFormField<String>(
+            onChanged: onChanged,
+            isDense: true,
+            decoration: InputDecoration(
+              isDense: true,
+              filled: true,
+              fillColor: Colors.white,
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(18.0),
+                borderSide:
+                    BorderSide(color: Color(0xffBDBDBD).withOpacity(0.5)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(18.0),
+                borderSide: BorderSide(color: Colors.white),
+              ),
+            ),
+            items: items.map<DropdownMenuItem<String>>((String? value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value ?? 'N/A'),
+              );
+            }).toList(),
+          ),
         ),
       ],
     );
@@ -250,6 +422,7 @@ class SiteDetail extends StatelessWidget {
                 borderSide: BorderSide(color: Colors.white),
               ),
             ),
+            // value: controller.currentOperator.value,
             items: items.map<DropdownMenuItem<Datum?>>((Datum? value) {
               return DropdownMenuItem<Datum?>(
                 value: value,
@@ -528,5 +701,27 @@ class SiteDetail extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void setData() {
+    final data = _box.read('site_details');
+    controller.siteDetails.value = SiteDetailModel(
+      data: List<Datum>.from(data["data"].map((x) => Datum.fromJson(x))),
+    );
+    controller.operators.assignAll(controller.siteDetails.value.data!);
+    controller.currentOperator.value = controller.operators.first;
+    controller.regions = [];
+    controller.subRegions = [];
+    controller.clusters = [];
+    controller.siteIDs = [];
+    controller.currentRegion.value = Region();
+    controller.currentSubRegion.value = SubRegion();
+    controller.currentCluster.value = ClusterId();
+    controller.currentSite.value = SiteReference(id: '', name: '');
+    controller.siteName.text = '';
+    controller.isRegionSelected = false;
+    controller.isSubRegionSelected = false;
+    controller.isClusterSelected = false;
+    controller.isSiteIDSelected = false;
   }
 }
