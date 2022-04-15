@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:site_audit/bindings/auth_bindings.dart';
+import 'package:site_audit/bindings/home_bindings.dart';
 import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/screens/auth_screen.dart';
 import 'package:site_audit/screens/home_screen.dart';
@@ -9,12 +10,11 @@ class AppPages {
     GetPage(
         name: AppRoutes.AUTH,
         binding: AuthBindings(),
-        page: () => AuthScreen()
-    ),
+        page: () => AuthScreen()),
     GetPage(
         name: AppRoutes.HOME,
-        page: () => HomeScreen()
-    ),
+        binding: HomeBindings(),
+        page: () => HomeScreen()),
     // GetPage(
     //     name: AppRoutes.HOME,
     //     binding: HomeBindings(),

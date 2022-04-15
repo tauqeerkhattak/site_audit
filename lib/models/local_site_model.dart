@@ -1,71 +1,86 @@
-class LocalSite {
-  final String? operator;
-  final String? region;
-  final String? subRegion;
-  final String? cluster;
-  final String? siteID;
-  final String? siteName;
-  final String? siteKeeperName;
-  final String? siteKeeperPhone;
-  final String? siteType;
-  final String? survey;
-  final String? longitude;
-  final String? latitude;
-  final String? weather;
-  final String? temperature;
-  final String? imagePath;
+// To parse this JSON data, do
+//
+//     final localSiteModel = localSiteModelFromMap(jsonString);
 
-  LocalSite({
-    this.operator,
+import 'dart:convert';
+
+class LocalSiteModel {
+  LocalSiteModel({
+    this.localSiteModelOperator,
     this.region,
     this.subRegion,
     this.cluster,
-    this.siteID,
+    this.siteId,
     this.siteName,
     this.siteKeeperName,
     this.siteKeeperPhone,
     this.siteType,
     this.survey,
-    this.longitude,
     this.latitude,
+    this.longitude,
     this.weather,
     this.temperature,
     this.imagePath,
   });
 
-  factory LocalSite.fromJson(Map<String, String> json) => LocalSite(
-        operator: json['operator'],
-        region: json['region'],
-        subRegion: json['subRegion'],
-        cluster: json['cluster'],
-        siteID: json['siteID'],
-        siteName: json['siteName'],
-        siteKeeperName: json['siteKeeperName'],
-        siteKeeperPhone: json['siteKeeperPhone'],
-        siteType: json['siteType'],
-        survey: json['survey'],
-        longitude: json['longitude'],
-        latitude: json['latitude'],
-        weather: json['weather'],
-        temperature: json['temperature'],
-        imagePath: json['image'],
+  String? localSiteModelOperator;
+  String? region;
+  String? subRegion;
+  String? cluster;
+  String? siteId;
+  String? siteName;
+  String? siteKeeperName;
+  String? siteKeeperPhone;
+  String? siteType;
+  String? survey;
+  String? latitude;
+  String? longitude;
+  String? weather;
+  String? temperature;
+  String? imagePath;
+
+  factory LocalSiteModel.fromJson(String str) =>
+      LocalSiteModel.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory LocalSiteModel.fromMap(Map<String, dynamic> json) => LocalSiteModel(
+        localSiteModelOperator:
+            json["operator"] == null ? null : json["operator"],
+        region: json["region"] == null ? null : json["region"],
+        subRegion: json["subRegion"] == null ? null : json["subRegion"],
+        cluster: json["cluster"] == null ? null : json["cluster"],
+        siteId: json["siteID"] == null ? null : json["siteID"],
+        siteName: json["siteName"] == null ? null : json["siteName"],
+        siteKeeperName:
+            json["siteKeeperName"] == null ? null : json["siteKeeperName"],
+        siteKeeperPhone:
+            json["siteKeeperPhone"] == null ? null : json["siteKeeperPhone"],
+        siteType: json["siteType"] == null ? null : json["siteType"],
+        survey: json["survey"] == null ? null : json["survey"],
+        latitude: json["latitude"] == null ? null : json["latitude"],
+        longitude: json["longitude"] == null ? null : json["longitude"],
+        weather: json["weather"] == null ? null : json["weather"],
+        temperature: json["temperature"] == null ? null : json["temperature"],
+        imagePath: json["imagePath"] == null ? null : json["imagePath"],
       );
 
-  Map<String, String> toJson() => {
-        'operator': operator!,
-        'region': region!,
-        'subRegion': subRegion!,
-        'cluster': cluster!,
-        'siteID': siteID!,
-        'siteName': siteName!,
-        'siteKeeperName': siteKeeperName!,
-        'siteKeeperPhone': siteKeeperPhone!,
-        'siteType': siteType!,
-        'survey': survey!,
-        'latitude': latitude!,
-        'longitude': longitude!,
-        'weather': weather!,
-        'temperature': temperature!,
-        'imagePath': imagePath!,
+  Map<String, dynamic> toMap() => {
+        "operator":
+            localSiteModelOperator == null ? null : localSiteModelOperator,
+        "region": region == null ? null : region,
+        "subRegion": subRegion == null ? null : subRegion,
+        "cluster": cluster == null ? null : cluster,
+        "siteID": siteId == null ? null : siteId,
+        "siteName": siteName == null ? null : siteName,
+        "siteKeeperName": siteKeeperName == null ? null : siteKeeperName,
+        "siteKeeperPhone": siteKeeperPhone == null ? null : siteKeeperPhone,
+        "siteType": siteType == null ? null : siteType,
+        "survey": survey == null ? null : survey,
+        "latitude": latitude == null ? null : latitude,
+        "longitude": longitude == null ? null : longitude,
+        "weather": weather == null ? null : weather,
+        "temperature": temperature == null ? null : temperature,
+        "imagePath": imagePath == null ? null : imagePath,
       };
 }

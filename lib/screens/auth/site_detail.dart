@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:site_audit/controllers/auth_controller.dart';
-import 'package:site_audit/screens/auth/temp_screen.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/size_config.dart';
 import 'package:site_audit/widgets/input_field.dart';
@@ -25,71 +22,143 @@ class SiteDetail extends StatelessWidget {
     ThemeData _theme = Theme.of(context);
     return SingleChildScrollView(
       padding: EdgeInsets.only(left: 30, right: 30, top: 50, bottom: 30),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Add\nSite\nDetails:',
-            style: _theme.textTheme.headline4,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Obx(
-            () => Row(
+      child: Form(
+        key: controller.key,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Add\nSite\nDetails:',
+              style: _theme.textTheme.headline4,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Obx(
+              () => Row(
+                children: [
+                  Expanded(
+                    child: operatorDrop(
+                      'Site Operator',
+                      controller.operators,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: regionDrop(
+                      'Site Region',
+                      controller.regions,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Obx(
+              () => Row(
+                children: [
+                  Expanded(
+                    child: subRegionDrop(
+                      'Site Sub-Region',
+                      controller.subRegions,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: clusterDrop(
+                      'Site Cluster',
+                      controller.clusters,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Obx(
+              () => Row(
+                children: [
+                  Expanded(
+                    child: siteIdDrop(
+                      'Site ID',
+                      controller.siteIDs,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: input(
+                      'Site Name',
+                      controller: controller.siteName,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 40,
+            ),
+            input(
+              'Name of Site Keeper',
+              controller: controller.siteKeeper,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            input(
+              'Phone Number of Site Keeper',
+              controller: controller.siteKeeperPhone,
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            Row(
               children: [
                 Expanded(
-                  child: operatorDrop(
-                    'Site Operator',
-                    controller.operators,
+                  child: simpleDrop(
+                    label: 'Physical Site Type',
+                    items: controller.physicalSiteTypes,
+                    onChanged: (String? type) {
+                      controller.currentSiteTypes.value = type ?? 'Outdoor';
+                    },
                   ),
                 ),
                 SizedBox(
                   width: 20,
                 ),
                 Expanded(
-                  child: regionDrop(
-                    'Site Region',
-                    controller.regions,
+                  child: InkWell(
+                    onTap: () async {
+                      controller.selectDateTime(controller.surveyStart);
+                    },
+                    child: IgnorePointer(
+                      child: input(
+                        'Survey Start',
+                        readOnly: true,
+                        controller: controller.surveyStart,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Obx(
-            () => Row(
-              children: [
-                Expanded(
-                  child: subRegionDrop(
-                    'Site Sub-Region',
-                    controller.subRegions,
-                  ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Expanded(
-                  child: clusterDrop(
-                    'Site Cluster',
-                    controller.clusters,
-                  ),
-                ),
-              ],
+            SizedBox(
+              height: 10,
             ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Obx(
-            () => Row(
+            Row(
               children: [
                 Expanded(
-                  child: siteIdDrop(
-                    'Site ID',
-                    controller.siteIDs,
+                  child: input(
+                    'Longitude',
+                    controller: controller.longitude,
                   ),
                 ),
                 SizedBox(
@@ -97,115 +166,67 @@ class SiteDetail extends StatelessWidget {
                 ),
                 Expanded(
                   child: input(
-                    'Site Name',
-                    controller: controller.siteName,
+                    'Latitude',
+                    controller: controller.latitude,
                   ),
                 ),
               ],
             ),
-          ),
-          SizedBox(
-            height: 40,
-          ),
-          input(
-            'Name of Site Keeper',
-            controller: controller.siteKeeper,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          input(
-            'Phone Number of Site Keeper',
-            controller: controller.siteKeeperPhone,
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: simpleDrop(
-                    label: 'Physical Site Type',
-                    items: controller.physicalSiteTypes,
-                    onChanged: (String? type) {
-                      controller.currentSiteTypes.value = type ?? 'Outdoor';
-                    }),
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              Expanded(
-                child: input(
-                  'Survey Start',
-                  controller: controller.surveyStart,
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: simpleDrop(
+                    label: 'Weather',
+                    items: controller.weatherType,
+                    onChanged: (String? weather) {
+                      controller.currentWeather.value = weather ?? "Sunny";
+                    },
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: input(
-                  'Longitude',
-                  controller: controller.longitude,
+                SizedBox(
+                  width: 20,
                 ),
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              Expanded(
-                child: input(
-                  'Latitude',
-                  controller: controller.latitude,
+                Expanded(
+                  child: input(
+                    'Temperature',
+                    controller: controller.temperature,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: simpleDrop(
-                  label: 'Weather',
-                  items: controller.weatherType,
-                  onChanged: (String? weather) {
-                    controller.currentWeather.value = weather ?? "Sunny";
-                  },
-                ),
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              Expanded(
-                child: input(
-                  'Temperature',
-                  controller: controller.temperature,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          imageInput('Site Photo from main entrance'),
-          SizedBox(
-            height: 20,
-          ),
-          Obx(() => RoundedButton(
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            imageInput('Site Photo from main entrance'),
+            SizedBox(
+              height: 20,
+            ),
+            Obx(
+              () => RoundedButton(
                 text: 'Submit',
                 onPressed: () async {
-                  // await controller.submitSiteDetails();
-                  Get.to(() => TempScreen());
+                  await controller.submitSiteDetails();
+                  // Get.to(() => TempScreen());
                 },
                 loading: controller.loading(),
                 width: controller.loading() ? 100 : Get.width,
-              ))
-        ],
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            // RoundedButton(
+            //   text: 'Go To Temp',
+            //   onPressed: () {
+            //     Get.to(() => HomeScreen());
+            //   },
+            //   width: Get.width,
+            // ),
+          ],
+        ),
       ),
     );
   }
@@ -218,30 +239,33 @@ class SiteDetail extends StatelessWidget {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           padding: EdgeInsets.symmetric(vertical: 5),
-          child: Text(label + "\t\t",
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                  // color: Colors.white,
-                  fontSize: SizeConfig.textMultiplier * 2.2)),
+          child: Text(
+            label + "\t\t",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              // color: Colors.white,
+              fontSize: SizeConfig.textMultiplier * 2.2,
+            ),
+          ),
         ),
         Obx(
-          () => InkWell(
-            onTap: () {
-              controller.pickImage(ImageSource.gallery);
-            },
-            child: Container(
-              height: SizeConfig.screenHeight * 0.2,
-              width: Get.width,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(
-                  color: Constants.primaryColor,
-                ),
-              ),
-              clipBehavior: Clip.hardEdge,
-              child: controller.imagePath.value == ''
-                  ? Column(
+          () => controller.images.isEmpty
+              ? InkWell(
+                  onTap: () {
+                    controller.pickImage(ImageSource.gallery);
+                  },
+                  child: Container(
+                    height: SizeConfig.screenHeight * 0.2,
+                    width: Get.width,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: Constants.primaryColor,
+                      ),
+                    ),
+                    clipBehavior: Clip.hardEdge,
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
@@ -258,19 +282,34 @@ class SiteDetail extends StatelessWidget {
                           ),
                         ),
                       ],
-                    )
-                  : Image.file(
-                      File(controller.imagePath.value),
-                      fit: BoxFit.fill,
                     ),
-            ),
-          ),
+                  ),
+                )
+              : Row(
+                  children: [
+                    ...List.generate(controller.images.length, (index) {
+                      return Image.file(controller.images[index]);
+                    }),
+                    InkWell(
+                      onTap: () {
+                        controller.pickImage(ImageSource.gallery);
+                      },
+                      child: Container(
+                        child: Icon(
+                          Icons.camera_alt,
+                          color: Constants.primaryColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
         ),
       ],
     );
   }
 
-  Widget input(label, {int? lines, TextEditingController? controller}) {
+  Widget input(label,
+      {int? lines, TextEditingController? controller, bool? readOnly}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -278,16 +317,20 @@ class SiteDetail extends StatelessWidget {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           padding: EdgeInsets.symmetric(vertical: 5),
-          child: Text(label + "\t\t",
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                  // color: Colors.white,
-                  fontSize: SizeConfig.textMultiplier * 2.2)),
+          child: Text(
+            label + "\t\t",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              // color: Colors.white,
+              fontSize: SizeConfig.textMultiplier * 2.2,
+            ),
+          ),
         ),
         // SizedBox(height: 5,),
         InputField(
           placeHolder: "",
           controller: controller,
+          readOnly: readOnly ?? false,
           lines: lines,
         ),
       ],
@@ -303,26 +346,33 @@ class SiteDetail extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(10)),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
           padding: EdgeInsets.symmetric(vertical: 5),
-          child: Text(label + "\t\t",
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                  // color: Colors.white,
-                  fontSize: SizeConfig.textMultiplier * 2.2)),
+          child: Text(
+            label + "\t\t",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              // color: Colors.white,
+              fontSize: SizeConfig.textMultiplier * 2.2,
+            ),
+          ),
         ),
         // SizedBox(height: 5,),
         Container(
           decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: new BorderRadius.circular(18.0),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    blurRadius: 10.0,
-                    spreadRadius: 0.4,
-                    offset: Offset(0, 6.0))
-              ]),
+            color: Colors.white,
+            borderRadius: new BorderRadius.circular(18.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 10.0,
+                spreadRadius: 0.4,
+                offset: Offset(0, 6.0),
+              )
+            ],
+          ),
           clipBehavior: Clip.antiAlias,
           child: DropdownButtonFormField<String>(
             onChanged: onChanged,
@@ -435,7 +485,10 @@ class SiteDetail extends StatelessWidget {
     );
   }
 
-  Widget regionDrop(label, List<Region> items) {
+  Widget regionDrop(
+    label,
+    List<Region> items,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -443,24 +496,29 @@ class SiteDetail extends StatelessWidget {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           padding: EdgeInsets.symmetric(vertical: 5),
-          child: Text(label + "\t\t",
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                  // color: Colors.white,
-                  fontSize: SizeConfig.textMultiplier * 2.2)),
+          child: Text(
+            label + "\t\t",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              // color: Colors.white,
+              fontSize: SizeConfig.textMultiplier * 2.2,
+            ),
+          ),
         ),
         // SizedBox(height: 5,),
         Container(
           decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: new BorderRadius.circular(18.0),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    blurRadius: 10.0,
-                    spreadRadius: 0.4,
-                    offset: Offset(0, 6.0))
-              ]),
+            color: Colors.white,
+            borderRadius: new BorderRadius.circular(18.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 10.0,
+                spreadRadius: 0.4,
+                offset: Offset(0, 6.0),
+              ),
+            ],
+          ),
           clipBehavior: Clip.antiAlias,
           child: DropdownButtonFormField<Region>(
             onChanged: (Region? newValue) {

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:http/http.dart' as http;
 import 'package:site_audit/utils/network.dart';
 
 import 'apis.dart';
@@ -64,6 +65,33 @@ class AppService {
       Get.rawSnackbar(
           message: "Error in login request!",
           backgroundColor: Colors.redAccent);
+      return throw Exception(e);
+    }
+  }
+
+  // POST SITE DETAILS
+  static Future<String> storeSiteDetails(
+      {payload, List<http.MultipartFile>? files}) async {
+    try {
+      var header = {"Authorization": "Bearer ${_box.read('token')}"};
+      var response = await Network.multiPartRequest(
+        url: Api.postDetails,
+        payload: payload,
+        headers: header,
+        files: files,
+      );
+      print('POST SITE DETAIL: $response');
+      if (response != null) {
+        return response;
+      } else {
+        return '';
+      }
+    } on Exception catch (e) {
+      print("ERROR STORING DETAILS: $e");
+      Get.rawSnackbar(
+        message: "Error in Storing site details!",
+        backgroundColor: Colors.redAccent,
+      );
       return throw Exception(e);
     }
   }
