@@ -16,9 +16,10 @@ class ConfirmDetail extends StatelessWidget {
         Positioned(
             bottom: 0,
             right: 0,
-            child: Image.asset("assets/images/33810963.jpg", height: 300,)
-        ),
-
+            child: Image.asset(
+              "assets/images/33810963.jpg",
+              height: 300,
+            )),
         SingleChildScrollView(
           padding: EdgeInsets.only(left: 30, right: 30, top: 50, bottom: 30),
           child: Form(
@@ -26,20 +27,43 @@ class ConfirmDetail extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Confirm\nEngineer\nDetails:', style: _theme.textTheme.headline4,),
-                SizedBox(height: 10,),
-                InputField(placeHolder: "Name", controller: controller.name, validator: controller.validator,),
-                SizedBox(height: 10,),
-                InputField(placeHolder: "Email", controller: controller.email, validator: controller.validator,),
-                SizedBox(height: 10,),
-                InputField(placeHolder: "Phone", controller: controller.phone, validator: controller.validator,),
-                SizedBox(height: 30,),
+                Text(
+                  'Confirm\nEngineer\nDetails:',
+                  style: _theme.textTheme.headline4,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                InputField(
+                  placeHolder: "Name",
+                  controller: controller.name,
+                  validator: controller.validator,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                InputField(
+                  placeHolder: "Email",
+                  controller: controller.email,
+                  validator: controller.validator,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                InputField(
+                  placeHolder: "Phone",
+                  controller: controller.phone,
+                  validator: controller.validator,
+                ),
+                SizedBox(
+                  height: 30,
+                ),
                 Obx(() => RoundedButton(
-                  text: 'Next',
-                  onPressed: controller.submitDetails,
-                  loading: controller.loading(),
-                  width: controller.loading() ? 100 : Get.width,
-                ))
+                      text: 'Next',
+                      onPressed: controller.submitDetails,
+                      loading: controller.loading(),
+                      width: Get.width,
+                    ))
               ],
             ),
           ),

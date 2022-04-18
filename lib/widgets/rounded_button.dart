@@ -32,7 +32,7 @@ class RoundedButton extends StatelessWidget {
             // shape: loading! ? BoxShape.circle : BoxShape.rectangle,
           ),
           // width: !loading! ? 100 : double.infinity,
-          width: loading! ? 100 : width!,
+          width: width!,
           alignment: Alignment.center,
           padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
           child: loading!

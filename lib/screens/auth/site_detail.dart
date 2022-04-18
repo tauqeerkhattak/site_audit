@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -14,7 +16,6 @@ class SiteDetail extends StatelessWidget {
   final AuthController controller;
   static GetStorage _box = GetStorage();
   SiteDetail({Key? key, required this.controller}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     //TODO: Comment this
@@ -249,23 +250,24 @@ class SiteDetail extends StatelessWidget {
           ),
         ),
         Obx(
-          () => controller.images.isEmpty
-              ? InkWell(
-                  onTap: () {
-                    controller.pickImage(ImageSource.gallery);
-                  },
-                  child: Container(
-                    height: SizeConfig.screenHeight * 0.2,
-                    width: Get.width,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(
-                        color: Constants.primaryColor,
-                      ),
-                    ),
-                    clipBehavior: Clip.hardEdge,
-                    child: Column(
+          () => InkWell(
+            onTap: () {
+              controller.pickImage(ImageSource.gallery);
+              print('Heherere: ${controller.image.value.path}');
+            },
+            child: Container(
+              height: SizeConfig.screenHeight * 0.2,
+              width: Get.width,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(
+                  color: Constants.primaryColor,
+                ),
+              ),
+              clipBehavior: Clip.hardEdge,
+              child: controller.image.value.path == ''
+                  ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
@@ -282,27 +284,15 @@ class SiteDetail extends StatelessWidget {
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                )
-              : Row(
-                  children: [
-                    ...List.generate(controller.images.length, (index) {
-                      return Image.file(controller.images[index]);
-                    }),
-                    InkWell(
-                      onTap: () {
-                        controller.pickImage(ImageSource.gallery);
-                      },
-                      child: Container(
-                        child: Icon(
-                          Icons.camera_alt,
-                          color: Constants.primaryColor,
-                        ),
+                    )
+                  : Image.file(
+                      File(
+                        controller.image.value.path,
                       ),
+                      fit: BoxFit.fill,
                     ),
-                  ],
-                ),
+            ),
+          ),
         ),
       ],
     );

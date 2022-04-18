@@ -6,6 +6,8 @@ import 'constants.dart';
 
 class Network {
   static var client = http.Client();
+  static bool isNetworkAvailable = false;
+  static bool sendDataToNetwork = false;
 
   static get(
       {required String url, headers, Map<String, dynamic>? params}) async {

@@ -14,160 +14,176 @@ class HomeScreen extends StatelessWidget {
     ThemeData _theme = Theme.of(context);
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        padding: EdgeInsets.only(top: 70, left: 30, right: 30, bottom: 30),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Site Audit',
-              style: _theme.textTheme.headline3,
+      body: Stack(
+        children: [
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              width: SizeConfig.screenWidth * 0.4,
+              height: SizeConfig.screenHeight * 0.4,
+              child: Image.asset(
+                'assets/images/istockphoto-1184778656-612x612.jpg',
+                fit: BoxFit.fill,
+              ),
             ),
-            SizedBox(
-              height: 30,
-            ),
-            //
-            // Row(
-            //   children: [
-            //     progress(),
-            //     SizedBox(width: 60,),
-            //     progress(),
-            //   ],
-            // ),
-
-            // SizedBox(height: 20,),
-            // customCard(
-            //   height: 100,
-            //   image: 'assets/images/33810963.jpg',
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.stretch,
-            //     mainAxisSize: MainAxisSize.min,
-            //     children: [
-            //       Text('Services', style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.8),),
-            //       Text('128m'),
-            //     ],
-            //   )
-            // ),
-
-            SizedBox(
-              height: 20,
-            ),
-
-            Row(
+          ),
+          SingleChildScrollView(
+            padding: EdgeInsets.only(top: 70, left: 30, right: 30, bottom: 30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                tileCard('Antenna Support Structure', 3),
+                Text(
+                  'Site Audit',
+                  style: _theme.textTheme.headline3,
+                ),
                 SizedBox(
-                  width: 20,
+                  height: 30,
                 ),
-                tileCard('Equipment\nHousing', 2),
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                tileCard('Radio Access\n(RAN)', 1),
-                SizedBox(
-                  width: 20,
-                ),
-                tileCard('Transmission Transport', 3),
-              ],
-            ),
+                //
+                // Row(
+                //   children: [
+                //     progress(),
+                //     SizedBox(width: 60,),
+                //     progress(),
+                //   ],
+                // ),
 
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                tileCard('AC Power \n', 1),
-                SizedBox(
-                  width: 20,
-                ),
-                tileCard('DC Power\n', 0),
-              ],
-            ),
+                // SizedBox(height: 20,),
+                // customCard(
+                //   height: 100,
+                //   image: 'assets/images/33810963.jpg',
+                //   child: Column(
+                //     crossAxisAlignment: CrossAxisAlignment.stretch,
+                //     mainAxisSize: MainAxisSize.min,
+                //     children: [
+                //       Text('Services', style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.8),),
+                //       Text('128m'),
+                //     ],
+                //   )
+                // ),
 
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                tileCard('Site CME\n', 3),
                 SizedBox(
-                  width: 20,
+                  height: 20,
                 ),
-                tileCard('Site Security\n', 2),
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                tileCard('Other Active\n', 0),
-                SizedBox(
-                  width: 20,
-                ),
-                tileCard('Other Passive\n', 0),
-              ],
-            ),
-            SizedBox(
-              height: 30,
-            ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                RoundedButton(
-                  text: 'Help',
-                  onPressed: () => {},
-                  width: Get.width * 0.4,
+                Row(
+                  children: [
+                    tileCard('Antenna Support Structure', 3),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    tileCard('Equipment\nHousing', 2),
+                  ],
                 ),
-                RoundedButton(
-                  text: 'Send Data',
-                  onPressed: () => {controller.storeSiteDetail()},
-                  color: Colors.green,
-                  width: Get.width * 0.4,
-                  loading: controller.isLoading.value,
+                SizedBox(
+                  height: 20,
                 ),
+                Row(
+                  children: [
+                    tileCard('Radio Access\n(RAN)', 1),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    tileCard('Transmission Transport', 3),
+                  ],
+                ),
+
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: [
+                    tileCard('AC Power \n', 1),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    tileCard('DC Power\n', 0),
+                  ],
+                ),
+
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: [
+                    tileCard('Site CME\n', 3),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    tileCard('Site Security\n', 2),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: [
+                    tileCard('Other Active\n', 0),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    tileCard('Other Passive\n', 0),
+                  ],
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    RoundedButton(
+                      text: 'Help',
+                      onPressed: () => {},
+                      width: Get.width * 0.4,
+                    ),
+                    RoundedButton(
+                      text: 'Send Data',
+                      onPressed: () => {controller.storeSiteDetail()},
+                      color: Colors.green,
+                      width: Get.width * 0.4,
+                      loading: controller.isLoading.value,
+                    ),
+                  ],
+                ),
+                // Row(
+                //   children: [
+                //     Expanded(
+                //       child: customCard(
+                //           height: 100,
+                //           image: 'assets/images/istockphoto-1184778656-612x612.jpg',
+                //           child: Column(
+                //             crossAxisAlignment: CrossAxisAlignment.stretch,
+                //             // mainAxisSize: MainAxisSize.min,
+                //             children: [
+                //               Text('Strength', style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.8),),
+                //               Text('128m'),
+                //             ],
+                //           )
+                //       ),
+                //     ),
+                //     SizedBox(width: 20,),
+                //     Expanded(
+                //       child: customCard(
+                //           height: 100,
+                //           image: 'assets/images/33810971.jpg',
+                //           child: Column(
+                //             crossAxisAlignment: CrossAxisAlignment.stretch,
+                //             // mainAxisSize: MainAxisSize.min,
+                //             children: [
+                //               Text('Areas', style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.8),),
+                //               Text('128m'),
+                //             ],
+                //           )
+                //       ),
+                //     ),
+                //   ],
+                // ),
               ],
             ),
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: customCard(
-            //           height: 100,
-            //           image: 'assets/images/istockphoto-1184778656-612x612.jpg',
-            //           child: Column(
-            //             crossAxisAlignment: CrossAxisAlignment.stretch,
-            //             // mainAxisSize: MainAxisSize.min,
-            //             children: [
-            //               Text('Strength', style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.8),),
-            //               Text('128m'),
-            //             ],
-            //           )
-            //       ),
-            //     ),
-            //     SizedBox(width: 20,),
-            //     Expanded(
-            //       child: customCard(
-            //           height: 100,
-            //           image: 'assets/images/33810971.jpg',
-            //           child: Column(
-            //             crossAxisAlignment: CrossAxisAlignment.stretch,
-            //             // mainAxisSize: MainAxisSize.min,
-            //             children: [
-            //               Text('Areas', style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.8),),
-            //               Text('128m'),
-            //             ],
-            //           )
-            //       ),
-            //     ),
-            //   ],
-            // ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

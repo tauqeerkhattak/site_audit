@@ -1,8 +1,5 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'package:site_audit/controllers/auth_controller.dart';
 import 'package:site_audit/screens/auth/confirm_detail.dart';
 import 'package:site_audit/screens/auth/login.dart';
@@ -27,9 +24,15 @@ class _AuthScreenState extends State<AuthScreen> {
           physics: NeverScrollableScrollPhysics(),
           controller: controller.pageController,
           children: [
-            LoginScreen(controller: controller,),
-            ConfirmDetail(controller: controller,),
-            SiteDetail(controller: controller,)
+            LoginScreen(
+              controller: controller,
+            ),
+            ConfirmDetail(
+              controller: controller,
+            ),
+            SiteDetail(
+              controller: controller,
+            )
           ],
         ),
       ),
