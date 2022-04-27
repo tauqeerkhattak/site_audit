@@ -10,6 +10,7 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:location/location.dart' hide PermissionStatus;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -89,9 +90,6 @@ class AuthController extends GetxController {
       pageController = PageController(initialPage: 0);
     }
     if (_box.hasData('site_details')) {
-      // _box.write('site_details', siteDetails.value.toJson().toString());
-      // _box.write('physical_site_type', physicalSiteTypes.toString());
-      // _box.write('weather_type', weatherType.toString());
       print('Start');
       siteDetails.value =
           SiteDetailModel.fromJson(jsonDecode(_box.read('site_details')));
@@ -100,8 +98,35 @@ class AuthController extends GetxController {
       physicalSiteTypes = List.castFrom(_box.read('physical_site_type'));
       weatherType = List.castFrom(_box.read('weather_type'));
     }
+    setLocation();
+    setDataTime();
     loginId.text = "NEJ001";
     password.text = "PAS001NEX";
+  }
+
+  Future<void> setLocation() async {
+    Location location = Location();
+    LocationData locationData;
+    if (await location.serviceEnabled()) {
+      locationData = await location.getLocation();
+      latitude.text = locationData.latitude.toString();
+      longitude.text = locationData.longitude.toString();
+    } else {
+      bool serviceEnable = await location.requestService();
+      if (serviceEnable) {
+        locationData = await location.getLocation();
+        print('Lat: ${locationData.latitude}');
+        latitude.text = locationData.latitude.toString();
+        longitude.text = locationData.longitude.toString();
+      } else {
+        print('Location service not enabled');
+        CustomDialog.showCustomDialog(
+          title: 'Error',
+          content:
+              'Location must be turned on to automatically get your location',
+        );
+      }
+    }
   }
 
   void initNetwork() {
@@ -147,7 +172,6 @@ class AuthController extends GetxController {
       LocalSiteModel model = LocalSiteModel.fromJson(siteData);
       DateTime now = DateTime.now();
       DateFormat format = DateFormat('yyyy-MM-dd HH:mm:ss');
-      // ),
       String date = format.parse(now.toString()).toString();
       var payload = {
         'system_datetime_of_insert': date.split('.').first,
@@ -289,36 +313,26 @@ class AuthController extends GetxController {
   }
 
   Future<void> pickImage(ImageSource source) async {
-    XFile? file = await _picker.pickImage(source: source);
-    if (file != null) {
-      print(file.path);
-      image.value = File(file.path);
+    PermissionStatus status = await Permission.camera.request();
+    if (status.isGranted) {
+      XFile? file = await _picker.pickImage(source: source);
+      if (file != null) {
+        print(file.path);
+        image.value = File(file.path);
+      }
+    } else {
+      CustomDialog.showCustomDialog(
+        title: 'Permission required',
+        content: 'Permission to Camera required to capture site images.',
+      );
     }
   }
 
-  void selectDateTime(TextEditingController textController) async {
-    int seconds = DateTime.now().second;
-    DateTime? surveyDate = await showDatePicker(
-      context: Get.context!,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now().subtract(
-        Duration(
-          days: 1000,
-        ),
-      ),
-      lastDate: DateTime.now(),
-    );
-    TimeOfDay? surveyTime = await showTimePicker(
-      context: Get.context!,
-      initialTime: TimeOfDay.now(),
-    );
-    //2022-03-31 18:24:23
+  void setDataTime() {
+    DateTime now = DateTime.now();
     DateFormat format = DateFormat('yyyy-MM-dd HH:mm:ss');
-    String date = format
-        .parse(
-            '${surveyDate.toString().split(' ').first} ${surveyTime?.hour}:${surveyTime?.minute}:${seconds.toString()}')
-        .toString();
-    textController.text = date.split('.').first;
+    String date = format.parse(now.toString()).toString();
+    surveyStart.text = date.split('.').first;
   }
 
   Future<void> submitSiteDetails() async {

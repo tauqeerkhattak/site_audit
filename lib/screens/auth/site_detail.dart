@@ -136,17 +136,10 @@ class SiteDetail extends StatelessWidget {
                   width: 20,
                 ),
                 Expanded(
-                  child: InkWell(
-                    onTap: () async {
-                      controller.selectDateTime(controller.surveyStart);
-                    },
-                    child: IgnorePointer(
-                      child: input(
-                        'Survey Start',
-                        readOnly: true,
-                        controller: controller.surveyStart,
-                      ),
-                    ),
+                  child: input(
+                    'Survey Start',
+                    readOnly: true,
+                    controller: controller.surveyStart,
                   ),
                 ),
               ],
@@ -252,7 +245,7 @@ class SiteDetail extends StatelessWidget {
         Obx(
           () => InkWell(
             onTap: () {
-              controller.pickImage(ImageSource.gallery);
+              controller.pickImage(ImageSource.camera);
               print('Heherere: ${controller.image.value.path}');
             },
             child: Container(
