@@ -39,6 +39,7 @@ dependencies:
   date_time_picker: ^2.1.0
   connectivity_plus: ^2.3.0
   location: ^4.3.0
+  encrypt: ^5.0.1
 
 dev_dependencies:
   flutter_test:

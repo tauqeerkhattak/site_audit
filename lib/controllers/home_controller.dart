@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:site_audit/models/local_site_model.dart';
 import 'package:site_audit/models/store_site_model.dart';
 import 'package:site_audit/models/user_model.dart';
+import 'package:site_audit/service/encryption_service.dart';
 import 'package:site_audit/service/services.dart';
 import 'package:site_audit/utils/network.dart';
 import 'package:site_audit/widgets/custom_dialog.dart';
@@ -28,24 +29,38 @@ class HomeController extends GetxController {
         // ),
         String date = format.parse(now.toString()).toString();
         var payload = {
-          'system_datetime_of_insert': date.split('.').first,
-          'internal_project_id': user.assignedToProjectId.toString(),
-          'site_reference_id': model.siteId!,
-          'site_reference_name': model.siteName!,
-          'site_operator': model.localSiteModelOperator!,
-          'site_location_region': model.region!,
-          'site_location_sub_region': model.subRegion!,
-          'site_belongs_to_cluster': model.cluster!,
-          'site_keeper_name': model.siteKeeperName!,
-          'site_keeper_phone_number': model.siteKeeperPhone!,
-          'site_physical_type': model.siteType!,
-          'site_longitude': model.longitude!,
-          'site_latitude': model.latitude!,
-          'site_altitude_above_sea_level': '4.6',
-          'site_local_datetime_survey_start': model.survey!,
-          'site_external_temperature': model.temperature!,
-          'site_audit_weather_conditions': model.weather!,
-          'row_id_of_audit_team': 1.toString(),
+          'system_datetime_of_insert':
+              await EncryptionService.encrypt(date.split('.').first),
+          'internal_project_id': await EncryptionService.encrypt(
+              user.assignedToProjectId.toString()),
+          'site_reference_id': await EncryptionService.encrypt(model.siteId!),
+          'site_reference_name':
+              await EncryptionService.encrypt(model.siteName!),
+          'site_operator':
+              await EncryptionService.encrypt(model.localSiteModelOperator!),
+          'site_location_region':
+              await EncryptionService.encrypt(model.region!),
+          'site_location_sub_region':
+              await EncryptionService.encrypt(model.subRegion!),
+          'site_belongs_to_cluster':
+              await EncryptionService.encrypt(model.cluster!),
+          'site_keeper_name':
+              await EncryptionService.encrypt(model.siteKeeperName!),
+          'site_keeper_phone_number':
+              await EncryptionService.encrypt(model.siteKeeperPhone!),
+          'site_physical_type':
+              await EncryptionService.encrypt(model.siteType!),
+          'site_longitude': await EncryptionService.encrypt(model.longitude!),
+          'site_latitude': await EncryptionService.encrypt(model.latitude!),
+          'site_altitude_above_sea_level':
+              await EncryptionService.encrypt('4.6'),
+          'site_local_datetime_survey_start':
+              await EncryptionService.encrypt(model.survey!),
+          'site_external_temperature':
+              await EncryptionService.encrypt(model.temperature!),
+          'site_audit_weather_conditions':
+              await EncryptionService.encrypt(model.weather!),
+          'row_id_of_audit_team': await EncryptionService.encrypt(1.toString()),
           // 'site_additional_notes_1': 'Image Name: ${basename(model.imagePath!)}',
           // 'site_additional_notes_2': '',
           // 'site_additional_notes_3': ''
