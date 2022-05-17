@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -133,7 +134,6 @@ class AppService {
         headers: header,
       );
       var map = jsonDecode(response);
-      print('Physical Site data: $response');
       List<String> types = List.castFrom(map['data']);
       return types;
     } on Exception catch (e) {
@@ -143,6 +143,14 @@ class AppService {
           backgroundColor: Colors.redAccent);
       return throw Exception(e);
     }
+  }
+
+  //Get Image Size
+  static String getFileSizeString({required int bytes, int decimals = 0}) {
+    if (bytes <= 0) return "0 Bytes";
+    const suffixes = [" Bytes", "KB", "MB", "GB", "TB"];
+    var i = (log(bytes) / log(1024)).floor();
+    return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) + suffixes[i];
   }
 
   //Weather Types

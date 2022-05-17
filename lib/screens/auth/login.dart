@@ -15,12 +15,13 @@ class LoginScreen extends StatelessWidget {
     return Stack(
       children: [
         Positioned(
-            bottom: 0,
-            right: 0,
-            child: Image.asset(
-              "assets/images/hand-drawn-5g.jpg",
-              height: 300,
-            )),
+          bottom: 0,
+          right: 0,
+          child: Image.asset(
+            "assets/images/hand-drawn-5g.jpg",
+            height: 300,
+          ),
+        ),
         SingleChildScrollView(
           // height: MediaQuery.of(context).size.height,
           padding: EdgeInsets.only(top: 50, left: 30, right: 30, bottom: 30),
@@ -55,12 +56,13 @@ class LoginScreen extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20)),
                   child: Text(
-                      'Please enter the Engineer ID and Password that were supplied to you....',
-                      // textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: SizeConfig.textMultiplier * 2.8,
-                        // fontWeight: FontWeight.w400
-                      )),
+                    'Please enter the Engineer ID and Password that were supplied to you....',
+                    // textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: SizeConfig.textMultiplier * 2.8,
+                      // fontWeight: FontWeight.w400
+                    ),
+                  ),
                 ),
                 SizedBox(
                   height: 20,

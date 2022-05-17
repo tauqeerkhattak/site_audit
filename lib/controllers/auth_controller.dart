@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -64,19 +65,13 @@ class AuthController extends GetxController {
   List<String> weatherType = <String>[].obs;
 
   //Current Dropdown values
-  Rx<Datum> currentOperator = Datum().obs;
-  Rx<Region?> currentRegion = Region().obs;
-  Rx<SubRegion> currentSubRegion = SubRegion().obs;
-  Rx<ClusterId> currentCluster = ClusterId().obs;
-  Rx<SiteReference> currentSite = SiteReference(id: '', name: '').obs;
+  Rxn<Datum?> currentOperator = Rxn<Datum?>();
+  Rxn<Region?> currentRegion = Rxn<Region?>();
+  Rxn<SubRegion?> currentSubRegion = Rxn<SubRegion?>();
+  Rxn<ClusterId?> currentCluster = Rxn<ClusterId?>();
+  Rxn<SiteReference?> currentSite = Rxn<SiteReference?>();
   Rx<String> currentSiteTypes = ''.obs;
   Rx<String> currentWeather = ''.obs;
-
-  //Dropdown Flags
-  bool isRegionSelected = false;
-  bool isSubRegionSelected = false;
-  bool isClusterSelected = false;
-  bool isSiteIDSelected = false;
 
   final formKey = GlobalKey<FormState>();
 
@@ -98,17 +93,19 @@ class AuthController extends GetxController {
       physicalSiteTypes = List.castFrom(_box.read('physical_site_type'));
       weatherType = List.castFrom(_box.read('weather_type'));
     }
-    setLocation();
     setDataTime();
-    loginId.text = "NEJ001";
-    password.text = "PAS001NEX";
+    // TODO Uncomment this
+    // loginId.text = "NEJ001";
+    // password.text = "PAS001NEX";
   }
 
   Future<void> setLocation() async {
+    print('Set Location!');
     Location location = Location();
     LocationData locationData;
     if (await location.serviceEnabled()) {
       locationData = await location.getLocation();
+      print('Location: ${locationData.time}');
       latitude.text = locationData.latitude.toString();
       longitude.text = locationData.longitude.toString();
     } else {
@@ -164,57 +161,62 @@ class AuthController extends GetxController {
   }
 
   Future<void> submitSiteData() async {
-    var data = _box.read('user');
-    User user = User.fromMap(data);
-    if (_box.hasData(user.id.toString())) {
-      print('Data exists!');
-      var siteData = await _box.read(user.id.toString());
-      LocalSiteModel model = LocalSiteModel.fromJson(siteData);
-      DateTime now = DateTime.now();
-      DateFormat format = DateFormat('yyyy-MM-dd HH:mm:ss');
-      String date = format.parse(now.toString()).toString();
-      var payload = {
-        'system_datetime_of_insert': date.split('.').first,
-        'internal_project_id': user.assignedToProjectId.toString(),
-        'site_reference_id': model.siteId!,
-        'site_reference_name': model.siteName!,
-        'site_operator': model.localSiteModelOperator!,
-        'site_location_region': model.region!,
-        'site_location_sub_region': model.subRegion!,
-        'site_belongs_to_cluster': model.cluster!,
-        'site_keeper_name': model.siteKeeperName!,
-        'site_keeper_phone_number': model.siteKeeperPhone!,
-        'site_physical_type': model.siteType!,
-        'site_longitude': model.longitude!,
-        'site_latitude': model.latitude!,
-        'site_altitude_above_sea_level': '4.6',
-        'site_local_datetime_survey_start': model.survey!,
-        'site_external_temperature': model.temperature!,
-        'site_audit_weather_conditions': model.weather!,
-        'row_id_of_audit_team': 1.toString(),
-        // 'site_additional_notes_1': 'Image Name: ${basename(model.imagePath!)}',
-        // 'site_additional_notes_2': '',
-        // 'site_additional_notes_3': ''
-      };
-      List<http.MultipartFile> files = [
-        await http.MultipartFile.fromPath(
-          'site_photo_from_main_entrance',
-          model.imagePath!,
-        ),
-      ];
-      var res =
-          await AppService.storeSiteDetails(payload: payload, files: files);
-      if (res != null) {
-        StoreSiteModel model = StoreSiteModel.fromJson(jsonDecode(res));
-        _box.remove(user.id.toString());
-        Get.rawSnackbar(
-          title: "Site Data submitted",
-          message: "Locally saved data has been send to server automatically!",
-          backgroundColor: Colors.green,
-        );
+    if (_box.hasData('user')) {
+      var data = _box.read('user');
+      User user = User.fromMap(data);
+      if (_box.hasData(user.id.toString())) {
+        print('Data exists!');
+        var siteData = await _box.read(user.id.toString());
+        LocalSiteModel model = LocalSiteModel.fromJson(siteData);
+        DateTime now = DateTime.now();
+        DateFormat format = DateFormat('yyyy-MM-dd HH:mm:ss');
+        String date = format.parse(now.toString()).toString();
+        var payload = {
+          'system_datetime_of_insert': date.split('.').first,
+          'internal_project_id': user.assignedToProjectId.toString(),
+          'site_reference_id': model.siteId!,
+          'site_reference_name': model.siteName!,
+          'site_operator': model.localSiteModelOperator!,
+          'site_location_region': model.region!,
+          'site_location_sub_region': model.subRegion!,
+          'site_belongs_to_cluster': model.cluster!,
+          'site_keeper_name': model.siteKeeperName!,
+          'site_keeper_phone_number': model.siteKeeperPhone!,
+          'site_physical_type': model.siteType!,
+          'site_longitude': model.longitude!,
+          'site_latitude': model.latitude!,
+          'site_altitude_above_sea_level': '4.6',
+          'site_local_datetime_survey_start': model.survey!,
+          'site_external_temperature': model.temperature!,
+          'site_audit_weather_conditions': model.weather!,
+          'row_id_of_audit_team': 1.toString(),
+          // 'site_additional_notes_1': 'Image Name: ${basename(model.imagePath!)}',
+          // 'site_additional_notes_2': '',
+          // 'site_additional_notes_3': ''
+        };
+        List<http.MultipartFile> files = [
+          await http.MultipartFile.fromPath(
+            'site_photo_from_main_entrance',
+            model.imagePath!,
+          ),
+        ];
+        var res =
+            await AppService.storeSiteDetails(payload: payload, files: files);
+        if (res != null) {
+          StoreSiteModel model = StoreSiteModel.fromJson(jsonDecode(res));
+          _box.remove(user.id.toString());
+          Get.rawSnackbar(
+            title: "Site Data submitted",
+            message:
+                "Locally saved data has been send to server automatically!",
+            backgroundColor: Colors.green,
+          );
+        }
+      } else {
+        print('No data!');
       }
     } else {
-      print('No data!');
+      log('User not logged in');
     }
   }
 
@@ -241,6 +243,7 @@ class AuthController extends GetxController {
       operators = siteDetails.value.data!;
       physicalSiteTypes = await AppService.getPhysicalSiteTypes();
       weatherType = await AppService.getWeatherTypes();
+      setLocation();
       _box.write('site_details', jsonEncode(siteDetails.value));
       _box.write('physical_site_type', physicalSiteTypes);
       _box.write('weather_type', weatherType);
@@ -318,7 +321,18 @@ class AuthController extends GetxController {
       XFile? file = await _picker.pickImage(source: source);
       if (file != null) {
         print(file.path);
-        image.value = File(file.path);
+        final bytes = File(file.path).lengthSync();
+        final kb = bytes / 1024;
+        final mb = kb / 1024;
+        print('Size in MB: $mb');
+        if (mb > 10) {
+          CustomDialog.showCustomDialog(
+            title: 'Error',
+            content: 'Image size cannot be greater than 10 mb!',
+          );
+        } else {
+          image.value = File(file.path);
+        }
       }
     } else {
       CustomDialog.showCustomDialog(
@@ -348,11 +362,11 @@ class AuthController extends GetxController {
         print(path + fileName);
         final File localImage = await image.value.copy(path + '/$fileName');
         LocalSiteModel site = LocalSiteModel(
-          localSiteModelOperator: currentOperator.value.datumOperator,
+          localSiteModelOperator: currentOperator.value!.datumOperator,
           region: currentRegion.value!.name,
-          subRegion: currentSubRegion.value.name,
-          cluster: currentCluster.value.id,
-          siteId: currentSite.value.id,
+          subRegion: currentSubRegion.value!.name,
+          cluster: currentCluster.value!.id,
+          siteId: currentSite.value!.id,
           siteName: siteName.text,
           siteKeeperName: siteKeeper.text,
           siteKeeperPhone: siteKeeperPhone.text,

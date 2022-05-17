@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:site_audit/utils/constants.dart';
+import 'package:site_audit/utils/permssion_util.dart';
 
 import 'routes/pages.dart';
 import 'routes/routes.dart';
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
       builder: (context, constraints) => OrientationBuilder(
         builder: (context, orientation) {
           SizeConfig().init(constraints, orientation);
+          PermissionUtil.request();
           return GetMaterialApp(
             title: 'Site Audit',
             theme: ThemeData(

@@ -246,7 +246,6 @@ class SiteDetail extends StatelessWidget {
           () => InkWell(
             onTap: () {
               controller.pickImage(ImageSource.camera);
-              print('Heherere: ${controller.image.value.path}');
             },
             child: Container(
               height: SizeConfig.screenHeight * 0.2,
@@ -342,7 +341,6 @@ class SiteDetail extends StatelessWidget {
             ),
           ),
         ),
-        // SizedBox(height: 5,),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -364,6 +362,7 @@ class SiteDetail extends StatelessWidget {
               isDense: true,
               filled: true,
               fillColor: Colors.white,
+              hintText: items.isEmpty ? null : 'Select',
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18.0),
                 borderSide:
@@ -394,56 +393,54 @@ class SiteDetail extends StatelessWidget {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           padding: EdgeInsets.symmetric(vertical: 5),
-          child: Text(label + "\t\t",
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                  // color: Colors.white,
-                  fontSize: SizeConfig.textMultiplier * 2.2)),
+          child: Text(
+            label + "\t\t",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              // color: Colors.white,
+              fontSize: SizeConfig.textMultiplier * 2.2,
+            ),
+          ),
         ),
         // SizedBox(height: 5,),
         Container(
           decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: new BorderRadius.circular(18.0),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    blurRadius: 10.0,
-                    spreadRadius: 0.4,
-                    offset: Offset(0, 6.0))
-              ]),
+            color: Colors.white,
+            borderRadius: new BorderRadius.circular(18.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 10.0,
+                spreadRadius: 0.4,
+                offset: Offset(
+                  0,
+                  6.0,
+                ),
+              ),
+            ],
+          ),
           clipBehavior: Clip.antiAlias,
           child: DropdownButtonFormField<Datum?>(
             onChanged: (Datum? newValue) {
               controller.currentOperator.value = newValue!;
               controller.regions.clear();
               controller.regions
-                  .assignAll(controller.currentOperator.value.region!);
-              controller.currentRegion.value = controller.regions.first;
-              if (controller.isSubRegionSelected) {
-                controller.subRegions.clear();
-                controller.subRegions
-                    .assignAll(controller.currentRegion.value!.subRegion!);
-                controller.currentSubRegion.value =
-                    controller.currentRegion.value!.subRegion!.first;
-              }
-              if (controller.isClusterSelected) {
-                controller.clusters.clear();
-                controller.clusters.assignAll(controller
-                    .currentRegion.value!.subRegion!.first.clusterId!);
-                controller.currentCluster.value = controller.clusters.first;
-              }
-              if (controller.isSiteIDSelected) {
-                controller.siteIDs.clear();
-                controller.siteIDs.assignAll(controller.currentRegion.value!
-                    .subRegion!.first.clusterId!.first.siteReference!);
-                controller.currentSite.value = controller.siteIDs.first;
-              }
+                  .assignAll(controller.currentOperator.value!.region!);
+              controller.currentRegion.value = null;
+              controller.subRegions.clear();
+              controller.currentSubRegion.value = null;
+              controller.clusters.clear();
+              controller.currentCluster.value = null;
+              controller.siteIDs.clear();
+              controller.currentSite.value = null;
+              controller.siteName.text = '';
             },
             isDense: true,
+            value: controller.currentOperator.value,
             decoration: InputDecoration(
               isDense: true,
               filled: true,
+              hintText: 'Select',
               fillColor: Colors.white,
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18.0),
@@ -477,7 +474,11 @@ class SiteDetail extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(10)),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(
+              10,
+            ),
+          ),
           padding: EdgeInsets.symmetric(vertical: 5),
           child: Text(
             label + "\t\t",
@@ -508,25 +509,19 @@ class SiteDetail extends StatelessWidget {
               controller.currentRegion.value = newValue!;
               controller.subRegions
                   .assignAll(controller.currentRegion.value!.subRegion!);
-              controller.currentSubRegion.value = controller.subRegions.first;
-              if (controller.isClusterSelected) {
-                controller.clusters.clear();
-                controller.clusters
-                    .assignAll(controller.currentSubRegion.value.clusterId!);
-                controller.currentCluster.value = controller.clusters.first;
-              }
-              if (controller.isSiteIDSelected) {
-                controller.siteIDs.clear();
-                controller.siteIDs.assignAll(controller
-                    .currentSubRegion.value.clusterId!.first.siteReference!);
-                controller.currentSite.value = controller.siteIDs.first;
-              }
+              controller.currentSubRegion.value = null;
+              controller.clusters.clear();
+              controller.currentCluster.value = null;
+              controller.siteIDs.clear();
+              controller.currentSite.value = null;
+              controller.siteName.text = '';
             },
             isDense: true,
             value: controller.currentRegion.value,
             decoration: InputDecoration(
               isDense: true,
               filled: true,
+              hintText: controller.regions.isEmpty ? null : 'Select',
               fillColor: Colors.white,
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18.0),
@@ -558,38 +553,40 @@ class SiteDetail extends StatelessWidget {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           padding: EdgeInsets.symmetric(vertical: 5),
-          child: Text(label + "\t\t",
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                  // color: Colors.white,
-                  fontSize: SizeConfig.textMultiplier * 2.2)),
+          child: Text(
+            label + "\t\t",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              fontSize: SizeConfig.textMultiplier * 2.2,
+            ),
+          ),
         ),
-        // SizedBox(height: 5,),
         Container(
           decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: new BorderRadius.circular(18.0),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    blurRadius: 10.0,
-                    spreadRadius: 0.4,
-                    offset: Offset(0, 6.0))
-              ]),
+            color: Colors.white,
+            borderRadius: new BorderRadius.circular(18.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 10.0,
+                spreadRadius: 0.4,
+                offset: Offset(
+                  0,
+                  6.0,
+                ),
+              ),
+            ],
+          ),
           clipBehavior: Clip.antiAlias,
           child: DropdownButtonFormField<SubRegion>(
             onChanged: (SubRegion? newValue) {
-              controller.isSubRegionSelected = true;
               controller.currentSubRegion.value = newValue!;
               controller.clusters
-                  .assignAll(controller.currentSubRegion.value.clusterId!);
-              controller.currentCluster.value = controller.clusters.first;
-              if (controller.isSiteIDSelected) {
-                controller.siteIDs.clear();
-                controller.siteIDs
-                    .assignAll(controller.currentCluster.value.siteReference!);
-                controller.currentSite.value = controller.siteIDs.first;
-              }
+                  .assignAll(controller.currentSubRegion.value!.clusterId!);
+              controller.currentCluster.value = null;
+              controller.siteIDs.clear();
+              controller.currentSite.value = null;
+              controller.siteName.text = '';
             },
             isDense: true,
             value: controller.currentSubRegion.value,
@@ -597,10 +594,14 @@ class SiteDetail extends StatelessWidget {
               isDense: true,
               filled: true,
               fillColor: Colors.white,
+              hintText: controller.subRegions.isEmpty ? null : 'Select',
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18.0),
-                borderSide:
-                    BorderSide(color: Color(0xffBDBDBD).withOpacity(0.5)),
+                borderSide: BorderSide(
+                  color: Color(0xffBDBDBD).withOpacity(
+                    0.5,
+                  ),
+                ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18.0),
@@ -627,38 +628,46 @@ class SiteDetail extends StatelessWidget {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           padding: EdgeInsets.symmetric(vertical: 5),
-          child: Text(label + "\t\t",
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                  // color: Colors.white,
-                  fontSize: SizeConfig.textMultiplier * 2.2)),
+          child: Text(
+            label + "\t\t",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              // color: Colors.white,
+              fontSize: SizeConfig.textMultiplier * 2.2,
+            ),
+          ),
         ),
-        // SizedBox(height: 5,),
         Container(
           decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: new BorderRadius.circular(18.0),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    blurRadius: 10.0,
-                    spreadRadius: 0.4,
-                    offset: Offset(0, 6.0))
-              ]),
+            color: Colors.white,
+            borderRadius: new BorderRadius.circular(18.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 10.0,
+                spreadRadius: 0.4,
+                offset: Offset(
+                  0,
+                  6.0,
+                ),
+              ),
+            ],
+          ),
           clipBehavior: Clip.antiAlias,
           child: DropdownButtonFormField<ClusterId>(
             onChanged: (ClusterId? newValue) {
-              controller.isClusterSelected = true;
               controller.currentCluster.value = newValue!;
               controller.siteIDs
-                  .assignAll(controller.currentCluster.value.siteReference!);
-              controller.currentSite.value = controller.siteIDs.first;
+                  .assignAll(controller.currentCluster.value!.siteReference!);
+              controller.currentSite.value = null;
+              controller.siteName.text = '';
             },
             isDense: true,
             value: controller.currentCluster.value,
             decoration: InputDecoration(
               isDense: true,
               filled: true,
+              hintText: controller.clusters.isEmpty ? null : 'Select',
               fillColor: Colors.white,
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18.0),
@@ -690,36 +699,43 @@ class SiteDetail extends StatelessWidget {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           padding: EdgeInsets.symmetric(vertical: 5),
-          child: Text(label + "\t\t",
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                  // color: Colors.white,
-                  fontSize: SizeConfig.textMultiplier * 2.2)),
+          child: Text(
+            label + "\t\t",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              // color: Colors.white,
+              fontSize: SizeConfig.textMultiplier * 2.2,
+            ),
+          ),
         ),
-        // SizedBox(height: 5,),
         Container(
           decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: new BorderRadius.circular(18.0),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    blurRadius: 10.0,
-                    spreadRadius: 0.4,
-                    offset: Offset(0, 6.0))
-              ]),
+            color: Colors.white,
+            borderRadius: new BorderRadius.circular(18.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 10.0,
+                spreadRadius: 0.4,
+                offset: Offset(
+                  0,
+                  6.0,
+                ),
+              ),
+            ],
+          ),
           clipBehavior: Clip.antiAlias,
           child: DropdownButtonFormField<SiteReference>(
             onChanged: (SiteReference? newValue) {
-              controller.isSiteIDSelected = true;
               controller.currentSite.value = newValue!;
-              controller.siteName.text = controller.currentSite.value.name;
+              controller.siteName.text = controller.currentSite.value!.name;
             },
             isDense: true,
             value: controller.currentSite.value,
             decoration: InputDecoration(
               isDense: true,
               filled: true,
+              hintText: controller.siteIDs.isEmpty ? null : 'Select',
               fillColor: Colors.white,
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18.0),
@@ -760,9 +776,5 @@ class SiteDetail extends StatelessWidget {
     controller.currentCluster.value = ClusterId();
     controller.currentSite.value = SiteReference(id: '', name: '');
     controller.siteName.text = '';
-    controller.isRegionSelected = false;
-    controller.isSubRegionSelected = false;
-    controller.isClusterSelected = false;
-    controller.isSiteIDSelected = false;
   }
 }

@@ -24,6 +24,7 @@ class Network {
       Uri uri = Uri.https(Constants.baseUrl, url, params);
       print("REQUESTED URL => $uri");
       var response = await client.get(uri, headers: apiHeaders);
+      print("Error: " + response.body);
       if (response.statusCode == 200) {
         return response.body;
         // return json.decode(response.body);
@@ -64,8 +65,9 @@ class Network {
         request.files.add(files[i]);
       }
       http.StreamedResponse res = await request.send();
+      String response = await res.stream.bytesToString();
+      print("Error: " + response);
       if (res.statusCode == 200) {
-        String response = await res.stream.bytesToString();
         print(response);
         return response;
       } else {
@@ -96,10 +98,14 @@ class Network {
         apiHeaders.addAll(headers);
       }
       var body = json.encode(payload);
-      Uri uri = Uri.https(Constants.baseUrl, url, params);
+      Uri uri = Uri.https(
+          Constants.baseUrl,
+          // Constants.baseUrl,
+          url,
+          params);
       print(uri);
       var response = await client.post(uri, body: body, headers: apiHeaders);
-      print(response.body);
+      print('Response: ' + response.body);
       if (response.statusCode == 200) {
         return response.body;
       }
@@ -127,7 +133,7 @@ class Network {
       Uri uri = Uri.https(Constants.baseUrl, url, params);
       print(uri);
       var response = await client.put(uri, body: body, headers: apiHeaders);
-      print(response.body);
+      print("Error: " + response.body);
       if (response.statusCode == 200) {
         return response.body;
       }
