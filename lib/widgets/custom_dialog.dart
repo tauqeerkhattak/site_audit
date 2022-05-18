@@ -37,6 +37,7 @@ class CustomDialog {
           ),
         ],
       ),
+      barrierDismissible: false,
     );
   }
 }

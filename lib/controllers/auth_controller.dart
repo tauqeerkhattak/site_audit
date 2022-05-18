@@ -226,11 +226,20 @@ class AuthController extends GetxController {
     sub?.cancel();
   }
 
-  String? validator(String? value) {
-    if (value!.isEmpty) {
-      return 'Please this field must be filled';
-    } else if (value.length < 3) {
+  String? stringValidator(String? value) {
+    if (value == null) {
+      return 'Please fill this field';
+    } else if (value.isEmpty) {
+      return 'Please fill this field';
+    } else if (value.length < 2) {
       return 'Length is too short';
+    }
+    return null;
+  }
+
+  String? dynamicValidator(dynamic value) {
+    if (value == null) {
+      return 'Select a value!';
     }
     return null;
   }
@@ -243,7 +252,6 @@ class AuthController extends GetxController {
       operators = siteDetails.value.data!;
       physicalSiteTypes = await AppService.getPhysicalSiteTypes();
       weatherType = await AppService.getWeatherTypes();
-      setLocation();
       _box.write('site_details', jsonEncode(siteDetails.value));
       _box.write('physical_site_type', physicalSiteTypes);
       _box.write('weather_type', weatherType);
@@ -350,48 +358,50 @@ class AuthController extends GetxController {
   }
 
   Future<void> submitSiteDetails() async {
-    var data = _box.read('user');
-    User user = User.fromMap(data);
-    if (image.value.path != '') {
-      PermissionStatus status = await Permission.storage.request();
-      final GetStorage _box = GetStorage();
-      if (status.isGranted) {
-        final Directory directory = await getApplicationDocumentsDirectory();
-        final String path = directory.path;
-        final String fileName = basename(image.value.path);
-        print(path + fileName);
-        final File localImage = await image.value.copy(path + '/$fileName');
-        LocalSiteModel site = LocalSiteModel(
-          localSiteModelOperator: currentOperator.value!.datumOperator,
-          region: currentRegion.value!.name,
-          subRegion: currentSubRegion.value!.name,
-          cluster: currentCluster.value!.id,
-          siteId: currentSite.value!.id,
-          siteName: siteName.text,
-          siteKeeperName: siteKeeper.text,
-          siteKeeperPhone: siteKeeperPhone.text,
-          siteType: currentSiteTypes.value,
-          survey: surveyStart.text,
-          latitude: latitude.text,
-          longitude: longitude.text,
-          weather: currentWeather.value,
-          temperature: temperature.text,
-          imagePath: localImage.path,
-        );
-        var data = site.toJson();
-        print('User: ${user.id}');
-        _box.write(user.id.toString(), data).then(
-          (value) {
-            print('Go to next page');
-            Get.to(() => HomeScreen());
-          },
+    if (key.currentState!.validate()) {
+      var data = _box.read('user');
+      User user = User.fromMap(data);
+      if (image.value.path != '') {
+        PermissionStatus status = await Permission.storage.request();
+        final GetStorage _box = GetStorage();
+        if (status.isGranted) {
+          final Directory directory = await getApplicationDocumentsDirectory();
+          final String path = directory.path;
+          final String fileName = basename(image.value.path);
+          print(path + fileName);
+          final File localImage = await image.value.copy(path + '/$fileName');
+          LocalSiteModel site = LocalSiteModel(
+            localSiteModelOperator: currentOperator.value!.datumOperator,
+            region: currentRegion.value!.name,
+            subRegion: currentSubRegion.value!.name,
+            cluster: currentCluster.value!.id,
+            siteId: currentSite.value!.id,
+            siteName: siteName.text,
+            siteKeeperName: siteKeeper.text,
+            siteKeeperPhone: siteKeeperPhone.text,
+            siteType: currentSiteTypes.value,
+            survey: surveyStart.text,
+            latitude: latitude.text,
+            longitude: longitude.text,
+            weather: currentWeather.value,
+            temperature: temperature.text,
+            imagePath: localImage.path,
+          );
+          var data = site.toJson();
+          print('User: ${user.id}');
+          _box.write(user.id.toString(), data).then(
+            (value) {
+              print('Go to next page');
+              Get.to(() => HomeScreen());
+            },
+          );
+        }
+      } else {
+        CustomDialog.showCustomDialog(
+          title: 'Image missing',
+          content: 'Please select an image first!',
         );
       }
-    } else {
-      CustomDialog.showCustomDialog(
-        title: 'Image missing',
-        content: 'Please select an image first!',
-      );
     }
   }
 }

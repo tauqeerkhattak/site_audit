@@ -71,7 +71,7 @@ class LoginScreen extends StatelessWidget {
                   placeHolder: "Engineer ID",
                   lines: 1,
                   controller: controller.loginId,
-                  validator: controller.validator,
+                  validator: controller.stringValidator,
                 ),
                 SizedBox(
                   height: 20,
@@ -80,7 +80,7 @@ class LoginScreen extends StatelessWidget {
                     placeHolder: "Password",
                     lines: 1,
                     controller: controller.password,
-                    validator: controller.validator),
+                    validator: controller.stringValidator),
                 SizedBox(
                   height: 30,
                 ),

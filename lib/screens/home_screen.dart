@@ -130,22 +130,24 @@ class HomeScreen extends StatelessWidget {
                   height: 30,
                 ),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    RoundedButton(
-                      text: 'Help',
-                      onPressed: () => {},
-                      width: Get.width * 0.4,
-                    ),
-                    RoundedButton(
-                      text: 'Send Data',
-                      onPressed: () => {controller.storeSiteDetail()},
-                      color: Colors.green,
-                      width: Get.width * 0.4,
-                      loading: controller.isLoading.value,
-                    ),
-                  ],
+                Obx(
+                  () => Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      RoundedButton(
+                        text: 'Help',
+                        onPressed: () => {},
+                        width: Get.width * 0.4,
+                      ),
+                      RoundedButton(
+                        text: 'Send Data',
+                        onPressed: () => {controller.storeSiteDetail()},
+                        color: Colors.green,
+                        width: Get.width * 0.4,
+                        loading: controller.isLoading.value,
+                      ),
+                    ],
+                  ),
                 ),
                 // Row(
                 //   children: [

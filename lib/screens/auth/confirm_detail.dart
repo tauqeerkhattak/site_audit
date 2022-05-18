@@ -37,7 +37,7 @@ class ConfirmDetail extends StatelessWidget {
                 InputField(
                   placeHolder: "Name",
                   controller: controller.name,
-                  validator: controller.validator,
+                  validator: controller.stringValidator,
                 ),
                 SizedBox(
                   height: 10,
@@ -45,7 +45,7 @@ class ConfirmDetail extends StatelessWidget {
                 InputField(
                   placeHolder: "Email",
                   controller: controller.email,
-                  validator: controller.validator,
+                  validator: controller.stringValidator,
                 ),
                 SizedBox(
                   height: 10,
@@ -53,7 +53,7 @@ class ConfirmDetail extends StatelessWidget {
                 InputField(
                   placeHolder: "Phone",
                   controller: controller.phone,
-                  validator: controller.validator,
+                  validator: controller.stringValidator,
                 ),
                 SizedBox(
                   height: 30,

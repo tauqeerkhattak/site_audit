@@ -12,10 +12,22 @@ import 'package:site_audit/widgets/rounded_button.dart';
 
 import '../../models/site_detail_model.dart';
 
-class SiteDetail extends StatelessWidget {
+class SiteDetail extends StatefulWidget {
   final AuthController controller;
   static GetStorage _box = GetStorage();
   SiteDetail({Key? key, required this.controller}) : super(key: key);
+
+  @override
+  State<SiteDetail> createState() => _SiteDetailState();
+}
+
+class _SiteDetailState extends State<SiteDetail> {
+  @override
+  void initState() {
+    widget.controller.setLocation();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     //TODO: Comment this
@@ -24,7 +36,7 @@ class SiteDetail extends StatelessWidget {
     return SingleChildScrollView(
       padding: EdgeInsets.only(left: 30, right: 30, top: 50, bottom: 30),
       child: Form(
-        key: controller.key,
+        key: widget.controller.key,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -41,7 +53,7 @@ class SiteDetail extends StatelessWidget {
                   Expanded(
                     child: operatorDrop(
                       'Site Operator',
-                      controller.operators,
+                      widget.controller.operators,
                     ),
                   ),
                   SizedBox(
@@ -50,7 +62,7 @@ class SiteDetail extends StatelessWidget {
                   Expanded(
                     child: regionDrop(
                       'Site Region',
-                      controller.regions,
+                      widget.controller.regions,
                     ),
                   ),
                 ],
@@ -65,7 +77,7 @@ class SiteDetail extends StatelessWidget {
                   Expanded(
                     child: subRegionDrop(
                       'Site Sub-Region',
-                      controller.subRegions,
+                      widget.controller.subRegions,
                     ),
                   ),
                   SizedBox(
@@ -74,7 +86,7 @@ class SiteDetail extends StatelessWidget {
                   Expanded(
                     child: clusterDrop(
                       'Site Cluster',
-                      controller.clusters,
+                      widget.controller.clusters,
                     ),
                   ),
                 ],
@@ -89,7 +101,7 @@ class SiteDetail extends StatelessWidget {
                   Expanded(
                     child: siteIdDrop(
                       'Site ID',
-                      controller.siteIDs,
+                      widget.controller.siteIDs,
                     ),
                   ),
                   SizedBox(
@@ -98,7 +110,7 @@ class SiteDetail extends StatelessWidget {
                   Expanded(
                     child: input(
                       'Site Name',
-                      controller: controller.siteName,
+                      textController: widget.controller.siteName,
                     ),
                   ),
                 ],
@@ -109,14 +121,14 @@ class SiteDetail extends StatelessWidget {
             ),
             input(
               'Name of Site Keeper',
-              controller: controller.siteKeeper,
+              textController: widget.controller.siteKeeper,
             ),
             SizedBox(
               height: 10,
             ),
             input(
               'Phone Number of Site Keeper',
-              controller: controller.siteKeeperPhone,
+              textController: widget.controller.siteKeeperPhone,
             ),
             SizedBox(
               height: 30,
@@ -126,9 +138,10 @@ class SiteDetail extends StatelessWidget {
                 Expanded(
                   child: simpleDrop(
                     label: 'Physical Site Type',
-                    items: controller.physicalSiteTypes,
+                    items: widget.controller.physicalSiteTypes,
                     onChanged: (String? type) {
-                      controller.currentSiteTypes.value = type ?? 'Outdoor';
+                      widget.controller.currentSiteTypes.value =
+                          type ?? 'Outdoor';
                     },
                   ),
                 ),
@@ -139,7 +152,7 @@ class SiteDetail extends StatelessWidget {
                   child: input(
                     'Survey Start',
                     readOnly: true,
-                    controller: controller.surveyStart,
+                    textController: widget.controller.surveyStart,
                   ),
                 ),
               ],
@@ -152,7 +165,7 @@ class SiteDetail extends StatelessWidget {
                 Expanded(
                   child: input(
                     'Longitude',
-                    controller: controller.longitude,
+                    textController: widget.controller.longitude,
                   ),
                 ),
                 SizedBox(
@@ -161,7 +174,7 @@ class SiteDetail extends StatelessWidget {
                 Expanded(
                   child: input(
                     'Latitude',
-                    controller: controller.latitude,
+                    textController: widget.controller.latitude,
                   ),
                 ),
               ],
@@ -174,9 +187,10 @@ class SiteDetail extends StatelessWidget {
                 Expanded(
                   child: simpleDrop(
                     label: 'Weather',
-                    items: controller.weatherType,
+                    items: widget.controller.weatherType,
                     onChanged: (String? weather) {
-                      controller.currentWeather.value = weather ?? "Sunny";
+                      widget.controller.currentWeather.value =
+                          weather ?? "Sunny";
                     },
                   ),
                 ),
@@ -186,7 +200,7 @@ class SiteDetail extends StatelessWidget {
                 Expanded(
                   child: input(
                     'Temperature',
-                    controller: controller.temperature,
+                    textController: widget.controller.temperature,
                   ),
                 ),
               ],
@@ -202,23 +216,16 @@ class SiteDetail extends StatelessWidget {
               () => RoundedButton(
                 text: 'Submit',
                 onPressed: () async {
-                  await controller.submitSiteDetails();
+                  await widget.controller.submitSiteDetails();
                   // Get.to(() => TempScreen());
                 },
-                loading: controller.loading(),
-                width: controller.loading() ? 100 : Get.width,
+                loading: widget.controller.loading(),
+                width: widget.controller.loading() ? 100 : Get.width,
               ),
             ),
             SizedBox(
               height: 10,
             ),
-            // RoundedButton(
-            //   text: 'Go To Temp',
-            //   onPressed: () {
-            //     Get.to(() => HomeScreen());
-            //   },
-            //   width: Get.width,
-            // ),
           ],
         ),
       ),
@@ -245,7 +252,7 @@ class SiteDetail extends StatelessWidget {
         Obx(
           () => InkWell(
             onTap: () {
-              controller.pickImage(ImageSource.camera);
+              widget.controller.pickImage(ImageSource.camera);
             },
             child: Container(
               height: SizeConfig.screenHeight * 0.2,
@@ -258,7 +265,7 @@ class SiteDetail extends StatelessWidget {
                 ),
               ),
               clipBehavior: Clip.hardEdge,
-              child: controller.image.value.path == ''
+              child: widget.controller.image.value.path == ''
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -279,7 +286,7 @@ class SiteDetail extends StatelessWidget {
                     )
                   : Image.file(
                       File(
-                        controller.image.value.path,
+                        widget.controller.image.value.path,
                       ),
                       fit: BoxFit.fill,
                     ),
@@ -291,7 +298,7 @@ class SiteDetail extends StatelessWidget {
   }
 
   Widget input(label,
-      {int? lines, TextEditingController? controller, bool? readOnly}) {
+      {int? lines, TextEditingController? textController, bool? readOnly}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -311,8 +318,9 @@ class SiteDetail extends StatelessWidget {
         // SizedBox(height: 5,),
         InputField(
           placeHolder: "",
-          controller: controller,
+          controller: textController,
           readOnly: readOnly ?? false,
+          validator: (String? text) => widget.controller.stringValidator(text),
           lines: lines,
         ),
       ],
@@ -358,20 +366,10 @@ class SiteDetail extends StatelessWidget {
           child: DropdownButtonFormField<String>(
             onChanged: onChanged,
             isDense: true,
-            decoration: InputDecoration(
-              isDense: true,
-              filled: true,
-              fillColor: Colors.white,
-              hintText: items.isEmpty ? null : 'Select',
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                borderSide:
-                    BorderSide(color: Color(0xffBDBDBD).withOpacity(0.5)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                borderSide: BorderSide(color: Colors.white),
-              ),
+            validator: (String? value) =>
+                widget.controller.stringValidator(value),
+            decoration: Constants.decoration(
+              hint: items.isEmpty ? 'Select' : null,
             ),
             items: items.map<DropdownMenuItem<String>>((String? value) {
               return DropdownMenuItem<String>(
@@ -422,36 +420,23 @@ class SiteDetail extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: DropdownButtonFormField<Datum?>(
             onChanged: (Datum? newValue) {
-              controller.currentOperator.value = newValue!;
-              controller.regions.clear();
-              controller.regions
-                  .assignAll(controller.currentOperator.value!.region!);
-              controller.currentRegion.value = null;
-              controller.subRegions.clear();
-              controller.currentSubRegion.value = null;
-              controller.clusters.clear();
-              controller.currentCluster.value = null;
-              controller.siteIDs.clear();
-              controller.currentSite.value = null;
-              controller.siteName.text = '';
+              widget.controller.currentOperator.value = newValue!;
+              widget.controller.regions.clear();
+              widget.controller.regions
+                  .assignAll(widget.controller.currentOperator.value!.region!);
+              widget.controller.currentRegion.value = null;
+              widget.controller.subRegions.clear();
+              widget.controller.currentSubRegion.value = null;
+              widget.controller.clusters.clear();
+              widget.controller.currentCluster.value = null;
+              widget.controller.siteIDs.clear();
+              widget.controller.currentSite.value = null;
+              widget.controller.siteName.text = '';
             },
             isDense: true,
-            value: controller.currentOperator.value,
-            decoration: InputDecoration(
-              isDense: true,
-              filled: true,
-              hintText: 'Select',
-              fillColor: Colors.white,
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                borderSide:
-                    BorderSide(color: Color(0xffBDBDBD).withOpacity(0.5)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                borderSide: BorderSide(color: Colors.white),
-              ),
-            ),
+            validator: (value) => widget.controller.dynamicValidator(value),
+            decoration: Constants.decoration(hint: 'Select'),
+            value: widget.controller.currentOperator.value,
             // value: controller.currentOperator.value,
             items: items.map<DropdownMenuItem<Datum?>>((Datum? value) {
               return DropdownMenuItem<Datum?>(
@@ -506,32 +491,21 @@ class SiteDetail extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: DropdownButtonFormField<Region>(
             onChanged: (Region? newValue) {
-              controller.currentRegion.value = newValue!;
-              controller.subRegions
-                  .assignAll(controller.currentRegion.value!.subRegion!);
-              controller.currentSubRegion.value = null;
-              controller.clusters.clear();
-              controller.currentCluster.value = null;
-              controller.siteIDs.clear();
-              controller.currentSite.value = null;
-              controller.siteName.text = '';
+              widget.controller.currentRegion.value = newValue!;
+              widget.controller.subRegions
+                  .assignAll(widget.controller.currentRegion.value!.subRegion!);
+              widget.controller.currentSubRegion.value = null;
+              widget.controller.clusters.clear();
+              widget.controller.currentCluster.value = null;
+              widget.controller.siteIDs.clear();
+              widget.controller.currentSite.value = null;
+              widget.controller.siteName.text = '';
             },
             isDense: true,
-            value: controller.currentRegion.value,
-            decoration: InputDecoration(
-              isDense: true,
-              filled: true,
-              hintText: controller.regions.isEmpty ? null : 'Select',
-              fillColor: Colors.white,
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                borderSide:
-                    BorderSide(color: Color(0xffBDBDBD).withOpacity(0.5)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                borderSide: BorderSide(color: Colors.white),
-              ),
+            value: widget.controller.currentRegion.value,
+            validator: (value) => widget.controller.dynamicValidator(value),
+            decoration: Constants.decoration(
+              hint: widget.controller.regions.isEmpty ? null : 'Select',
             ),
             items: items.map<DropdownMenuItem<Region>>((Region value) {
               return DropdownMenuItem<Region>(
@@ -580,33 +554,20 @@ class SiteDetail extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: DropdownButtonFormField<SubRegion>(
             onChanged: (SubRegion? newValue) {
-              controller.currentSubRegion.value = newValue!;
-              controller.clusters
-                  .assignAll(controller.currentSubRegion.value!.clusterId!);
-              controller.currentCluster.value = null;
-              controller.siteIDs.clear();
-              controller.currentSite.value = null;
-              controller.siteName.text = '';
+              widget.controller.currentSubRegion.value = newValue!;
+              widget.controller.clusters.assignAll(
+                  widget.controller.currentSubRegion.value!.clusterId!);
+              widget.controller.currentCluster.value = null;
+              widget.controller.siteIDs.clear();
+              widget.controller.currentSite.value = null;
+              widget.controller.siteName.text = '';
             },
             isDense: true,
-            value: controller.currentSubRegion.value,
-            decoration: InputDecoration(
-              isDense: true,
-              filled: true,
-              fillColor: Colors.white,
-              hintText: controller.subRegions.isEmpty ? null : 'Select',
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                borderSide: BorderSide(
-                  color: Color(0xffBDBDBD).withOpacity(
-                    0.5,
-                  ),
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                borderSide: BorderSide(color: Colors.white),
-              ),
+            value: widget.controller.currentSubRegion.value,
+            validator: (SubRegion? region) =>
+                widget.controller.dynamicValidator(region),
+            decoration: Constants.decoration(
+              hint: widget.controller.subRegions.isEmpty ? null : 'Select',
             ),
             items: items.map<DropdownMenuItem<SubRegion>>((SubRegion value) {
               return DropdownMenuItem<SubRegion>(
@@ -656,28 +617,17 @@ class SiteDetail extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: DropdownButtonFormField<ClusterId>(
             onChanged: (ClusterId? newValue) {
-              controller.currentCluster.value = newValue!;
-              controller.siteIDs
-                  .assignAll(controller.currentCluster.value!.siteReference!);
-              controller.currentSite.value = null;
-              controller.siteName.text = '';
+              widget.controller.currentCluster.value = newValue!;
+              widget.controller.siteIDs.assignAll(
+                  widget.controller.currentCluster.value!.siteReference!);
+              widget.controller.currentSite.value = null;
+              widget.controller.siteName.text = '';
             },
             isDense: true,
-            value: controller.currentCluster.value,
-            decoration: InputDecoration(
-              isDense: true,
-              filled: true,
-              hintText: controller.clusters.isEmpty ? null : 'Select',
-              fillColor: Colors.white,
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                borderSide:
-                    BorderSide(color: Color(0xffBDBDBD).withOpacity(0.5)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                borderSide: BorderSide(color: Colors.white),
-              ),
+            value: widget.controller.currentCluster.value,
+            validator: (cluster) => widget.controller.dynamicValidator(cluster),
+            decoration: Constants.decoration(
+              hint: widget.controller.clusters.isEmpty ? null : 'Select',
             ),
             items: items.map<DropdownMenuItem<ClusterId>>((ClusterId value) {
               return DropdownMenuItem<ClusterId>(
@@ -697,7 +647,11 @@ class SiteDetail extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(10)),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(
+              10,
+            ),
+          ),
           padding: EdgeInsets.symmetric(vertical: 5),
           child: Text(
             label + "\t\t",
@@ -727,25 +681,15 @@ class SiteDetail extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: DropdownButtonFormField<SiteReference>(
             onChanged: (SiteReference? newValue) {
-              controller.currentSite.value = newValue!;
-              controller.siteName.text = controller.currentSite.value!.name;
+              widget.controller.currentSite.value = newValue!;
+              widget.controller.siteName.text =
+                  widget.controller.currentSite.value!.name;
             },
             isDense: true,
-            value: controller.currentSite.value,
-            decoration: InputDecoration(
-              isDense: true,
-              filled: true,
-              hintText: controller.siteIDs.isEmpty ? null : 'Select',
-              fillColor: Colors.white,
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                borderSide:
-                    BorderSide(color: Color(0xffBDBDBD).withOpacity(0.5)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                borderSide: BorderSide(color: Colors.white),
-              ),
+            value: widget.controller.currentSite.value,
+            validator: (siteId) => widget.controller.dynamicValidator(siteId),
+            decoration: Constants.decoration(
+              hint: widget.controller.siteIDs.isEmpty ? null : 'Select',
             ),
             items: items
                 .map<DropdownMenuItem<SiteReference>>((SiteReference value) {
@@ -761,20 +705,21 @@ class SiteDetail extends StatelessWidget {
   }
 
   void setData() {
-    final data = _box.read('site_details');
-    controller.siteDetails.value = SiteDetailModel(
+    final data = SiteDetail._box.read('site_details');
+    widget.controller.siteDetails.value = SiteDetailModel(
       data: List<Datum>.from(data["data"].map((x) => Datum.fromJson(x))),
     );
-    controller.operators.assignAll(controller.siteDetails.value.data!);
-    controller.currentOperator.value = controller.operators.first;
-    controller.regions = [];
-    controller.subRegions = [];
-    controller.clusters = [];
-    controller.siteIDs = [];
-    controller.currentRegion.value = Region();
-    controller.currentSubRegion.value = SubRegion();
-    controller.currentCluster.value = ClusterId();
-    controller.currentSite.value = SiteReference(id: '', name: '');
-    controller.siteName.text = '';
+    widget.controller.operators
+        .assignAll(widget.controller.siteDetails.value.data!);
+    widget.controller.currentOperator.value = widget.controller.operators.first;
+    widget.controller.regions = [];
+    widget.controller.subRegions = [];
+    widget.controller.clusters = [];
+    widget.controller.siteIDs = [];
+    widget.controller.currentRegion.value = Region();
+    widget.controller.currentSubRegion.value = SubRegion();
+    widget.controller.currentCluster.value = ClusterId();
+    widget.controller.currentSite.value = SiteReference(id: '', name: '');
+    widget.controller.siteName.text = '';
   }
 }

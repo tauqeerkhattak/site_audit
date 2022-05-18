@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide MultipartFile;
 import 'package:get_storage/get_storage.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:site_audit/models/local_site_model.dart';
 import 'package:site_audit/models/store_site_model.dart';
@@ -65,8 +65,8 @@ class HomeController extends GetxController {
           // 'site_additional_notes_2': '',
           // 'site_additional_notes_3': ''
         };
-        List<http.MultipartFile> files = [
-          await http.MultipartFile.fromPath(
+        List<MultipartFile> files = [
+          await MultipartFile.fromPath(
             'site_photo_from_main_entrance',
             model.imagePath!,
           ),
@@ -91,7 +91,9 @@ class HomeController extends GetxController {
         );
       }
     } on Exception catch (e) {
+      isLoading.value = false;
       print("Something $e");
+      CustomDialog.showCustomDialog(title: 'Error', content: e.toString());
       throw Exception(e);
     }
   }
