@@ -58,12 +58,14 @@ class ConfirmDetail extends StatelessWidget {
                 SizedBox(
                   height: 30,
                 ),
-                Obx(() => RoundedButton(
-                      text: 'Next',
-                      onPressed: controller.submitDetails,
-                      loading: controller.loading(),
-                      width: Get.width,
-                    ))
+                Obx(
+                  () => RoundedButton(
+                    text: 'Next',
+                    onPressed: controller.submitDetails,
+                    loading: controller.loading(),
+                    width: Get.width,
+                  ),
+                ),
               ],
             ),
           ),

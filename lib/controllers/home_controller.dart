@@ -60,7 +60,8 @@ class HomeController extends GetxController {
               await EncryptionService.encrypt(model.temperature!),
           'site_audit_weather_conditions':
               await EncryptionService.encrypt(model.weather!),
-          'row_id_of_audit_team': await EncryptionService.encrypt(1.toString()),
+          'row_id_of_audit_team':
+              await EncryptionService.encrypt(user.id.toString()),
           // 'site_additional_notes_1': 'Image Name: ${basename(model.imagePath!)}',
           // 'site_additional_notes_2': '',
           // 'site_additional_notes_3': ''

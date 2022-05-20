@@ -384,6 +384,7 @@ class _SiteDetailState extends State<SiteDetail> {
   }
 
   Widget operatorDrop(label, List<Datum> items) {
+    items = items.toSet().toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -454,6 +455,7 @@ class _SiteDetailState extends State<SiteDetail> {
     label,
     List<Region> items,
   ) {
+    items = items.toSet().toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -520,6 +522,7 @@ class _SiteDetailState extends State<SiteDetail> {
   }
 
   Widget subRegionDrop(label, List<SubRegion> items) {
+    items = items.toSet().toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -582,6 +585,7 @@ class _SiteDetailState extends State<SiteDetail> {
   }
 
   Widget clusterDrop(label, List<ClusterId> items) {
+    items = items.toSet().toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -642,6 +646,7 @@ class _SiteDetailState extends State<SiteDetail> {
   }
 
   Widget siteIdDrop(label, List<SiteReference> items) {
+    items = items.toSet().toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

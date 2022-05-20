@@ -189,7 +189,7 @@ class AuthController extends GetxController {
           'site_local_datetime_survey_start': model.survey!,
           'site_external_temperature': model.temperature!,
           'site_audit_weather_conditions': model.weather!,
-          'row_id_of_audit_team': 1.toString(),
+          'row_id_of_audit_team': user.id.toString(),
           // 'site_additional_notes_1': 'Image Name: ${basename(model.imagePath!)}',
           // 'site_additional_notes_2': '',
           // 'site_additional_notes_3': ''
