@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:site_audit/controllers/auth_controller.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/size_config.dart';
+import 'package:site_audit/utils/widget_utils.dart';
 import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
@@ -33,202 +34,194 @@ class _SiteDetailState extends State<SiteDetail> {
     //TODO: Comment this
     // setData();
     ThemeData _theme = Theme.of(context);
-    return SingleChildScrollView(
-      padding: EdgeInsets.only(left: 30, right: 30, top: 50, bottom: 30),
-      child: Form(
-        key: widget.controller.key,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Add\nSite\nDetails:',
-              style: _theme.textTheme.headline4,
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Obx(
-              () => Row(
-                children: [
-                  Expanded(
-                    child: operatorDrop(
-                      'Site Operator',
-                      widget.controller.operators,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                    child: regionDrop(
-                      'Site Region',
-                      widget.controller.regions,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Obx(
-              () => Row(
-                children: [
-                  Expanded(
-                    child: subRegionDrop(
-                      'Site Sub-Region',
-                      widget.controller.subRegions,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                    child: clusterDrop(
-                      'Site Cluster',
-                      widget.controller.clusters,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Obx(
-              () => Row(
-                children: [
-                  Expanded(
-                    child: siteIdDrop(
-                      'Site ID',
-                      widget.controller.siteIDs,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                    child: input(
-                      'Site Name',
-                      textController: widget.controller.siteName,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 40,
-            ),
-            input(
-              'Name of Site Keeper',
-              textController: widget.controller.siteKeeper,
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            input(
-              'Phone Number of Site Keeper',
-              textController: widget.controller.siteKeeperPhone,
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: simpleDrop(
-                    label: 'Physical Site Type',
-                    items: widget.controller.physicalSiteTypes,
-                    onChanged: (String? type) {
-                      widget.controller.currentSiteTypes.value =
-                          type ?? 'Outdoor';
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Expanded(
-                  child: input(
-                    'Survey Start',
-                    readOnly: true,
-                    textController: widget.controller.surveyStart,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: input(
-                    'Longitude',
-                    textController: widget.controller.longitude,
-                  ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Expanded(
-                  child: input(
-                    'Latitude',
-                    textController: widget.controller.latitude,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: simpleDrop(
-                    label: 'Weather',
-                    items: widget.controller.weatherType,
-                    onChanged: (String? weather) {
-                      widget.controller.currentWeather.value =
-                          weather ?? "Sunny";
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Expanded(
-                  child: input(
-                    'Temperature',
-                    textController: widget.controller.temperature,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            imageInput('Site Photo from main entrance'),
-            SizedBox(
-              height: 20,
-            ),
-            Obx(
-              () => RoundedButton(
-                text: 'Submit',
-                onPressed: () async {
-                  await widget.controller.submitSiteDetails();
-                  // Get.to(() => TempScreen());
-                },
-                loading: widget.controller.loading(),
-                width: widget.controller.loading() ? 100 : Get.width,
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 50.0, left: 30),
+          child: Text(
+            'Add Site Details:',
+            style: _theme.textTheme.headline4,
+          ),
         ),
-      ),
+
+        Flexible(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(left: 30, right: 30, top: 20, bottom: 30),
+            physics: BouncingScrollPhysics(),
+            child: Form(
+              key: widget.controller.key,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Text(
+                  //   'Add Site Details:',
+                  //   style: _theme.textTheme.headline4,
+                  // ),
+                  // WidgetUtils.spaceVrt10,
+                  Obx(
+                    () => Row(
+                      children: [
+                        Expanded(
+                          child: operatorDrop(
+                            'Site Operator',
+                            widget.controller.operators,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: regionDrop(
+                            'Site Region',
+                            widget.controller.regions,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  WidgetUtils.spaceVrt10,
+                  Obx(
+                    () => Row(
+                      children: [
+                        Expanded(
+                          child: subRegionDrop(
+                            'Site Sub-Region',
+                            widget.controller.subRegions,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: clusterDrop(
+                            'Site Cluster',
+                            widget.controller.clusters,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  WidgetUtils.spaceVrt10,
+                  Obx(
+                    () => Row(
+                      children: [
+                        Expanded(
+                          child: siteIdDrop(
+                            'Site ID',
+                            widget.controller.siteIDs,
+                          ),
+                        ),
+                        WidgetUtils.spaceHrz20,
+                        Expanded(
+                          child: input(
+                            'Site Name',
+                            textController: widget.controller.siteName,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  WidgetUtils.spaceVrt40,
+                  input(
+                    'Name of Site Keeper',
+                    textController: widget.controller.siteKeeper,
+                  ),
+                  WidgetUtils.spaceVrt10,
+                  input(
+                    'Phone Number of Site Keeper',
+                    textController: widget.controller.siteKeeperPhone,
+                  ),
+                  WidgetUtils.spaceVrt30,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: simpleDrop(
+                          label: 'Physical Site Type',
+                          items: widget.controller.physicalSiteTypes,
+                          onChanged: (String? type) {
+                            widget.controller.currentSiteTypes.value =
+                                type ?? 'Outdoor';
+                          },
+                        ),
+                      ),
+                      WidgetUtils.spaceHrz20,
+                      Expanded(
+                        child: input(
+                          'Survey Start',
+                          readOnly: true,
+                          textController: widget.controller.surveyStart,
+                        ),
+                      ),
+                    ],
+                  ),
+                    WidgetUtils.spaceVrt10,
+                  // ALTITUDE IN METERS FIELD
+                  input(
+                    'Altitude in Meters',
+                    textController: widget.controller.altitude,
+                  ),
+                  WidgetUtils.spaceVrt10,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: input(
+                          'Longitude',
+                          textController: widget.controller.longitude,
+                        ),
+                      ),
+                      WidgetUtils.spaceHrz20,
+                      Expanded(
+                        child: input(
+                          'Latitude',
+                          textController: widget.controller.latitude,
+                        ),
+                      ),
+                    ],
+                  ),
+                  WidgetUtils.spaceVrt10,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: simpleDrop(
+                          label: 'Weather',
+                          items: widget.controller.weatherType,
+                          onChanged: (String? weather) {
+                            widget.controller.currentWeather.value =
+                                weather ?? "Sunny";
+                          },
+                        ),
+                      ),
+                      WidgetUtils.spaceHrz20,
+                      Expanded(
+                        child: input(
+                          'Temperature',
+                          textController: widget.controller.temperature,
+                        ),
+                      ),
+                    ],
+                  ),
+                  WidgetUtils.spaceVrt10,
+                  imageInput('Site Photo from main entrance'),
+                  WidgetUtils.spaceVrt20,
+                  Obx(
+                    () => RoundedButton(
+                      text: 'Submit',
+                      onPressed: () async {
+                        await widget.controller.submitSiteDetails();
+                        // Get.to(() => TempScreen());
+                      },
+                      loading: widget.controller.loading(),
+                      width: widget.controller.loading() ? 100 : Get.width,
+                    ),
+                  ),
+                  WidgetUtils.spaceVrt10,
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -368,7 +361,7 @@ class _SiteDetailState extends State<SiteDetail> {
             isDense: true,
             validator: (String? value) =>
                 widget.controller.stringValidator(value),
-            decoration: Constants.decoration(
+            decoration: WidgetUtils.decoration(
               hint: items.isEmpty ? 'Select' : null,
             ),
             items: items.map<DropdownMenuItem<String>>((String? value) {
@@ -436,7 +429,7 @@ class _SiteDetailState extends State<SiteDetail> {
             },
             isDense: true,
             validator: (value) => widget.controller.dynamicValidator(value),
-            decoration: Constants.decoration(hint: 'Select'),
+            decoration: WidgetUtils.decoration(hint: 'Select'),
             value: widget.controller.currentOperator.value,
             // value: controller.currentOperator.value,
             items: items.map<DropdownMenuItem<Datum?>>((Datum? value) {
@@ -506,7 +499,7 @@ class _SiteDetailState extends State<SiteDetail> {
             isDense: true,
             value: widget.controller.currentRegion.value,
             validator: (value) => widget.controller.dynamicValidator(value),
-            decoration: Constants.decoration(
+            decoration: WidgetUtils.decoration(
               hint: widget.controller.regions.isEmpty ? null : 'Select',
             ),
             items: items.map<DropdownMenuItem<Region>>((Region value) {
@@ -569,7 +562,7 @@ class _SiteDetailState extends State<SiteDetail> {
             value: widget.controller.currentSubRegion.value,
             validator: (SubRegion? region) =>
                 widget.controller.dynamicValidator(region),
-            decoration: Constants.decoration(
+            decoration: WidgetUtils.decoration(
               hint: widget.controller.subRegions.isEmpty ? null : 'Select',
             ),
             items: items.map<DropdownMenuItem<SubRegion>>((SubRegion value) {
@@ -630,7 +623,7 @@ class _SiteDetailState extends State<SiteDetail> {
             isDense: true,
             value: widget.controller.currentCluster.value,
             validator: (cluster) => widget.controller.dynamicValidator(cluster),
-            decoration: Constants.decoration(
+            decoration: WidgetUtils.decoration(
               hint: widget.controller.clusters.isEmpty ? null : 'Select',
             ),
             items: items.map<DropdownMenuItem<ClusterId>>((ClusterId value) {
@@ -693,7 +686,7 @@ class _SiteDetailState extends State<SiteDetail> {
             isDense: true,
             value: widget.controller.currentSite.value,
             validator: (siteId) => widget.controller.dynamicValidator(siteId),
-            decoration: Constants.decoration(
+            decoration: WidgetUtils.decoration(
               hint: widget.controller.siteIDs.isEmpty ? null : 'Select',
             ),
             items: items

@@ -45,6 +45,7 @@ class AuthController extends GetxController {
   TextEditingController siteKeeper = TextEditingController();
   TextEditingController siteKeeperPhone = TextEditingController();
   TextEditingController surveyStart = TextEditingController();
+  TextEditingController altitude = TextEditingController();
   TextEditingController longitude = TextEditingController();
   TextEditingController latitude = TextEditingController();
   TextEditingController temperature = TextEditingController();
