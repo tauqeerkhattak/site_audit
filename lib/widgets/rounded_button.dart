@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/size_config.dart';
 
@@ -32,9 +33,10 @@ class RoundedButton extends StatelessWidget {
             // shape: loading! ? BoxShape.circle : BoxShape.rectangle,
           ),
           // width: !loading! ? 100 : double.infinity,
-          width: width!,
+          width: Get.width * (width ?? 1),
+          // width: width ?? 500,
           alignment: Alignment.center,
-          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 0),
           child: loading!
               ? CircularProgressIndicator(
                   color: Colors.white,
@@ -43,7 +45,7 @@ class RoundedButton extends StatelessWidget {
                   text,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: SizeConfig.textMultiplier * 2.8,
+                    fontSize: Get.textScaleFactor * 20.0,
                     fontFamily: 'Ubuntu',
                     fontWeight: FontWeight.w500,
                   ),

@@ -5,6 +5,8 @@ import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/size_config.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
+import '../widgets/custom_dialog.dart';
+
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
   final HomeController controller = Get.put(HomeController());
@@ -24,7 +26,7 @@ class HomeScreen extends StatelessWidget {
               height: SizeConfig.screenHeight * 0.4,
               child: Image.asset(
                 'assets/images/istockphoto-1184778656-612x612.jpg',
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -137,13 +139,16 @@ class HomeScreen extends StatelessWidget {
                       RoundedButton(
                         text: 'Help',
                         onPressed: () => {},
-                        width: Get.width * 0.4,
+                        width: 0.4,
                       ),
                       RoundedButton(
                         text: 'Send Data',
-                        onPressed: () => {controller.storeSiteDetail()},
+                        // onPressed: () => Get.dialog(
+                        //     ConfirmDialog(action: controller.handleCloseApp),
+                        // ),
+                        onPressed: controller.storeSiteDetail,
                         color: Colors.green,
-                        width: Get.width * 0.4,
+                        width: 0.4,
                         loading: controller.isLoading.value,
                       ),
                     ],

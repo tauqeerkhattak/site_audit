@@ -26,7 +26,7 @@ class LoginScreen extends StatelessWidget {
           // height: MediaQuery.of(context).size.height,
           padding: EdgeInsets.only(top: 50, left: 30, right: 30, bottom: 30),
           child: Form(
-            key: controller.formKey,
+            key: controller.loginFormKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -89,8 +89,7 @@ class LoginScreen extends StatelessWidget {
                     text: 'Login',
                     onPressed: controller.handleLogin,
                     loading: controller.loading(),
-                    // width: controller.loading() ? 100 : Get.width,
-                    width: Get.width,
+                    width: controller.loading() ? 1 : 1,
                   ),
                 ),
               ],

@@ -9,8 +9,7 @@ class Network {
   static bool isNetworkAvailable = false;
   static bool sendDataToNetwork = false;
 
-  static get(
-      {required String url, headers, Map<String, dynamic>? params}) async {
+  static get({required String url, headers, Map<String, dynamic>? params}) async {
     try {
       Map<String, String> apiHeaders = {
         'Content-Type': 'application/json',
@@ -40,8 +39,7 @@ class Network {
     }
   }
 
-  static multiPartRequest(
-      {url, payload, headers, List<http.MultipartFile>? files}) async {
+  static multiPartRequest({url, payload, headers, List<http.MultipartFile>? files}) async {
     try {
       Map<String, String> apiHeaders = {
         'Content-Type': 'application/json',

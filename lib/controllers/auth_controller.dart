@@ -29,7 +29,6 @@ class AuthController extends GetxController {
   Rx<User> _user = User().obs;
   late PageController pageController;
   int index = 0;
-  final key = GlobalKey<FormState>();
 
   //IMAGE PICKER
   final ImagePicker _picker = ImagePicker();
@@ -81,7 +80,9 @@ class AuthController extends GetxController {
   Rx<String> currentSiteTypes = ''.obs;
   Rx<String> currentWeather = ''.obs;
 
+  final loginFormKey = GlobalKey<FormState>();
   final formKey = GlobalKey<FormState>();
+  final key = GlobalKey<FormState>();
 
   @override
   void onInit() {
@@ -267,7 +268,7 @@ class AuthController extends GetxController {
   }
 
   Future handleLogin() async {
-    if (formKey.currentState!.validate()) {
+    if (loginFormKey.currentState!.validate()) {
       try {
         FocusManager.instance.primaryFocus?.unfocus();
         loading.value = true;
@@ -426,7 +427,7 @@ class AuthController extends GetxController {
           _box.write(user.id.toString(), data).then(
             (value) {
               print('Go to next page');
-              Get.to(() => HomeScreen());
+              Get.off(() => HomeScreen());
             },
           );
         }
