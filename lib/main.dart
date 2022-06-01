@@ -1,7 +1,9 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:site_audit/utils/constants.dart';
+import 'package:site_audit/utils/network.dart';
 import 'package:site_audit/utils/permssion_util.dart';
 
 import 'routes/pages.dart';
@@ -13,7 +15,25 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  init() async {
+    final result = await Connectivity().checkConnectivity();
+    if (result == ConnectionState.active) {
+      Network.isAvailable = true;
+    }
+  }
+
+  @override
+  void initState() {
+    init();
+    super.initState();
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

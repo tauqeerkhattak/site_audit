@@ -18,7 +18,7 @@ class HomeController extends GetxController {
 
   Future<void> storeSiteDetail() async {
     try {
-      if (Network.isNetworkAvailable) {
+      if (Network.isAvailable) {
         isLoading.value = true;
         var data = _box.read('user');
         User user = User.fromMap(data);

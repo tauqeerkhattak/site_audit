@@ -56,13 +56,13 @@ class AuthController extends GetxController {
   final GetStorage _box = GetStorage();
 
   //Dropdown Lists
-  List<Datum> operators = <Datum>[].obs;
-  List<Region> regions = <Region>[].obs;
-  List<SubRegion> subRegions = <SubRegion>[].obs;
-  List<ClusterId> clusters = <ClusterId>[].obs;
-  List<SiteReference> siteIDs = <SiteReference>[].obs;
-  List<String> physicalSiteTypes = <String>[].obs;
-  List<String> weatherType = <String>[].obs;
+  final RxList<Datum> operators = <Datum>[].obs;
+  final RxList<Region> regions = <Region>[].obs;
+  final RxList<SubRegion> subRegions = <SubRegion>[].obs;
+  final RxList<ClusterId> clusters = <ClusterId>[].obs;
+  final RxList<SiteReference> siteIDs = <SiteReference>[].obs;
+  final RxList<String> physicalSiteTypes = <String>[].obs;
+  final RxList<String> weatherType = <String>[].obs;
 
   //Current Dropdown values
   Rxn<Datum?> currentOperator = Rxn<Datum?>();
@@ -76,8 +76,7 @@ class AuthController extends GetxController {
   final formKey = GlobalKey<FormState>();
 
   @override
-  void onInit() {
-    super.onInit();
+  void onInit() async {
     initNetwork();
     if (_box.hasData('user')) {
       pageController = PageController(initialPage: 2);
@@ -85,15 +84,21 @@ class AuthController extends GetxController {
       pageController = PageController(initialPage: 0);
     }
     if (_box.hasData('site_details')) {
-      print('Start');
-      siteDetails.value =
-          SiteDetailModel.fromJson(jsonDecode(_box.read('site_details')));
-      operators = siteDetails.value.data!;
-      print(siteDetails.value.data!.first.datumOperator);
-      physicalSiteTypes = List.castFrom(_box.read('physical_site_type'));
-      weatherType = List.castFrom(_box.read('weather_type'));
+      if (Network.isAvailable) {
+        await getSiteDetails();
+      } else {
+        print('Not Available');
+        siteDetails.value =
+            SiteDetailModel.fromJson(jsonDecode(_box.read('site_details')));
+        operators.value = siteDetails.value.data!;
+        print(siteDetails.value.data!.first.datumOperator);
+        physicalSiteTypes.value =
+            List.castFrom(_box.read('physical_site_type'));
+        weatherType.value = List.castFrom(_box.read('weather_type'));
+      }
     }
     setDataTime();
+    super.onInit();
     // TODO Uncomment this
     // loginId.text = "NEJ001";
     // password.text = "PAS001NEX";
@@ -126,21 +131,21 @@ class AuthController extends GetxController {
     }
   }
 
-  void initNetwork() {
+  initNetwork() {
     sub = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) async {
       if (result == ConnectivityResult.none) {
-        print('No network!');
-        Network.isNetworkAvailable = false;
+        log('No wifi or mobile');
+        Network.isAvailable = false;
       } else {
         if (await hasNetwork()) {
-          Network.isNetworkAvailable = true;
+          log('Internet available');
+          Network.isAvailable = true;
           await submitSiteData();
-          print('Network available!');
         } else {
-          Network.isNetworkAvailable = false;
-          print('No network!');
+          log('Internet not available');
+          Network.isAvailable = false;
         }
       }
     });
@@ -244,14 +249,16 @@ class AuthController extends GetxController {
     return null;
   }
 
-  Future getSiteDetails() async {
-    var response = await AppService.getSiteDetails();
-    print('Response: $response');
+  Future<void> getSiteDetails() async {
+    _box.remove('site_details');
+    var response =
+        await AppService.getSiteDetails().timeout(const Duration(seconds: 25));
+    log('Response: $response');
     if (response != null) {
       siteDetails.value = SiteDetailModel.fromJson(response);
-      operators = siteDetails.value.data!;
-      physicalSiteTypes = await AppService.getPhysicalSiteTypes();
-      weatherType = await AppService.getWeatherTypes();
+      operators.value = siteDetails.value.data!;
+      physicalSiteTypes.value = await AppService.getPhysicalSiteTypes();
+      weatherType.value = await AppService.getWeatherTypes();
       _box.write('site_details', jsonEncode(siteDetails.value));
       _box.write('physical_site_type', physicalSiteTypes);
       _box.write('weather_type', weatherType);

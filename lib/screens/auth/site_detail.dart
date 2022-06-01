@@ -717,10 +717,10 @@ class _SiteDetailState extends State<SiteDetail> {
     widget.controller.operators
         .assignAll(widget.controller.siteDetails.value.data!);
     widget.controller.currentOperator.value = widget.controller.operators.first;
-    widget.controller.regions = [];
-    widget.controller.subRegions = [];
-    widget.controller.clusters = [];
-    widget.controller.siteIDs = [];
+    widget.controller.regions.value = [];
+    widget.controller.subRegions.value = [];
+    widget.controller.clusters.value = [];
+    widget.controller.siteIDs.value = [];
     widget.controller.currentRegion.value = Region();
     widget.controller.currentSubRegion.value = SubRegion();
     widget.controller.currentCluster.value = ClusterId();

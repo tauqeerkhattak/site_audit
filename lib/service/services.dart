@@ -98,13 +98,14 @@ class AppService {
   }
 
   //SITE DETAILS
-  static getSiteDetails() async {
+  static Future getSiteDetails() async {
     try {
       var header = {"Authorization": "Bearer ${_box.read('token')}"};
       var data = _box.read('user');
       String response = await Network.get(
-          url: Api.siteDetails + '${data['assigned_to_project_id']}',
-          headers: header);
+        url: Api.siteDetails + '${data['assigned_to_project_id']}',
+        headers: header,
+      );
       if (response != null) {
         final data = jsonDecode(response);
         await _box.write('site_details', data);
