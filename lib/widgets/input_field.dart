@@ -3,7 +3,7 @@ import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/size_config.dart';
 
 class InputField extends StatelessWidget {
-  const InputField({Key? key, this.onTap, this.placeHolder, this.readOnly, this.icon, this.vertical, this.horizontal, this.lines, this.controller, this.validator}) : super(key: key);
+  const InputField({Key? key, this.onTap, this.placeHolder, this.readOnly, this.icon, this.vertical, this.horizontal, this.lines, this.controller, this.validator, this.inputType}) : super(key: key);
 
   final String? placeHolder;
   final Widget? icon;
@@ -11,6 +11,7 @@ class InputField extends StatelessWidget {
   final double? vertical, horizontal;
   final VoidCallback? onTap;
   final int? lines;
+  final TextInputType? inputType;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
 
@@ -30,6 +31,7 @@ class InputField extends StatelessWidget {
         validator: validator,
         readOnly: readOnly ?? false,
         onTap: onTap,
+        keyboardType: inputType,
         maxLines: lines ?? 1,
         style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.4),
         decoration: InputDecoration(

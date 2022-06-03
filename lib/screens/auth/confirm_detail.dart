@@ -63,7 +63,6 @@ class ConfirmDetail extends StatelessWidget {
                     text: 'Next',
                     onPressed: controller.submitDetails,
                     loading: controller.loading(),
-                    width: Get.width,
                   ),
                 ),
               ],

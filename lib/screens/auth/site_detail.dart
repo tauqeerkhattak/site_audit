@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:site_audit/controllers/auth_controller.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/size_config.dart';
@@ -12,6 +12,7 @@ import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
 import '../../models/site_detail_model.dart';
+import '../home_screen.dart';
 
 class SiteDetail extends StatefulWidget {
   final AuthController controller;
@@ -84,28 +85,28 @@ class _SiteDetailState extends State<SiteDetail> {
                     ),
                   ),
                   WidgetUtils.spaceVrt10,
-                  // Obx(
-                  //   () => Row(
-                  //     children: [
-                  //       Expanded(
-                  //         child: subRegionDrop(
-                  //           'Site Sub-Region',
-                  //           widget.controller.subRegions,
-                  //         ),
-                  //       ),
-                  //       SizedBox(
-                  //         width: 20,
-                  //       ),
-                  //       Expanded(
-                  //         child: clusterDrop(
-                  //           'Site Cluster',
-                  //           widget.controller.clusters,
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
-                  // WidgetUtils.spaceVrt10,
+                  Obx(
+                    () => Row(
+                      children: [
+                        Expanded(
+                          child: subRegionDrop(
+                            'Site Sub-Region',
+                            widget.controller.subRegions,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: clusterDrop(
+                            'Site Cluster',
+                            widget.controller.clusters,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  WidgetUtils.spaceVrt10,
                   Obx(
                     () => Row(
                       children: [
@@ -134,6 +135,7 @@ class _SiteDetailState extends State<SiteDetail> {
                   input(
                     'Phone Number of Site Keeper',
                     textController: widget.controller.siteKeeperPhone,
+                    inputType: TextInputType.phone
                   ),
                   // WidgetUtils.spaceVrt30,
                   Row(
@@ -159,7 +161,7 @@ class _SiteDetailState extends State<SiteDetail> {
                     ],
                   ),
                   // ALTITUDE IN METERS FIELD
-                  input('Altitude in Meters', textController: widget.controller.altitude,),
+                  input('Altitude in Meters', textController: widget.controller.altitude, inputType: TextInputType.phone),
                   // WidgetUtils.spaceVrt10,
                   Row(
                     children: [
@@ -196,26 +198,27 @@ class _SiteDetailState extends State<SiteDetail> {
                         child: input(
                           'Temperature',
                           textController: widget.controller.temperature,
+                            inputType: TextInputType.phone
                         ),
                       ),
                     ],
                   ),
                   // WidgetUtils.spaceVrt10,
-                  imageInput('Site Photo from main entrance', controller.handleMainEntrancePhoto, controller.image.value.path),
+                  Obx(() => imageInput('Site Photo from main entrance', controller.handleMainEntrancePhoto, controller.image.value.path),),
                   WidgetUtils.spaceVrt10,
                   Divider(color: Constants.primaryColor, thickness: 1.5),
                   // WidgetUtils.spaceVrt10,
                   // ADDITIONAL PHOTOS
-                  imageInput('Additional Photo 1', controller.handleAdditionalPhoto1, controller.image1.value.path),
-                  input('Add Description', textController: widget.controller.description1,),
+                  Obx(() =>  imageInput('Additional Photo 1', controller.handleAdditionalPhoto1, controller.image1.value.path)),
+                  input('Add Description', textController: widget.controller.description1, noValidate: true),
                   Row(
                     children: [
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            imageInput('Additional Photo 2', controller.handleAdditionalPhoto2, controller.image2.value.path, boxSize: 0.15),
-                            input('Add Description', textController: widget.controller.description3,),
+                            Obx(() => imageInput('Additional Photo 2', controller.handleAdditionalPhoto2, controller.image2.value.path, boxSize: 0.15)),
+                            input('Add Description', textController: widget.controller.description2, noValidate: true),
                           ],
                         ),
                       ),
@@ -224,8 +227,8 @@ class _SiteDetailState extends State<SiteDetail> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            imageInput('Additional Photo 3', controller.handleAdditionalPhoto3, controller.image3.value.path, boxSize: 0.15),
-                            input('Add Description', textController: widget.controller.description3,),
+                            Obx(() => imageInput('Additional Photo 3', controller.handleAdditionalPhoto3, controller.image3.value.path, boxSize: 0.15)),
+                            input('Add Description', textController: widget.controller.description3, noValidate: true),
                           ],
                         ),
                       ),
@@ -236,11 +239,12 @@ class _SiteDetailState extends State<SiteDetail> {
                     () => RoundedButton(
                       text: 'Submit',
                       onPressed: () async {
+                        // Get.to(() => HomeScreen());
                         await widget.controller.submitSiteDetails();
                         // Get.to(() => TempScreen());
                       },
                       loading: widget.controller.loading(),
-                      width: widget.controller.loading() ? 100 : Get.width,
+                      width: widget.controller.loading() ? 0.1 : Get.width,
                     ),
                   ),
                   WidgetUtils.spaceVrt10,
@@ -270,12 +274,50 @@ class _SiteDetailState extends State<SiteDetail> {
             ),
           ),
         ),
-        Obx(() => imageBox(action, "Take Photo", filePath, boxSize: boxSize)),
+        InkWell(
+          onTap: action,
+          child: Container(
+            height: SizeConfig.screenHeight * (boxSize ?? 0.2),
+            width: Get.width,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: Constants.primaryColor,
+              ),
+            ),
+            clipBehavior: Clip.hardEdge,
+            // child: widget.controller.image.value.path == ''
+            child: filePath == '' ?
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.camera_alt,
+                  color: Constants.primaryColor,
+                  size: 30,
+                ),
+                Text(
+                  "Take Photo",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    // color: Colors.white,
+                    fontSize: SizeConfig.textMultiplier * 2.2,
+                  ),
+                ),
+              ],
+            ) :
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(borderRadius: BorderRadius.circular(10.0), child: Image.file(File(filePath), fit: BoxFit.fill,)),
+            ),
+          ),
+        ),
       ],
     );
   }
 
-  Widget input(label, {int? lines, TextEditingController? textController, bool? readOnly}) {
+  Widget input(label, {int? lines, TextEditingController? textController, bool? readOnly, bool? noValidate, TextInputType? inputType}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Column(
@@ -298,8 +340,9 @@ class _SiteDetailState extends State<SiteDetail> {
             placeHolder: "",
             controller: textController,
             readOnly: readOnly ?? false,
-            validator: (String? text) => widget.controller.stringValidator(text),
+            validator: noValidate == true ? null :(String? text) => widget.controller.stringValidator(text),
             lines: lines,
+            inputType: inputType,
           ),
         ],
       ),
@@ -701,45 +744,7 @@ class _SiteDetailState extends State<SiteDetail> {
     widget.controller.siteName.text = '';
   }
 
-  Widget imageBox(VoidCallback action, String boxTitle, String filePath, {double? boxSize}) {
-    return InkWell(
-      onTap: action,
-      child: Container(
-        height: SizeConfig.screenHeight * (boxSize ?? 0.2),
-        width: Get.width,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: Constants.primaryColor,
-          ),
-        ),
-        clipBehavior: Clip.hardEdge,
-        // child: widget.controller.image.value.path == ''
-        child: filePath == '' ?
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.camera_alt,
-              color: Constants.primaryColor,
-              size: 30,
-            ),
-            Text(
-              boxTitle,
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                // color: Colors.white,
-                fontSize: SizeConfig.textMultiplier * 2.2,
-              ),
-            ),
-          ],
-        ) :
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ClipRRect(borderRadius: BorderRadius.circular(10.0), child: Image.file(File(filePath), fit: BoxFit.fill,)),
-        ),
-      ),
-    );
-  }
+  // Widget imageBox(VoidCallback action, String boxTitle, String filePath, {double? boxSize}) {
+  //   return ;
+  // }
 }
