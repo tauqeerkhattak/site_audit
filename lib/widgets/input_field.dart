@@ -3,10 +3,23 @@ import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/size_config.dart';
 
 class InputField extends StatelessWidget {
-  const InputField({Key? key, this.onTap, this.placeHolder, this.readOnly, this.icon, this.vertical, this.horizontal, this.lines, this.controller, this.validator, this.inputType}) : super(key: key);
+  const InputField({
+    Key? key,
+    this.onTap,
+    this.placeHolder,
+    this.readOnly,
+    this.icon,
+    this.vertical,
+    this.horizontal,
+    this.lines,
+    this.node,
+    this.controller,
+    this.validator,
+  }) : super(key: key);
 
   final String? placeHolder;
   final Widget? icon;
+  final FocusNode? node;
   final bool? readOnly;
   final double? vertical, horizontal;
   final VoidCallback? onTap;
@@ -18,16 +31,17 @@ class InputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration:  BoxDecoration(
-          // color: Colors.white,
-          borderRadius: new BorderRadius.circular(18.0),
-          // boxShadow: [
-          //   BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 2.0, spreadRadius: 0.2, offset: Offset(0.0, 0.0))
-          // ]
-          ),
+      decoration: BoxDecoration(
+        // color: Colors.white,
+        borderRadius: new BorderRadius.circular(18.0),
+        // boxShadow: [
+        //   BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 2.0, spreadRadius: 0.2, offset: Offset(0.0, 0.0))
+        // ]
+      ),
       clipBehavior: Clip.antiAlias,
       child: TextFormField(
         controller: controller,
+        focusNode: node,
         validator: validator,
         readOnly: readOnly ?? false,
         onTap: onTap,
@@ -39,14 +53,18 @@ class InputField extends StatelessWidget {
           fillColor: Colors.white,
           hintText: placeHolder.toString(),
           prefixIcon: icon,
-          hintStyle: TextStyle(fontFamily: 'Ubuntu', color: Colors.grey.withOpacity(0.8), fontWeight: FontWeight.w500),
+          hintStyle: TextStyle(
+              fontFamily: 'Ubuntu',
+              color: Colors.grey.withOpacity(0.8),
+              fontWeight: FontWeight.w500),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(18.0),
             borderSide: BorderSide(color: Constants.primaryColor),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(18.0),
-            borderSide: BorderSide(color: Constants.primaryColor.withOpacity(0.4)),
+            borderSide:
+                BorderSide(color: Constants.primaryColor.withOpacity(0.4)),
             // borderSide: BorderSide(color: Colors.white),
           ),
           errorBorder: OutlineInputBorder(

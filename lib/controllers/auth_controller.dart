@@ -29,6 +29,7 @@ import '../service/encryption_service.dart';
 class AuthController extends GetxController {
   RxBool loading = false.obs;
   Rx<User> _user = User().obs;
+  RxBool validated = true.obs;
   late PageController pageController;
   int index = 0;
 
@@ -65,13 +66,13 @@ class AuthController extends GetxController {
   final GetStorage _box = GetStorage();
 
   //Dropdown Lists
-  List<Datum> operators = <Datum>[].obs;
-  List<Region> regions = <Region>[].obs;
-  List<SubRegion> subRegions = <SubRegion>[].obs;
-  List<ClusterId> clusters = <ClusterId>[].obs;
-  List<SiteReference> siteIDs = <SiteReference>[].obs;
-  List<String> physicalSiteTypes = <String>[].obs;
-  List<String> weatherType = <String>[].obs;
+  final RxList<Datum> operators = <Datum>[].obs;
+  final RxList<Region> regions = <Region>[].obs;
+  final RxList<SubRegion> subRegions = <SubRegion>[].obs;
+  final RxList<ClusterId> clusters = <ClusterId>[].obs;
+  final RxList<SiteReference> siteIDs = <SiteReference>[].obs;
+  final RxList<String> physicalSiteTypes = <String>[].obs;
+  final RxList<String> weatherType = <String>[].obs;
 
   //Current Dropdown values
   Rxn<Datum?> currentOperator = Rxn<Datum?>();
@@ -87,8 +88,7 @@ class AuthController extends GetxController {
   final key = GlobalKey<FormState>();
 
   @override
-  void onInit() {
-    super.onInit();
+  void onInit() async {
     initNetwork();
     if (_box.hasData('user')) {
       pageController = PageController(initialPage: 2);
@@ -96,15 +96,21 @@ class AuthController extends GetxController {
       pageController = PageController(initialPage: 0);
     }
     if (_box.hasData('site_details')) {
-      print('Start');
-      siteDetails.value =
-          SiteDetailModel.fromJson(jsonDecode(_box.read('site_details')));
-      operators = siteDetails.value.data!;
-      print(siteDetails.value.data!.first.datumOperator);
-      physicalSiteTypes = List.castFrom(_box.read('physical_site_type'));
-      weatherType = List.castFrom(_box.read('weather_type'));
+      if (Network.isAvailable) {
+        await getSiteDetails();
+      } else {
+        print('Not Available');
+        siteDetails.value =
+            SiteDetailModel.fromJson(jsonDecode(_box.read('site_details')));
+        operators.value = siteDetails.value.data!;
+        print(siteDetails.value.data!.first.datumOperator);
+        physicalSiteTypes.value =
+            List.castFrom(_box.read('physical_site_type'));
+        weatherType.value = List.castFrom(_box.read('weather_type'));
+      }
     }
     setDataTime();
+    super.onInit();
     // TODO Uncomment this
     // loginId.text = "NEJ001";
     // password.text = "PAS001NEX";
@@ -137,21 +143,21 @@ class AuthController extends GetxController {
     }
   }
 
-  void initNetwork() {
+  initNetwork() {
     sub = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) async {
       if (result == ConnectivityResult.none) {
-        print('No network!');
-        Network.isNetworkAvailable = false;
+        log('No wifi or mobile');
+        Network.isAvailable = false;
       } else {
         if (await hasNetwork()) {
-          Network.isNetworkAvailable = true;
+          log('Internet available');
+          Network.isAvailable = true;
           await submitSiteData();
-          print('Network available!');
         } else {
-          Network.isNetworkAvailable = false;
-          print('No network!');
+          log('Internet not available');
+          Network.isAvailable = false;
         }
       }
     });
@@ -295,14 +301,16 @@ class AuthController extends GetxController {
     return null;
   }
 
-  Future getSiteDetails() async {
-    var response = await AppService.getSiteDetails();
-    print('Response: $response');
+  Future<void> getSiteDetails() async {
+    _box.remove('site_details');
+    var response =
+        await AppService.getSiteDetails().timeout(const Duration(seconds: 25));
+    log('Response: $response');
     if (response != null) {
       siteDetails.value = SiteDetailModel.fromJson(response);
-      operators = siteDetails.value.data!;
-      physicalSiteTypes = await AppService.getPhysicalSiteTypes();
-      weatherType = await AppService.getWeatherTypes();
+      operators.value = siteDetails.value.data!;
+      physicalSiteTypes.value = await AppService.getPhysicalSiteTypes();
+      weatherType.value = await AppService.getWeatherTypes();
       _box.write('site_details', jsonEncode(siteDetails.value));
       _box.write('physical_site_type', physicalSiteTypes);
       _box.write('weather_type', weatherType);
@@ -435,69 +443,48 @@ class AuthController extends GetxController {
   }
 
   Future<void> submitSiteDetails() async {
-    if (key.currentState!.validate()) {
-      var data = _box.read('user');
-      User user = User.fromMap(data);
-      if (image.value.path != '') {
-        PermissionStatus status = await Permission.storage.request();
-        // final GetStorage _box = GetStorage();
-        if (status.isGranted) {
-          final Directory directory = await getApplicationDocumentsDirectory();
-          final String path = directory.path;
-          final String fileName = basename(image.value.path);
-          final String fileName1 = basename(image1.value.path);
-          final String fileName2 = basename(image2.value.path);
-          final String fileName3 = basename(image3.value.path);
-          File? localImage1;
-          File? localImage2;
-          File? localImage3;
-          // print(path + fileName);
-
-          final File localImage = await image.value.copy(path + '/$fileName');
-          if(fileName1.isNotEmpty)
-            localImage1 = await image1.value.copy(path + '/$fileName1');
-          if(fileName2.isNotEmpty)
-            localImage2 = await image2.value.copy(path + '/$fileName2');
-          if(fileName3.isNotEmpty)
-            localImage3 = await image3.value.copy(path + '/$fileName3');
-
-
-          LocalSiteModel site = LocalSiteModel(
-            localSiteModelOperator: currentOperator.value!.datumOperator,
-            region: currentRegion.value!.name,
-            subRegion: currentSubRegion.value!.name,
-            cluster: currentCluster.value!.id,
-            siteId: currentSite.value!.id,
-            siteName: siteName.text,
-            siteKeeperName: siteKeeper.text,
-            siteKeeperPhone: siteKeeperPhone.text,
-            siteType: currentSiteTypes.value,
-            survey: surveyStart.text,
-            latitude: latitude.text,
-            longitude: longitude.text,
-            weather: currentWeather.value,
-            temperature: temperature.text,
-            imagePath: localImage.path,
-            image1description: description1.text,
-            image2description: description2.text,
-            image3description: description3.text,
-            imagePath1: localImage1?.path ?? null,
-            imagePath2: localImage2?.path ?? null,
-            imagePath3: localImage3?.path ?? null,
-          );
-          var data = site.toJson();
-          // print('JSON: $data');
-          print('User: ${user.id}');
-          await _box.write(user.id.toString(), data);
-          print('Go to next page');
-          Get.to(() => HomeScreen());
-        }
-      } else {
-        CustomDialog.showCustomDialog(
-          title: 'Image missing',
-          content: 'Please select an image first!',
+    var data = _box.read('user');
+    User user = User.fromMap(data);
+    if (image.value.path != '') {
+      PermissionStatus status = await Permission.storage.request();
+      final GetStorage _box = GetStorage();
+      if (status.isGranted) {
+        final Directory directory = await getApplicationDocumentsDirectory();
+        final String path = directory.path;
+        final String fileName = basename(image.value.path);
+        print(path + fileName);
+        final File localImage = await image.value.copy(path + '/$fileName');
+        LocalSiteModel site = LocalSiteModel(
+          localSiteModelOperator: currentOperator.value!.datumOperator,
+          region: currentRegion.value!.name,
+          subRegion: currentSubRegion.value!.name,
+          cluster: currentCluster.value!.id,
+          siteId: currentSite.value!.id,
+          siteName: siteName.text,
+          siteKeeperName: siteKeeper.text,
+          siteKeeperPhone: siteKeeperPhone.text,
+          siteType: currentSiteTypes.value,
+          survey: surveyStart.text,
+          latitude: latitude.text,
+          longitude: longitude.text,
+          weather: currentWeather.value,
+          temperature: temperature.text,
+          imagePath: localImage.path,
+        );
+        var data = site.toJson();
+        print('User: ${user.id}');
+        _box.write(user.id.toString(), data).then(
+          (value) {
+            print('Go to next page');
+            Get.to(() => HomeScreen());
+          },
         );
       }
+    } else {
+      CustomDialog.showCustomDialog(
+        title: 'Image missing',
+        content: 'Please select an image first!',
+      );
     }
   }
 }
