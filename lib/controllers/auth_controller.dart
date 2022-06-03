@@ -45,12 +45,20 @@ class AuthController extends GetxController {
   TextEditingController siteKeeper = TextEditingController();
   TextEditingController siteKeeperPhone = TextEditingController();
   TextEditingController surveyStart = TextEditingController();
+  TextEditingController altitude = TextEditingController();
   TextEditingController longitude = TextEditingController();
   TextEditingController latitude = TextEditingController();
   TextEditingController temperature = TextEditingController();
 
+  TextEditingController description1 = TextEditingController();
+  TextEditingController description2 = TextEditingController();
+  TextEditingController description3 = TextEditingController();
+
   var siteDetails = SiteDetailModel().obs;
   Rx<File> image = File('').obs;
+  Rx<File> image1 = File('').obs;
+  Rx<File> image2 = File('').obs;
+  Rx<File> image3 = File('').obs;
   User? get user => _user.value;
   StreamSubscription? sub;
   final GetStorage _box = GetStorage();
@@ -330,7 +338,31 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> pickImage(ImageSource source) async {
+  Future handleMainEntrancePhoto() async {
+    File? _img = await _pickImage(ImageSource.camera);
+    if(_img != null)
+      image.value = _img;
+  }
+
+  Future handleAdditionalPhoto1() async {
+    File? _img = await _pickImage(ImageSource.camera);
+    if(_img != null)
+      image1.value = _img;
+  }
+
+  Future handleAdditionalPhoto2() async {
+    File? _img = await _pickImage(ImageSource.camera);
+    if(_img != null)
+      image2.value = _img;
+  }
+
+  Future handleAdditionalPhoto3() async {
+    File? _img = await _pickImage(ImageSource.camera);
+    if(_img != null)
+      image3.value = _img;
+  }
+
+  Future<File?> _pickImage(ImageSource source) async {
     PermissionStatus status = await Permission.camera.request();
     if (status.isGranted) {
       XFile? file = await _picker.pickImage(source: source);
@@ -346,7 +378,8 @@ class AuthController extends GetxController {
             content: 'Image size cannot be greater than 10 mb!',
           );
         } else {
-          image.value = File(file.path);
+          return File(file.path);
+          // image.value = File(file.path);
         }
       }
     } else {
@@ -355,6 +388,7 @@ class AuthController extends GetxController {
         content: 'Permission to Camera required to capture site images.',
       );
     }
+    return null;
   }
 
   void setDataTime() {
