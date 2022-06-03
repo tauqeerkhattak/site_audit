@@ -85,7 +85,9 @@ class ConfirmDialog extends StatelessWidget {
 
             SizedBox(height: Get.height * 0.080,),
 
-            if(_controller.savingData())
+            // if(_controller.isLoading() && !_controller.savingData())
+            //   Center(child: CircularProgressIndicator(color: Constants.primaryColor,))
+            if(_controller.isLoading() || _controller.savingData())
               LinearPercentIndicator(
                 width: Get.width * 0.70,
                 lineHeight: 14.0,
@@ -95,18 +97,18 @@ class ConfirmDialog extends StatelessWidget {
                 barRadius: Radius.circular(30),
               ),
 
-            if(!_controller.savingData() && !_controller.dataSaved())
+            if(!_controller.isLoading() && !_controller.savingData() && !_controller.dataSaved())
               Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 RoundedButton(
                   text: 'Cancel',
-                  onPressed: () => {Get.back(closeOverlays: true)},
+                  onPressed: () => Get.back(),
                   width: 0.35,
                 ),
                 RoundedButton(
                   text: 'Close Audit',
-                  onPressed: _controller.handleCloseApp,
+                  onPressed: _controller.isLoading() ? null : _controller.handleCloseApp,
                   color: Colors.green,
                   width: 0.35,
                   loading: false,

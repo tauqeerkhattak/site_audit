@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -134,6 +135,7 @@ class _SiteDetailState extends State<SiteDetail> {
                   input(
                     'Phone Number of Site Keeper',
                     textController: widget.controller.siteKeeperPhone,
+                    inputType: TextInputType.phone
                   ),
                   // WidgetUtils.spaceVrt30,
                   Row(
@@ -159,7 +161,7 @@ class _SiteDetailState extends State<SiteDetail> {
                     ],
                   ),
                   // ALTITUDE IN METERS FIELD
-                  input('Altitude in Meters', textController: widget.controller.altitude,),
+                  input('Altitude in Meters', textController: widget.controller.altitude, inputType: TextInputType.phone),
                   // WidgetUtils.spaceVrt10,
                   Row(
                     children: [
@@ -196,6 +198,7 @@ class _SiteDetailState extends State<SiteDetail> {
                         child: input(
                           'Temperature',
                           textController: widget.controller.temperature,
+                            inputType: TextInputType.phone
                         ),
                       ),
                     ],
@@ -314,7 +317,7 @@ class _SiteDetailState extends State<SiteDetail> {
     );
   }
 
-  Widget input(label, {int? lines, TextEditingController? textController, bool? readOnly, bool? noValidate}) {
+  Widget input(label, {int? lines, TextEditingController? textController, bool? readOnly, bool? noValidate, TextInputType? inputType}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Column(
@@ -339,6 +342,7 @@ class _SiteDetailState extends State<SiteDetail> {
             readOnly: readOnly ?? false,
             validator: noValidate == true ? null :(String? text) => widget.controller.stringValidator(text),
             lines: lines,
+            inputType: inputType,
           ),
         ],
       ),

@@ -7,6 +7,7 @@ class RoundedButton extends StatelessWidget {
   final String text;
   final Color? color;
   final bool? loading;
+  final bool disabled;
   final double? width;
   final VoidCallback? onPressed;
   const RoundedButton(
@@ -15,6 +16,7 @@ class RoundedButton extends StatelessWidget {
       this.width,
       this.onPressed,
       this.color,
+        this.disabled = false,
       this.loading = false})
       : super(key: key);
 
@@ -22,11 +24,11 @@ class RoundedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: InkWell(
-        onTap: onPressed,
+        onTap: disabled ? null : onPressed,
         child: AnimatedContainer(
           duration: Duration(milliseconds: 500),
           decoration: BoxDecoration(
-            color: color ?? Constants.primaryColor,
+            color: disabled ? Colors.grey : (color ?? Constants.primaryColor),
             borderRadius: loading!
                 ? BorderRadius.circular(100.0)
                 : BorderRadius.circular(18.0),

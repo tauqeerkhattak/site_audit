@@ -7,10 +7,10 @@ class EncryptionService {
   static final _iv = IV.fromUtf8('0000000000000000');
 
   static Future<String> encrypt(String variable) async {
-    log('IV: ${_iv.bytes}');
+    // log('IV: ${_iv.bytes}');
     final encryptor = Encrypter(AES(_key, mode: AESMode.cbc));
     final encrypted = encryptor.encrypt(variable, iv: _iv);
-    log('Encrypted: ${encrypted.base64}');
+    // log('Encrypted: ${encrypted.base64}');
     return encrypted.base64;
   }
 }
