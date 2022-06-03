@@ -24,13 +24,14 @@ import 'package:site_audit/service/services.dart';
 import 'package:site_audit/utils/network.dart';
 import 'package:site_audit/widgets/custom_dialog.dart';
 
+import '../service/encryption_service.dart';
+
 class AuthController extends GetxController {
   RxBool loading = false.obs;
   Rx<User> _user = User().obs;
   RxBool validated = true.obs;
   late PageController pageController;
   int index = 0;
-  final key = GlobalKey<FormState>();
 
   //IMAGE PICKER
   final ImagePicker _picker = ImagePicker();
@@ -46,12 +47,20 @@ class AuthController extends GetxController {
   TextEditingController siteKeeper = TextEditingController();
   TextEditingController siteKeeperPhone = TextEditingController();
   TextEditingController surveyStart = TextEditingController();
+  TextEditingController altitude = TextEditingController();
   TextEditingController longitude = TextEditingController();
   TextEditingController latitude = TextEditingController();
   TextEditingController temperature = TextEditingController();
 
+  TextEditingController description1 = TextEditingController();
+  TextEditingController description2 = TextEditingController();
+  TextEditingController description3 = TextEditingController();
+
   var siteDetails = SiteDetailModel().obs;
   Rx<File> image = File('').obs;
+  Rx<File> image1 = File('').obs;
+  Rx<File> image2 = File('').obs;
+  Rx<File> image3 = File('').obs;
   User? get user => _user.value;
   StreamSubscription? sub;
   final GetStorage _box = GetStorage();
@@ -74,7 +83,9 @@ class AuthController extends GetxController {
   Rx<String> currentSiteTypes = ''.obs;
   Rx<String> currentWeather = ''.obs;
 
+  final loginFormKey = GlobalKey<FormState>();
   final formKey = GlobalKey<FormState>();
+  final key = GlobalKey<FormState>();
 
   @override
   void onInit() async {
@@ -177,44 +188,84 @@ class AuthController extends GetxController {
         DateTime now = DateTime.now();
         DateFormat format = DateFormat('yyyy-MM-dd HH:mm:ss');
         String date = format.parse(now.toString()).toString();
-        var payload = {
-          'system_datetime_of_insert': date.split('.').first,
-          'internal_project_id': user.assignedToProjectId.toString(),
-          'site_reference_id': model.siteId!,
-          'site_reference_name': model.siteName!,
-          'site_operator': model.localSiteModelOperator!,
-          'site_location_region': model.region!,
-          'site_location_sub_region': model.subRegion!,
-          'site_belongs_to_cluster': model.cluster!,
-          'site_keeper_name': model.siteKeeperName!,
-          'site_keeper_phone_number': model.siteKeeperPhone!,
-          'site_physical_type': model.siteType!,
-          'site_longitude': model.longitude!,
-          'site_latitude': model.latitude!,
-          'site_altitude_above_sea_level': '4.6',
-          'site_local_datetime_survey_start': model.survey!,
-          'site_external_temperature': model.temperature!,
-          'site_audit_weather_conditions': model.weather!,
-          'row_id_of_audit_team': user.id.toString(),
-          // 'site_additional_notes_1': 'Image Name: ${basename(model.imagePath!)}',
-          // 'site_additional_notes_2': '',
-          // 'site_additional_notes_3': ''
+        Map<String, String> payload = {
+          'system_datetime_of_insert': await EncryptionService.encrypt(date.split('.').first),
+          'internal_project_id': await EncryptionService.encrypt(user.assignedToProjectId.toString()),
+          'site_reference_id': await EncryptionService.encrypt(model.siteId!),
+          'site_reference_name': await EncryptionService.encrypt(model.siteName!),
+          'site_operator': await EncryptionService.encrypt(model.localSiteModelOperator!),
+          'site_location_region': await EncryptionService.encrypt(model.region!),
+          'site_location_sub_region': await EncryptionService.encrypt(model.subRegion!),
+          'site_belongs_to_cluster': await EncryptionService.encrypt(model.cluster!),
+          'site_keeper_name': await EncryptionService.encrypt(model.siteKeeperName!),
+          'site_keeper_phone_number': await EncryptionService.encrypt(model.siteKeeperPhone!),
+          'site_physical_type': await EncryptionService.encrypt(model.siteType!),
+          'site_longitude': await EncryptionService.encrypt(model.longitude!),
+          'site_latitude': await EncryptionService.encrypt(model.latitude!),
+          'site_altitude_above_sea_level': await EncryptionService.encrypt('4.6'),
+          'site_local_datetime_survey_start': await EncryptionService.encrypt(model.survey!),
+          'site_external_temperature': await EncryptionService.encrypt(model.temperature!),
+          'site_audit_weather_conditions': await EncryptionService.encrypt(model.weather!),
+          'row_id_of_audit_team': await EncryptionService.encrypt(user.id.toString()),
         };
+        if(model.image1description != null && model.image1description!.isNotEmpty){
+          payload.addAll({'site_additional_notes_1': await EncryptionService.encrypt(model.image1description.toString()),});
+        }
+        if(model.image2description != null && model.image2description!.isNotEmpty){
+          payload.addAll({'site_additional_notes_2': await EncryptionService.encrypt(model.image2description.toString())});
+        }
+        if(model.image3description != null && model.image3description!.isNotEmpty){
+          print({'site_additional_notes_3': await EncryptionService.encrypt(model.image3description.toString())});
+        }
+        // Map<String, String> payload = {
+        //   'system_datetime_of_insert': date.split('.').first,
+        //   'internal_project_id': user.assignedToProjectId.toString(),
+        //   'site_reference_id': model.siteId!,
+        //   'site_reference_name': model.siteName!,
+        //   'site_operator': model.localSiteModelOperator!,
+        //   'site_location_region': model.region!,
+        //   'site_location_sub_region': model.subRegion!,
+        //   'site_belongs_to_cluster': model.cluster!,
+        //   'site_keeper_name': model.siteKeeperName!,
+        //   'site_keeper_phone_number': model.siteKeeperPhone!,
+        //   'site_physical_type': model.siteType!,
+        //   'site_longitude': model.longitude!,
+        //   'site_latitude': model.latitude!,
+        //   'site_altitude_above_sea_level': '4.6',
+        //   'site_local_datetime_survey_start': model.survey!,
+        //   'site_external_temperature': model.temperature!,
+        //   'site_audit_weather_conditions': model.weather!,
+        //   'row_id_of_audit_team': user.id.toString(),
+        //   // 'site_additional_notes_1': model.image1description ?? "",
+        //   // 'site_additional_notes_2': model.image2description ?? "",
+        //   // 'site_additional_notes_3': model.image3description ?? "",
+        // };
+        // if(model.image1description != null && model.image1description!.isNotEmpty){
+        //   payload.addAll({'site_additional_notes_1': model.image1description!});
+        // }
+        // if(model.image2description != null && model.image2description!.isNotEmpty){
+        //   payload.addAll({'site_additional_notes_2': model.image3description!});
+        // }
+        // if(model.image3description != null && model.image3description!.isNotEmpty){
+        //   print({'site_additional_notes_3': model.image3description!});
+        // }
         List<http.MultipartFile> files = [
-          await http.MultipartFile.fromPath(
-            'site_photo_from_main_entrance',
-            model.imagePath!,
-          ),
+          await http.MultipartFile.fromPath('site_photo_from_main_entrance', model.imagePath!,),
+          if(model.imagePath1 != null)
+            await http.MultipartFile.fromPath('site_additional_photo_1_name', model.imagePath1!,),
+          if(model.imagePath1 != null)
+            await http.MultipartFile.fromPath('site_additional_photo_2_name', model.imagePath2!,),
+          if(model.imagePath1 != null)
+            await http.MultipartFile.fromPath('site_additional_photo_3_name', model.imagePath3!,),
         ];
-        var res =
-            await AppService.storeSiteDetails(payload: payload, files: files);
+        // print("TYPE::: ${payload.runtimeType}");
+        var res = await AppService.storeSiteDetails(payload: payload, files: files);
         if (res != null) {
           StoreSiteModel model = StoreSiteModel.fromJson(jsonDecode(res));
           _box.remove(user.id.toString());
           Get.rawSnackbar(
             title: "Site Data submitted",
-            message:
-                "Locally saved data has been send to server automatically!",
+            message: "Locally saved data has been send to server automatically!",
             backgroundColor: Colors.green,
           );
         }
@@ -267,7 +318,7 @@ class AuthController extends GetxController {
   }
 
   Future handleLogin() async {
-    if (formKey.currentState!.validate()) {
+    if (loginFormKey.currentState!.validate()) {
       try {
         FocusManager.instance.primaryFocus?.unfocus();
         loading.value = true;
@@ -331,7 +382,31 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> pickImage(ImageSource source) async {
+  Future handleMainEntrancePhoto() async {
+    File? _img = await _pickImage(ImageSource.camera);
+    if(_img != null)
+      image.value = _img;
+  }
+
+  Future handleAdditionalPhoto1() async {
+    File? _img = await _pickImage(ImageSource.camera);
+    if(_img != null)
+      image1.value = _img;
+  }
+
+  Future handleAdditionalPhoto2() async {
+    File? _img = await _pickImage(ImageSource.camera);
+    if(_img != null)
+      image2.value = _img;
+  }
+
+  Future handleAdditionalPhoto3() async {
+    File? _img = await _pickImage(ImageSource.camera);
+    if(_img != null)
+      image3.value = _img;
+  }
+
+  Future<File?> _pickImage(ImageSource source) async {
     PermissionStatus status = await Permission.camera.request();
     if (status.isGranted) {
       XFile? file = await _picker.pickImage(source: source);
@@ -347,7 +422,8 @@ class AuthController extends GetxController {
             content: 'Image size cannot be greater than 10 mb!',
           );
         } else {
-          image.value = File(file.path);
+          return File(file.path);
+          // image.value = File(file.path);
         }
       }
     } else {
@@ -356,6 +432,7 @@ class AuthController extends GetxController {
         content: 'Permission to Camera required to capture site images.',
       );
     }
+    return null;
   }
 
   void setDataTime() {

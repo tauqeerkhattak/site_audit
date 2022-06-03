@@ -9,8 +9,7 @@ class Network {
   static bool isAvailable = false;
   static bool sendDataToNetwork = false;
 
-  static get(
-      {required String url, headers, Map<String, dynamic>? params}) async {
+  static get({required String url, headers, Map<String, dynamic>? params}) async {
     try {
       Map<String, String> apiHeaders = {
         'Content-Type': 'application/json',
@@ -40,12 +39,11 @@ class Network {
     }
   }
 
-  static multiPartRequest(
-      {url, payload, headers, List<http.MultipartFile>? files}) async {
+  static multiPartRequest({url,required Map<String, String> payload, headers, List<http.MultipartFile>? files}) async {
     try {
       Map<String, String> apiHeaders = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': '*/*',
       };
       if (headers != null) {
         apiHeaders.addAll(headers);
@@ -55,20 +53,19 @@ class Network {
         url,
       );
       print(uri);
-      http.MultipartRequest request = http.MultipartRequest(
-        'POST',
-        uri,
-      );
+      http.MultipartRequest request = http.MultipartRequest('POST', uri,);
       request.headers.addAll(apiHeaders);
       request.fields.addAll(payload);
       for (int i = 0; i < files!.length; i++) {
         request.files.add(files[i]);
       }
-      http.StreamedResponse res = await request.send();
+      // print("FILES:::: ${request.fields.length}");
+      // print("PAYLOAD::::: $payload}");
+      var res = await request.send();
+      print("Error: ${res.statusCode}");
       String response = await res.stream.bytesToString();
       print("Error: " + response);
       if (res.statusCode == 200) {
-        print(response);
         return response;
       } else {
         print('Hello');
@@ -77,7 +74,8 @@ class Network {
         return null;
       }
       return null;
-    } catch (e) {
+    }
+    catch (e) {
       print("POST: $e");
       return throw Exception(e);
     }

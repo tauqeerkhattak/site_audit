@@ -5,6 +5,8 @@ import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/size_config.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
+import '../widgets/custom_dialog.dart';
+
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
   final HomeController controller = Get.put(HomeController());
@@ -24,7 +26,7 @@ class HomeScreen extends StatelessWidget {
               height: SizeConfig.screenHeight * 0.4,
               child: Image.asset(
                 'assets/images/istockphoto-1184778656-612x612.jpg',
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -130,25 +132,31 @@ class HomeScreen extends StatelessWidget {
                   height: 30,
                 ),
 
-                Obx(
-                  () => Row(
+                Obx(() {
+                  return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       RoundedButton(
                         text: 'Help',
                         onPressed: () => {},
-                        width: Get.width * 0.4,
+                        width: 0.4,
                       ),
                       RoundedButton(
-                        text: 'Send Data',
-                        onPressed: () => {controller.storeSiteDetail()},
+                        text: 'Audit Completed',
+                        disabled: controller.auditComplete(),
+                        onPressed: () =>
+                            Get.dialog(
+                              ConfirmDialog(action: controller.handleCloseApp),
+                              barrierDismissible: false,
+                            ),
+                        // onPressed: controller.storeSiteDetail,
                         color: Colors.green,
-                        width: Get.width * 0.4,
-                        loading: controller.isLoading.value,
+                        width: 0.4,
+                        // loading: controller.isLoading.value,
                       ),
                     ],
-                  ),
-                ),
+                  );
+                }),
                 // Row(
                 //   children: [
                 //     Expanded(
@@ -221,19 +229,22 @@ class HomeScreen extends StatelessWidget {
               child: Row(
                 children: List.generate(
                   length,
-                  (index) => Obx(
-                    () => Checkbox(
-                      checkColor: Colors.white,
-                      fillColor: MaterialStateProperty.all(
-                        Constants.primaryColor,
+                      (index) =>
+                      Obx(
+                            () =>
+                            Checkbox(
+                              checkColor: Colors.white,
+                              fillColor: MaterialStateProperty.all(
+                                Constants.primaryColor,
+                              ),
+                              materialTapTargetSize: MaterialTapTargetSize
+                                  .shrinkWrap,
+                              value: checks[index],
+                              onChanged: (bool? value) {
+                                checks[index] = value ?? checks[index];
+                              },
+                            ),
                       ),
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      value: checks[index],
-                      onChanged: (bool? value) {
-                        checks[index] = value ?? checks[index];
-                      },
-                    ),
-                  ),
                 ),
               ),
             ),
@@ -271,33 +282,34 @@ class HomeScreen extends StatelessWidget {
   Widget progress() {
     return Expanded(
         child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'Services',
-          style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.8),
-        ),
-        Text(
-          '128m/300m',
-          style: TextStyle(color: Colors.grey),
-        ),
-        Container(
-          height: 3,
-          width: 100,
-          margin: EdgeInsets.only(top: 5),
-          decoration: BoxDecoration(
-              color: Colors.grey, borderRadius: BorderRadius.circular(20)),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.green, borderRadius: BorderRadius.circular(20)),
-              height: 3,
-              width: 60,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Services',
+              style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.8),
             ),
-          ),
-        ),
-      ],
-    ));
+            Text(
+              '128m/300m',
+              style: TextStyle(color: Colors.grey),
+            ),
+            Container(
+              height: 3,
+              width: 100,
+              margin: EdgeInsets.only(top: 5),
+              decoration: BoxDecoration(
+                  color: Colors.grey, borderRadius: BorderRadius.circular(20)),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(20)),
+                  height: 3,
+                  width: 60,
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 }

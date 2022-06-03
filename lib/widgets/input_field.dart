@@ -24,6 +24,7 @@ class InputField extends StatelessWidget {
   final double? vertical, horizontal;
   final VoidCallback? onTap;
   final int? lines;
+  final TextInputType? inputType;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
 
@@ -44,6 +45,7 @@ class InputField extends StatelessWidget {
         validator: validator,
         readOnly: readOnly ?? false,
         onTap: onTap,
+        keyboardType: inputType,
         maxLines: lines ?? 1,
         style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.4),
         decoration: InputDecoration(
