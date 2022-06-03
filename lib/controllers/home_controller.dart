@@ -22,67 +22,75 @@ class HomeController extends GetxController {
         isLoading.value = true;
         var data = _box.read('user');
         User user = User.fromMap(data);
-        var siteData = await _box.read(user.id.toString());
-        LocalSiteModel model = LocalSiteModel.fromJson(siteData);
-        DateTime now = DateTime.now();
-        DateFormat format = DateFormat('yyyy-MM-dd HH:mm:ss');
-        // ),
-        String date = format.parse(now.toString()).toString();
-        var payload = {
-          'system_datetime_of_insert':
-              await EncryptionService.encrypt(date.split('.').first),
-          'internal_project_id': await EncryptionService.encrypt(
-              user.assignedToProjectId.toString()),
-          'site_reference_id': await EncryptionService.encrypt(model.siteId!),
-          'site_reference_name':
-              await EncryptionService.encrypt(model.siteName!),
-          'site_operator':
-              await EncryptionService.encrypt(model.localSiteModelOperator!),
-          'site_location_region':
-              await EncryptionService.encrypt(model.region!),
-          'site_location_sub_region':
-              await EncryptionService.encrypt(model.subRegion!),
-          'site_belongs_to_cluster':
-              await EncryptionService.encrypt(model.cluster!),
-          'site_keeper_name':
-              await EncryptionService.encrypt(model.siteKeeperName!),
-          'site_keeper_phone_number':
-              await EncryptionService.encrypt(model.siteKeeperPhone!),
-          'site_physical_type':
-              await EncryptionService.encrypt(model.siteType!),
-          'site_longitude': await EncryptionService.encrypt(model.longitude!),
-          'site_latitude': await EncryptionService.encrypt(model.latitude!),
-          'site_altitude_above_sea_level':
-              await EncryptionService.encrypt('4.6'),
-          'site_local_datetime_survey_start':
-              await EncryptionService.encrypt(model.survey!),
-          'site_external_temperature':
-              await EncryptionService.encrypt(model.temperature!),
-          'site_audit_weather_conditions':
-              await EncryptionService.encrypt(model.weather!),
-          'row_id_of_audit_team':
-              await EncryptionService.encrypt(user.id.toString()),
-          // 'site_additional_notes_1': 'Image Name: ${basename(model.imagePath!)}',
-          // 'site_additional_notes_2': '',
-          // 'site_additional_notes_3': ''
-        };
-        List<MultipartFile> files = [
-          await MultipartFile.fromPath(
-            'site_photo_from_main_entrance',
-            model.imagePath!,
-          ),
-        ];
-        var res =
-            await AppService.storeSiteDetails(payload: payload, files: files);
-        if (res != null) {
-          StoreSiteModel model = StoreSiteModel.fromJson(jsonDecode(res));
-          _box.remove(user.id.toString());
+        if (_box.hasData(user.id.toString())) {
+          var siteData = await _box.read(user.id.toString());
+          LocalSiteModel model = LocalSiteModel.fromJson(siteData);
+          DateTime now = DateTime.now();
+          DateFormat format = DateFormat('yyyy-MM-dd HH:mm:ss');
+          // ),
+          String date = format.parse(now.toString()).toString();
+          var payload = {
+            'system_datetime_of_insert':
+                await EncryptionService.encrypt(date.split('.').first),
+            'internal_project_id': await EncryptionService.encrypt(
+                user.assignedToProjectId.toString()),
+            'site_reference_id': await EncryptionService.encrypt(model.siteId!),
+            'site_reference_name':
+                await EncryptionService.encrypt(model.siteName!),
+            'site_operator':
+                await EncryptionService.encrypt(model.localSiteModelOperator!),
+            'site_location_region':
+                await EncryptionService.encrypt(model.region!),
+            'site_location_sub_region':
+                await EncryptionService.encrypt(model.subRegion!),
+            'site_belongs_to_cluster':
+                await EncryptionService.encrypt(model.cluster!),
+            'site_keeper_name':
+                await EncryptionService.encrypt(model.siteKeeperName!),
+            'site_keeper_phone_number':
+                await EncryptionService.encrypt(model.siteKeeperPhone!),
+            'site_physical_type':
+                await EncryptionService.encrypt(model.siteType!),
+            'site_longitude': await EncryptionService.encrypt(model.longitude!),
+            'site_latitude': await EncryptionService.encrypt(model.latitude!),
+            'site_altitude_above_sea_level':
+                await EncryptionService.encrypt('4.6'),
+            'site_local_datetime_survey_start':
+                await EncryptionService.encrypt(model.survey!),
+            'site_external_temperature':
+                await EncryptionService.encrypt(model.temperature!),
+            'site_audit_weather_conditions':
+                await EncryptionService.encrypt(model.weather!),
+            'row_id_of_audit_team':
+                await EncryptionService.encrypt(user.id.toString()),
+            // 'site_additional_notes_1': 'Image Name: ${basename(model.imagePath!)}',
+            // 'site_additional_notes_2': '',
+            // 'site_additional_notes_3': ''
+          };
+          List<MultipartFile> files = [
+            await MultipartFile.fromPath(
+              'site_photo_from_main_entrance',
+              model.imagePath!,
+            ),
+          ];
+          var res =
+              await AppService.storeSiteDetails(payload: payload, files: files);
+          if (res != null) {
+            StoreSiteModel model = StoreSiteModel.fromJson(jsonDecode(res));
+            _box.remove(user.id.toString());
+            CustomDialog.showCustomDialog(
+              title: 'Success',
+              content: model.message!,
+            );
+          }
+          isLoading.value = false;
+        } else {
           CustomDialog.showCustomDialog(
-            title: 'Success',
-            content: model.message!,
+            title: 'Error',
+            content: 'No data available to send to server.',
           );
+          isLoading.value = false;
         }
-        isLoading.value = false;
       } else {
         Network.sendDataToNetwork = true;
         CustomDialog.showCustomDialog(
