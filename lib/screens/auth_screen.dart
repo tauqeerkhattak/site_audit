@@ -30,9 +30,7 @@ class _AuthScreenState extends State<AuthScreen> {
             ConfirmDetail(
               controller: controller,
             ),
-            SiteDetail(
-              controller: controller,
-            )
+            SiteDetail(),
           ],
         ),
       ),

@@ -29,6 +29,7 @@ import '../service/encryption_service.dart';
 class AuthController extends GetxController {
   RxBool loading = false.obs;
   Rx<User> _user = User().obs;
+  RxBool validated = true.obs;
   late PageController pageController;
   int index = 0;
 
@@ -442,69 +443,48 @@ class AuthController extends GetxController {
   }
 
   Future<void> submitSiteDetails() async {
-    if (key.currentState!.validate()) {
-      var data = _box.read('user');
-      User user = User.fromMap(data);
-      if (image.value.path != '') {
-        PermissionStatus status = await Permission.storage.request();
-        // final GetStorage _box = GetStorage();
-        if (status.isGranted) {
-          final Directory directory = await getApplicationDocumentsDirectory();
-          final String path = directory.path;
-          final String fileName = basename(image.value.path);
-          final String fileName1 = basename(image1.value.path);
-          final String fileName2 = basename(image2.value.path);
-          final String fileName3 = basename(image3.value.path);
-          File? localImage1;
-          File? localImage2;
-          File? localImage3;
-          // print(path + fileName);
-
-          final File localImage = await image.value.copy(path + '/$fileName');
-          if(fileName1.isNotEmpty)
-            localImage1 = await image1.value.copy(path + '/$fileName1');
-          if(fileName2.isNotEmpty)
-            localImage2 = await image2.value.copy(path + '/$fileName2');
-          if(fileName3.isNotEmpty)
-            localImage3 = await image3.value.copy(path + '/$fileName3');
-
-
-          LocalSiteModel site = LocalSiteModel(
-            localSiteModelOperator: currentOperator.value!.datumOperator,
-            region: currentRegion.value!.name,
-            subRegion: currentSubRegion.value!.name,
-            cluster: currentCluster.value!.id,
-            siteId: currentSite.value!.id,
-            siteName: siteName.text,
-            siteKeeperName: siteKeeper.text,
-            siteKeeperPhone: siteKeeperPhone.text,
-            siteType: currentSiteTypes.value,
-            survey: surveyStart.text,
-            latitude: latitude.text,
-            longitude: longitude.text,
-            weather: currentWeather.value,
-            temperature: temperature.text,
-            imagePath: localImage.path,
-            image1description: description1.text,
-            image2description: description2.text,
-            image3description: description3.text,
-            imagePath1: localImage1?.path ?? null,
-            imagePath2: localImage2?.path ?? null,
-            imagePath3: localImage3?.path ?? null,
-          );
-          var data = site.toJson();
-          // print('JSON: $data');
-          print('User: ${user.id}');
-          await _box.write(user.id.toString(), data);
-          print('Go to next page');
-          Get.to(() => HomeScreen());
-        }
-      } else {
-        CustomDialog.showCustomDialog(
-          title: 'Image missing',
-          content: 'Please select an image first!',
+    var data = _box.read('user');
+    User user = User.fromMap(data);
+    if (image.value.path != '') {
+      PermissionStatus status = await Permission.storage.request();
+      final GetStorage _box = GetStorage();
+      if (status.isGranted) {
+        final Directory directory = await getApplicationDocumentsDirectory();
+        final String path = directory.path;
+        final String fileName = basename(image.value.path);
+        print(path + fileName);
+        final File localImage = await image.value.copy(path + '/$fileName');
+        LocalSiteModel site = LocalSiteModel(
+          localSiteModelOperator: currentOperator.value!.datumOperator,
+          region: currentRegion.value!.name,
+          subRegion: currentSubRegion.value!.name,
+          cluster: currentCluster.value!.id,
+          siteId: currentSite.value!.id,
+          siteName: siteName.text,
+          siteKeeperName: siteKeeper.text,
+          siteKeeperPhone: siteKeeperPhone.text,
+          siteType: currentSiteTypes.value,
+          survey: surveyStart.text,
+          latitude: latitude.text,
+          longitude: longitude.text,
+          weather: currentWeather.value,
+          temperature: temperature.text,
+          imagePath: localImage.path,
+        );
+        var data = site.toJson();
+        print('User: ${user.id}');
+        _box.write(user.id.toString(), data).then(
+          (value) {
+            print('Go to next page');
+            Get.to(() => HomeScreen());
+          },
         );
       }
+    } else {
+      CustomDialog.showCustomDialog(
+        title: 'Image missing',
+        content: 'Please select an image first!',
+      );
     }
   }
 }
