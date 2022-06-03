@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/utils/constants.dart';
-import 'package:site_audit/utils/size_config.dart';
 
 class RoundedButton extends StatelessWidget {
   final String text;
@@ -16,7 +15,7 @@ class RoundedButton extends StatelessWidget {
       this.width,
       this.onPressed,
       this.color,
-        this.disabled = false,
+      this.disabled = false,
       this.loading = false})
       : super(key: key);
 
@@ -35,6 +34,7 @@ class RoundedButton extends StatelessWidget {
             // shape: loading! ? BoxShape.circle : BoxShape.rectangle,
           ),
           // width: !loading! ? 100 : double.infinity,
+          // height: 60,
           width: Get.width * (width ?? 1),
           // width: width ?? 500,
           alignment: Alignment.center,
@@ -45,6 +45,7 @@ class RoundedButton extends StatelessWidget {
                 )
               : Text(
                   text,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: Get.textScaleFactor * 20.0,

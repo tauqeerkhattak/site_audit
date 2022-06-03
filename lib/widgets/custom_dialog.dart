@@ -56,69 +56,73 @@ class ConfirmDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData _theme = Theme.of(context);
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20)
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
         // decoration: BoxDecoration(
         //     color: Colors.white,
         // ),
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20),
-        child: Obx(() => Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              _controller.confirmClose() ?
-              "Please confirm again – Audit Completed" :
-              _controller.savingData() ?
-              "Saving Data for later Transmission" :
-              _controller.dataSaved() ?
-              "Data Saved\nAPP Closing" :
-              "Confirm you wish to close the Audit",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: Get.height * 0.035,
-                  fontWeight: FontWeight.w500
-              ),
-            ),
-
-            SizedBox(height: Get.height * 0.080,),
-
-            // if(_controller.isLoading() && !_controller.savingData())
-            //   Center(child: CircularProgressIndicator(color: Constants.primaryColor,))
-            if(_controller.isLoading() || _controller.savingData())
-              LinearPercentIndicator(
-                width: Get.width * 0.70,
-                lineHeight: 14.0,
-                percent: _controller.savingPercent.value,
-                backgroundColor: Colors.grey,
-                progressColor: Constants.primaryColor,
-                barRadius: Radius.circular(30),
+        child: Obx(
+          () => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _controller.confirmClose()
+                    ? "Please confirm again – Audit Completed"
+                    : _controller.savingData()
+                        ? "Saving Data for later Transmission"
+                        : _controller.dataSaved()
+                            ? "Data Saved\nAPP Closing"
+                            : "Confirm you wish to close the Audit",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: Get.height * 0.035,
+                    fontWeight: FontWeight.w500),
               ),
 
-            if(!_controller.isLoading() && !_controller.savingData() && !_controller.dataSaved())
-              Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                RoundedButton(
-                  text: 'Cancel',
-                  onPressed: () => Get.back(),
-                  width: 0.35,
+              SizedBox(
+                height: Get.height * 0.080,
+              ),
+
+              // if(_controller.isLoading() && !_controller.savingData())
+              //   Center(child: CircularProgressIndicator(color: Constants.primaryColor,))
+              if (_controller.isLoading() || _controller.savingData())
+                LinearPercentIndicator(
+                  width: Get.width * 0.70,
+                  lineHeight: 14.0,
+                  percent: _controller.savingPercent.value,
+                  backgroundColor: Colors.grey,
+                  progressColor: Constants.primaryColor,
+                  barRadius: Radius.circular(30),
                 ),
-                RoundedButton(
-                  text: 'Close Audit',
-                  onPressed: _controller.isLoading() ? null : _controller.handleCloseApp,
-                  color: Colors.green,
-                  width: 0.35,
-                  loading: false,
+
+              if (!_controller.isLoading() &&
+                  !_controller.savingData() &&
+                  !_controller.dataSaved())
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    RoundedButton(
+                      text: 'Cancel',
+                      onPressed: () => Get.back(),
+                      width: 0.3,
+                    ),
+                    RoundedButton(
+                      text: 'Close Audit',
+                      onPressed: _controller.isLoading()
+                          ? null
+                          : _controller.handleCloseApp,
+                      color: Colors.green,
+                      width: 0.35,
+                      loading: false,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ],
-        ),),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
-

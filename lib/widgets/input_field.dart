@@ -14,6 +14,7 @@ class InputField extends StatelessWidget {
     this.lines,
     this.node,
     this.controller,
+    this.inputType,
     this.validator,
   }) : super(key: key);
 
@@ -32,11 +33,7 @@ class InputField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        // color: Colors.white,
         borderRadius: new BorderRadius.circular(18.0),
-        // boxShadow: [
-        //   BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 2.0, spreadRadius: 0.2, offset: Offset(0.0, 0.0))
-        // ]
       ),
       clipBehavior: Clip.antiAlias,
       child: TextFormField(

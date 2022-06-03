@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/services.dart';
 import 'package:get/get.dart' hide MultipartFile;
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart';
@@ -27,14 +26,17 @@ class HomeController extends GetxController {
     try {
       if (Network.isAvailable) {
         isLoading.value = true;
-        Timer.periodic(Duration(milliseconds: 200), (Timer t) {
-          if(savingPercent.value < 0.9) {
-            // print(savingPercent.value);
-            savingPercent.value = savingPercent.value + 0.1;
-          } else {
-            t.cancel();
-          }
-        },);
+        Timer.periodic(
+          Duration(milliseconds: 200),
+          (Timer t) {
+            if (savingPercent.value < 0.9) {
+              // print(savingPercent.value);
+              savingPercent.value = savingPercent.value + 0.1;
+            } else {
+              t.cancel();
+            }
+          },
+        );
         var data = _box.read('user');
         User user = User.fromMap(data);
         if (_box.hasData(user.id.toString())) {
@@ -78,15 +80,49 @@ class HomeController extends GetxController {
                 await EncryptionService.encrypt(model.weather!),
             'row_id_of_audit_team':
                 await EncryptionService.encrypt(user.id.toString()),
-            // 'site_additional_notes_1': 'Image Name: ${basename(model.imagePath!)}',
-            // 'site_additional_notes_2': '',
-            // 'site_additional_notes_3': ''
           };
+          if (model.image1description != null &&
+              model.image1description!.isNotEmpty) {
+            payload.addAll({
+              'site_additional_notes_1': await EncryptionService.encrypt(
+                  model.image1description.toString()),
+            });
+          }
+          if (model.image2description != null &&
+              model.image2description!.isNotEmpty) {
+            payload.addAll({
+              'site_additional_notes_2': await EncryptionService.encrypt(
+                  model.image2description.toString())
+            });
+          }
+          if (model.image3description != null &&
+              model.image3description!.isNotEmpty) {
+            payload.addAll({
+              'site_additional_notes_3': await EncryptionService.encrypt(
+                model.image3description.toString(),
+              )
+            });
+          }
           List<MultipartFile> files = [
             await MultipartFile.fromPath(
               'site_photo_from_main_entrance',
               model.imagePath!,
             ),
+            if (model.imagePath1 != null)
+              await MultipartFile.fromPath(
+                'site_additional_photo_1_name',
+                model.imagePath1!,
+              ),
+            if (model.imagePath1 != null)
+              await MultipartFile.fromPath(
+                'site_additional_photo_2_name',
+                model.imagePath2!,
+              ),
+            if (model.imagePath1 != null)
+              await MultipartFile.fromPath(
+                'site_additional_photo_3_name',
+                model.imagePath3!,
+              ),
           ];
           var res =
               await AppService.storeSiteDetails(payload: payload, files: files);
@@ -110,20 +146,23 @@ class HomeController extends GetxController {
         Network.sendDataToNetwork = true;
         savingData.value = true;
         confirmClose.value = false;
-        Timer.periodic(Duration(milliseconds: 200), (Timer t) {
-          if(savingPercent.value < 0.9) {
-            print(savingPercent.value);
-            savingPercent.value = savingPercent.value + 0.1;
-          } else {
-            dataSaved.value = true;
-            savingData.value = false;
-            confirmClose.value = false;
-            auditComplete.value = true;
-            t.cancel();
-            Future.delayed(Duration(milliseconds: 200), () => Get.back());
-            // Future.delayed(Duration(milliseconds: 200), () => SystemNavigator.pop());
-          }
-        },);
+        Timer.periodic(
+          Duration(milliseconds: 200),
+          (Timer t) {
+            if (savingPercent.value < 0.9) {
+              print(savingPercent.value);
+              savingPercent.value = savingPercent.value + 0.1;
+            } else {
+              dataSaved.value = true;
+              savingData.value = false;
+              confirmClose.value = false;
+              auditComplete.value = true;
+              t.cancel();
+              Future.delayed(Duration(milliseconds: 200), () => Get.back());
+              // Future.delayed(Duration(milliseconds: 200), () => SystemNavigator.pop());
+            }
+          },
+        );
         // CustomDialog.showCustomDialog(
         //   title: 'No network available',
         //   content:
@@ -145,12 +184,11 @@ class HomeController extends GetxController {
   }
 
   Future<void> handleCloseApp() async {
-    if(savingData()){
+    if (savingData()) {
       dataSaved.value = true;
       savingData.value = false;
       confirmClose.value = false;
-    }
-    else if(confirmClose()){
+    } else if (confirmClose()) {
       storeSiteDetail();
       // savingData.value = true;
       // confirmClose.value = false;
@@ -166,8 +204,7 @@ class HomeController extends GetxController {
       //     Future.delayed(Duration(milliseconds: 200), () => SystemNavigator.pop());
       //   }
       // },);
-    }
-    else {
+    } else {
       confirmClose.value = true;
     }
   }

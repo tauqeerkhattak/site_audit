@@ -71,9 +71,11 @@ class AppService {
   }
 
   // POST SITE DETAILS
-  static Future<String> storeSiteDetails({required Map<String,String> payload, List<http.MultipartFile>? files}) async {
+  static Future<String> storeSiteDetails(
+      {required Map<String, String> payload,
+      List<http.MultipartFile>? files}) async {
     try {
-      // print(payload);
+      print('3: ${payload['site_additional_notes_3']}');
       var header = {"Authorization": "Bearer ${_box.read('token')}"};
       var response = await Network.multiPartRequest(
         url: Api.postDetails,

@@ -12,7 +12,6 @@ import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
 import '../../models/site_detail_model.dart';
-import '../home_screen.dart';
 
 class SiteDetail extends StatefulWidget {
   static GetStorage _box = GetStorage();
@@ -52,7 +51,7 @@ class _SiteDetailState extends State<SiteDetail> {
             padding: EdgeInsets.only(left: 30, right: 30, top: 20, bottom: 30),
             physics: BouncingScrollPhysics(),
             child: Form(
-              key: widget.controller.key,
+              key: controller.key,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -67,7 +66,7 @@ class _SiteDetailState extends State<SiteDetail> {
                         Expanded(
                           child: operatorDrop(
                             'Site Operator',
-                            widget.controller.operators,
+                            controller.operators,
                           ),
                         ),
                         SizedBox(
@@ -76,7 +75,7 @@ class _SiteDetailState extends State<SiteDetail> {
                         Expanded(
                           child: regionDrop(
                             'Site Region',
-                            widget.controller.regions,
+                            controller.regions,
                           ),
                         ),
                       ],
@@ -89,7 +88,7 @@ class _SiteDetailState extends State<SiteDetail> {
                         Expanded(
                           child: subRegionDrop(
                             'Site Sub-Region',
-                            widget.controller.subRegions,
+                            controller.subRegions,
                           ),
                         ),
                         SizedBox(
@@ -98,7 +97,7 @@ class _SiteDetailState extends State<SiteDetail> {
                         Expanded(
                           child: clusterDrop(
                             'Site Cluster',
-                            widget.controller.clusters,
+                            controller.clusters,
                           ),
                         ),
                       ],
@@ -111,14 +110,14 @@ class _SiteDetailState extends State<SiteDetail> {
                         Expanded(
                           child: siteIdDrop(
                             'Site ID',
-                            widget.controller.siteIDs,
+                            controller.siteIDs,
                           ),
                         ),
                         WidgetUtils.spaceHrz20,
                         Expanded(
                           child: input(
                             'Site Name',
-                            textController: widget.controller.siteName,
+                            textController: controller.siteName,
                           ),
                         ),
                       ],
@@ -127,23 +126,21 @@ class _SiteDetailState extends State<SiteDetail> {
                   // WidgetUtils.spaceVrt40,
                   input(
                     'Name of Site Keeper',
-                    textController: widget.controller.siteKeeper,
+                    textController: controller.siteKeeper,
                   ),
                   // WidgetUtils.spaceVrt10,
-                  input(
-                    'Phone Number of Site Keeper',
-                    textController: widget.controller.siteKeeperPhone,
-                    inputType: TextInputType.phone
-                  ),
+                  input('Phone Number of Site Keeper',
+                      textController: controller.siteKeeperPhone,
+                      inputType: TextInputType.phone),
                   // WidgetUtils.spaceVrt30,
                   Row(
                     children: [
                       Expanded(
                         child: simpleDrop(
                           label: 'Physical Site Type',
-                          items: widget.controller.physicalSiteTypes,
+                          items: controller.physicalSiteTypes,
                           onChanged: (String? type) {
-                            widget.controller.currentSiteTypes.value =
+                            controller.currentSiteTypes.value =
                                 type ?? 'Outdoor';
                           },
                         ),
@@ -153,27 +150,29 @@ class _SiteDetailState extends State<SiteDetail> {
                         child: input(
                           'Survey Start',
                           readOnly: true,
-                          textController: widget.controller.surveyStart,
+                          textController: controller.surveyStart,
                         ),
                       ),
                     ],
                   ),
                   // ALTITUDE IN METERS FIELD
-                  input('Altitude in Meters', textController: widget.controller.altitude, inputType: TextInputType.phone),
+                  input('Altitude in Meters',
+                      textController: controller.altitude,
+                      inputType: TextInputType.phone),
                   // WidgetUtils.spaceVrt10,
                   Row(
                     children: [
                       Expanded(
                         child: input(
                           'Longitude',
-                          textController: widget.controller.longitude,
+                          textController: controller.longitude,
                         ),
                       ),
                       WidgetUtils.spaceHrz20,
                       Expanded(
                         child: input(
                           'Latitude',
-                          textController: widget.controller.latitude,
+                          textController: controller.latitude,
                         ),
                       ),
                     ],
@@ -184,39 +183,61 @@ class _SiteDetailState extends State<SiteDetail> {
                       Expanded(
                         child: simpleDrop(
                           label: 'Weather',
-                          items: widget.controller.weatherType,
+                          items: controller.weatherType,
                           onChanged: (String? weather) {
-                            widget.controller.currentWeather.value =
+                            controller.currentWeather.value =
                                 weather ?? "Sunny";
                           },
                         ),
                       ),
                       WidgetUtils.spaceHrz20,
                       Expanded(
-                        child: input(
-                          'Temperature',
-                          textController: widget.controller.temperature,
-                            inputType: TextInputType.phone
-                        ),
+                        child: input('Temperature',
+                            textController: controller.temperature,
+                            inputType: TextInputType.phone),
                       ),
                     ],
                   ),
                   // WidgetUtils.spaceVrt10,
-                  Obx(() => imageInput('Site Photo from main entrance', controller.handleMainEntrancePhoto, controller.image.value.path),),
+                  Obx(
+                    () => imageInput(
+                        'Site Photo from main entrance',
+                        controller.handleMainEntrancePhoto,
+                        controller.image.value.path),
+                  ),
                   WidgetUtils.spaceVrt10,
                   Divider(color: Constants.primaryColor, thickness: 1.5),
                   // WidgetUtils.spaceVrt10,
                   // ADDITIONAL PHOTOS
-                  Obx(() =>  imageInput('Additional Photo 1', controller.handleAdditionalPhoto1, controller.image1.value.path)),
-                  input('Add Description', textController: widget.controller.description1, noValidate: true),
+                  Obx(
+                    () => imageInput(
+                      'Additional Photo 1',
+                      controller.handleAdditionalPhoto1,
+                      controller.image1.value.path,
+                    ),
+                  ),
+                  input('Add Description',
+                      textController: controller.description1,
+                      noValidate: true),
                   Row(
                     children: [
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Obx(() => imageInput('Additional Photo 2', controller.handleAdditionalPhoto2, controller.image2.value.path, boxSize: 0.15)),
-                            input('Add Description', textController: widget.controller.description2, noValidate: true),
+                            Obx(
+                              () => imageInput(
+                                'Additional Photo 2',
+                                controller.handleAdditionalPhoto2,
+                                controller.image2.value.path,
+                                boxSize: 0.15,
+                              ),
+                            ),
+                            input(
+                              'Add Description',
+                              textController: controller.description2,
+                              noValidate: true,
+                            ),
                           ],
                         ),
                       ),
@@ -225,24 +246,63 @@ class _SiteDetailState extends State<SiteDetail> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Obx(() => imageInput('Additional Photo 3', controller.handleAdditionalPhoto3, controller.image3.value.path, boxSize: 0.15)),
-                            input('Add Description', textController: widget.controller.description3, noValidate: true),
+                            Obx(
+                              () => imageInput(
+                                'Additional Photo 3',
+                                controller.handleAdditionalPhoto3,
+                                controller.image3.value.path,
+                                boxSize: 0.15,
+                              ),
+                            ),
+                            input(
+                              'Add Description',
+                              textController: controller.description3,
+                              noValidate: true,
+                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
+                  WidgetUtils.spaceVrt10,
+                  Obx(
+                    () => controller.validated.value
+                        ? SizedBox()
+                        : Container(
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(
+                                10,
+                              ),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              vertical: 5,
+                            ),
+                            child: Text(
+                              'Please fill all the required fields!',
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: SizeConfig.textMultiplier * 2.2,
+                              ),
+                            ),
+                          ),
+                  ),
+                  WidgetUtils.spaceVrt10,
 
                   Obx(
                     () => RoundedButton(
                       text: 'Submit',
                       onPressed: () async {
-                        // Get.to(() => HomeScreen());
-                        await widget.controller.submitSiteDetails();
-                        // Get.to(() => TempScreen());
+                        controller.validated.value =
+                            controller.key.currentState!.validate();
+                        if (controller.validated.value) {
+                          await controller.submitSiteDetails();
+                        }
                       },
-                      loading: widget.controller.loading(),
-                      width: widget.controller.loading() ? 0.1 : Get.width,
+                      loading: controller.loading(),
+                      width: controller.loading() ? 0.1 : Get.width,
                     ),
                   ),
                   WidgetUtils.spaceVrt10,
@@ -255,7 +315,8 @@ class _SiteDetailState extends State<SiteDetail> {
     );
   }
 
-  Widget imageInput(label, VoidCallback action, String filePath, {double? boxSize}) {
+  Widget imageInput(label, VoidCallback action, String filePath,
+      {double? boxSize}) {
     return Column(
       children: [
         Container(
@@ -285,40 +346,50 @@ class _SiteDetailState extends State<SiteDetail> {
               ),
             ),
             clipBehavior: Clip.hardEdge,
-            // child: widget.controller.image.value.path == ''
-            child: filePath == '' ?
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.camera_alt,
-                  color: Constants.primaryColor,
-                  size: 30,
-                ),
-                Text(
-                  "Take Photo",
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    // color: Colors.white,
-                    fontSize: SizeConfig.textMultiplier * 2.2,
+            // child: controller.image.value.path == ''
+            child: filePath == ''
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.camera_alt,
+                        color: Constants.primaryColor,
+                        size: 30,
+                      ),
+                      Text(
+                        "Take Photo",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          // color: Colors.white,
+                          fontSize: SizeConfig.textMultiplier * 2.2,
+                        ),
+                      ),
+                    ],
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image.file(
+                          File(filePath),
+                          fit: BoxFit.fill,
+                        )),
                   ),
-                ),
-              ],
-            ) :
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ClipRRect(borderRadius: BorderRadius.circular(10.0), child: Image.file(File(filePath), fit: BoxFit.fill,)),
-            ),
           ),
         ),
       ],
     );
   }
-  Widget input(label,
-      {int? lines,
-      TextEditingController? textController,
-      FocusNode? node,
-      bool? readOnly}) {
+
+  Widget input(
+    label, {
+    int? lines,
+    TextEditingController? textController,
+    FocusNode? node,
+    bool? readOnly,
+    bool? noValidate,
+    TextInputType? inputType,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -338,9 +409,12 @@ class _SiteDetailState extends State<SiteDetail> {
         // SizedBox(height: 5,),
         InputField(
           placeHolder: "",
+          inputType: inputType,
           controller: textController,
           readOnly: readOnly ?? false,
-          validator: (String? text) => controller.stringValidator(text),
+          validator: noValidate == true
+              ? null
+              : (String? text) => controller.stringValidator(text),
           node: node,
           lines: lines,
         ),
@@ -348,7 +422,10 @@ class _SiteDetailState extends State<SiteDetail> {
     );
   }
 
-  Widget simpleDrop({label, required List<String> items, required Function(String?) onChanged}) {
+  Widget simpleDrop(
+      {label,
+      required List<String> items,
+      required Function(String?) onChanged}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -384,8 +461,7 @@ class _SiteDetailState extends State<SiteDetail> {
           child: DropdownButtonFormField<String>(
             onChanged: onChanged,
             isDense: true,
-            validator: (String? value) =>
-                controller.stringValidator(value),
+            validator: (String? value) => controller.stringValidator(value),
             decoration: WidgetUtils.decoration(
               hint: items.isEmpty ? 'Select' : null,
             ),
@@ -453,9 +529,9 @@ class _SiteDetailState extends State<SiteDetail> {
               controller.siteName.text = '';
             },
             isDense: true,
-            validator: (value) => widget.controller.dynamicValidator(value),
+            validator: (value) => controller.dynamicValidator(value),
             decoration: WidgetUtils.decoration(hint: 'Select'),
-            value: widget.controller.currentOperator.value,
+            value: controller.currentOperator.value,
             // value: controller.currentOperator.value,
             items: items.map<DropdownMenuItem<Datum?>>((Datum? value) {
               return DropdownMenuItem<Datum?>(
@@ -469,7 +545,7 @@ class _SiteDetailState extends State<SiteDetail> {
     );
   }
 
-  Widget regionDrop(label, List<Region> items,) {
+  Widget regionDrop(label, List<Region> items) {
     items = items.toSet().toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -519,10 +595,10 @@ class _SiteDetailState extends State<SiteDetail> {
               controller.siteName.text = '';
             },
             isDense: true,
-            value: widget.controller.currentRegion.value,
-            validator: (value) => widget.controller.dynamicValidator(value),
+            value: controller.currentRegion.value,
+            validator: (value) => controller.dynamicValidator(value),
             decoration: WidgetUtils.decoration(
-              hint: widget.controller.regions.isEmpty ? null : 'Select',
+              hint: controller.regions.isEmpty ? null : 'Select',
             ),
             items: items.map<DropdownMenuItem<Region>>((Region value) {
               return DropdownMenuItem<Region>(
@@ -583,9 +659,9 @@ class _SiteDetailState extends State<SiteDetail> {
             isDense: true,
             value: controller.currentSubRegion.value,
             validator: (SubRegion? region) =>
-                widget.controller.dynamicValidator(region),
+                controller.dynamicValidator(region),
             decoration: WidgetUtils.decoration(
-              hint: widget.controller.subRegions.isEmpty ? null : 'Select',
+              hint: controller.subRegions.isEmpty ? null : 'Select',
             ),
             items: items.map<DropdownMenuItem<SubRegion>>((SubRegion value) {
               return DropdownMenuItem<SubRegion>(
@@ -643,10 +719,10 @@ class _SiteDetailState extends State<SiteDetail> {
               controller.siteName.text = '';
             },
             isDense: true,
-            value: widget.controller.currentCluster.value,
-            validator: (cluster) => widget.controller.dynamicValidator(cluster),
+            value: controller.currentCluster.value,
+            validator: (cluster) => controller.dynamicValidator(cluster),
             decoration: WidgetUtils.decoration(
-              hint: widget.controller.clusters.isEmpty ? null : 'Select',
+              hint: controller.clusters.isEmpty ? null : 'Select',
             ),
             items: items.map<DropdownMenuItem<ClusterId>>((ClusterId value) {
               return DropdownMenuItem<ClusterId>(
@@ -705,10 +781,10 @@ class _SiteDetailState extends State<SiteDetail> {
               controller.siteName.text = controller.currentSite.value!.name;
             },
             isDense: true,
-            value: widget.controller.currentSite.value,
-            validator: (siteId) => widget.controller.dynamicValidator(siteId),
+            value: controller.currentSite.value,
+            validator: (siteId) => controller.dynamicValidator(siteId),
             decoration: WidgetUtils.decoration(
-              hint: widget.controller.siteIDs.isEmpty ? null : 'Select',
+              hint: controller.siteIDs.isEmpty ? null : 'Select',
             ),
             items: items
                 .map<DropdownMenuItem<SiteReference>>((SiteReference value) {
@@ -740,8 +816,4 @@ class _SiteDetailState extends State<SiteDetail> {
     controller.currentSite.value = SiteReference(id: '', name: '');
     controller.siteName.text = '';
   }
-
-  // Widget imageBox(VoidCallback action, String boxTitle, String filePath, {double? boxSize}) {
-  //   return ;
-  // }
 }

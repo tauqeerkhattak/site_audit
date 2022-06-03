@@ -144,11 +144,12 @@ class HomeScreen extends StatelessWidget {
                       RoundedButton(
                         text: 'Audit Completed',
                         disabled: controller.auditComplete(),
-                        onPressed: () =>
-                            Get.dialog(
-                              ConfirmDialog(action: controller.handleCloseApp),
-                              barrierDismissible: false,
-                            ),
+                        onPressed: () {
+                          Get.dialog(
+                            ConfirmDialog(action: controller.handleCloseApp),
+                            barrierDismissible: false,
+                          );
+                        },
                         // onPressed: controller.storeSiteDetail,
                         color: Colors.green,
                         width: 0.4,
@@ -229,22 +230,19 @@ class HomeScreen extends StatelessWidget {
               child: Row(
                 children: List.generate(
                   length,
-                      (index) =>
-                      Obx(
-                            () =>
-                            Checkbox(
-                              checkColor: Colors.white,
-                              fillColor: MaterialStateProperty.all(
-                                Constants.primaryColor,
-                              ),
-                              materialTapTargetSize: MaterialTapTargetSize
-                                  .shrinkWrap,
-                              value: checks[index],
-                              onChanged: (bool? value) {
-                                checks[index] = value ?? checks[index];
-                              },
-                            ),
+                  (index) => Obx(
+                    () => Checkbox(
+                      checkColor: Colors.white,
+                      fillColor: MaterialStateProperty.all(
+                        Constants.primaryColor,
                       ),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      value: checks[index],
+                      onChanged: (bool? value) {
+                        checks[index] = value ?? checks[index];
+                      },
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -282,34 +280,33 @@ class HomeScreen extends StatelessWidget {
   Widget progress() {
     return Expanded(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Services',
-              style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.8),
-            ),
-            Text(
-              '128m/300m',
-              style: TextStyle(color: Colors.grey),
-            ),
-            Container(
-              height: 3,
-              width: 100,
-              margin: EdgeInsets.only(top: 5),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          'Services',
+          style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.8),
+        ),
+        Text(
+          '128m/300m',
+          style: TextStyle(color: Colors.grey),
+        ),
+        Container(
+          height: 3,
+          width: 100,
+          margin: EdgeInsets.only(top: 5),
+          decoration: BoxDecoration(
+              color: Colors.grey, borderRadius: BorderRadius.circular(20)),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
               decoration: BoxDecoration(
-                  color: Colors.grey, borderRadius: BorderRadius.circular(20)),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(20)),
-                  height: 3,
-                  width: 60,
-                ),
-              ),
+                  color: Colors.green, borderRadius: BorderRadius.circular(20)),
+              height: 3,
+              width: 60,
             ),
-          ],
-        ));
+          ),
+        ),
+      ],
+    ));
   }
 }
