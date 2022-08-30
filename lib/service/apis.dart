@@ -7,4 +7,5 @@ class Api {
   static String postDetails = middleware + "/store/site/details";
   static String physicalType = middleware + '/get/physical_type/details/';
   static String weatherType = middleware + '/get/weather_details/details/';
+  static String getModules = middleware + '/project/modules/';
 }

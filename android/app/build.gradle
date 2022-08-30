@@ -35,7 +35,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.site_audit"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -45,7 +45,7 @@ android {
         release {
 //            storeFile file('C:\\Users\\Fattani computers\\StudioProjects\\EuSopht\\cricketnfantasyupload-keystore.jks')
 //            C:\\Users\\rk\\Desktop\\\keystores
-            storeFile file('C:\\Users\\rk\\Desktop\\keystores\\tauqeer-keystore.jks')
+            storeFile file('D:\\EUSOPHT\\Site Audit\\site_audit\\android\\tauqeer-keystore.jks')
             storePassword 'upload'
             keyAlias 'upload'
             keyPassword 'upload'

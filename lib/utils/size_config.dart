@@ -1,5 +1,5 @@
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 
 class SizeConfig {
   static late double _screenWidth;
@@ -13,13 +13,14 @@ class SizeConfig {
   static late double screenWidth;
   static late double screenHeight;
 
-  void init(BoxConstraints constraints, Orientation orientation) {
+  static void init(Orientation orientation) {
+    final size = Get.size;
     if (orientation == Orientation.portrait) {
-      _screenWidth = constraints.maxWidth;
-      _screenHeight = constraints.maxHeight;
+      _screenWidth = size.width;
+      _screenHeight = size.height;
     } else {
-      _screenWidth = constraints.maxHeight;
-      _screenHeight = constraints.maxWidth;
+      _screenWidth = size.height;
+      _screenHeight = size.width;
     }
     _blockSizeHorizontal = _screenWidth / 100;
     _blockSizeVertical = _screenHeight / 100;

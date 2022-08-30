@@ -9,7 +9,8 @@ class Network {
   static bool isNetworkAvailable = false;
   static bool sendDataToNetwork = false;
 
-  static get({required String url, headers, Map<String, dynamic>? params}) async {
+  static get(
+      {required String url, headers, Map<String, dynamic>? params}) async {
     try {
       Map<String, String> apiHeaders = {
         'Content-Type': 'application/json',
@@ -23,10 +24,8 @@ class Network {
       Uri uri = Uri.https(Constants.baseUrl, url, params);
       print("REQUESTED URL => $uri");
       var response = await client.get(uri, headers: apiHeaders);
-      print("Error: " + response.body);
       if (response.statusCode == 200) {
         return response.body;
-        // return json.decode(response.body);
       }
       if (response.statusCode < 200 ||
           response.statusCode > 400 ||
@@ -39,7 +38,11 @@ class Network {
     }
   }
 
-  static multiPartRequest({url,required Map<String, String> payload, headers, List<http.MultipartFile>? files}) async {
+  static multiPartRequest(
+      {url,
+      required Map<String, String> payload,
+      headers,
+      List<http.MultipartFile>? files}) async {
     try {
       Map<String, String> apiHeaders = {
         'Content-Type': 'application/json; charset=UTF-8',
@@ -53,7 +56,10 @@ class Network {
         url,
       );
       print(uri);
-      http.MultipartRequest request = http.MultipartRequest('POST', uri,);
+      http.MultipartRequest request = http.MultipartRequest(
+        'POST',
+        uri,
+      );
       request.headers.addAll(apiHeaders);
       request.fields.addAll(payload);
       for (int i = 0; i < files!.length; i++) {
@@ -74,8 +80,7 @@ class Network {
         return null;
       }
       return null;
-    }
-    catch (e) {
+    } catch (e) {
       print("POST: $e");
       return throw Exception(e);
     }

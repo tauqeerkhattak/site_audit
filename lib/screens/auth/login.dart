@@ -6,8 +6,8 @@ import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
 class LoginScreen extends StatelessWidget {
-  final AuthController controller;
-  const LoginScreen({Key? key, required this.controller}) : super(key: key);
+  final controller = Get.find<AuthController>();
+  LoginScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +53,9 @@ class LoginScreen extends StatelessWidget {
                 ),
                 DecoratedBox(
                   decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20)),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   child: Text(
                     'Please enter the Engineer ID and Password that were supplied to you....',
                     // textAlign: TextAlign.center,
@@ -77,10 +78,11 @@ class LoginScreen extends StatelessWidget {
                   height: 20,
                 ),
                 InputField(
-                    placeHolder: "Password",
-                    lines: 1,
-                    controller: controller.password,
-                    validator: controller.stringValidator),
+                  placeHolder: "Password",
+                  lines: 1,
+                  controller: controller.password,
+                  validator: controller.stringValidator,
+                ),
                 SizedBox(
                   height: 30,
                 ),

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:site_audit/controllers/auth_controller.dart';
 import 'package:site_audit/screens/auth/confirm_detail.dart';
 import 'package:site_audit/screens/auth/login.dart';
-import 'package:site_audit/screens/auth/site_detail.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -13,7 +12,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  AuthController controller = Get.find<AuthController>();
+  final controller = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
@@ -24,15 +23,9 @@ class _AuthScreenState extends State<AuthScreen> {
           physics: NeverScrollableScrollPhysics(),
           controller: controller.pageController,
           children: [
-            LoginScreen(
-              controller: controller,
-            ),
-            ConfirmDetail(
-              controller: controller,
-            ),
-            SiteDetail(
-              controller: controller,
-            )
+            LoginScreen(),
+            ConfirmDetail(),
+            // SiteDetail(),
           ],
         ),
       ),

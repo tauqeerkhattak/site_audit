@@ -2,9 +2,7 @@
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionUtil {
-  // static GetStorage _box = GetStorage();
-  static void request() async {
-    // await _box.erase();
+  static Future<void> request() async {
     Map<Permission, PermissionStatus> permissions = await [
       Permission.location,
       Permission.camera,

@@ -5,8 +5,8 @@ import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
 class ConfirmDetail extends StatelessWidget {
-  final AuthController controller;
-  const ConfirmDetail({Key? key, required this.controller}) : super(key: key);
+  final controller = Get.find<AuthController>();
+  ConfirmDetail({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ class ConfirmDetail extends StatelessWidget {
                 Obx(
                   () => RoundedButton(
                     text: 'Next',
-                    onPressed: controller.submitDetails,
+                    onPressed: controller.updateEngineerDetails,
                     loading: controller.loading(),
                   ),
                 ),
