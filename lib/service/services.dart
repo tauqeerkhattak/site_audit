@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:developer' as dev;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:site_audit/models/form_model.dart';
 import 'package:site_audit/models/module_model.dart';
 import 'package:site_audit/service/local_storage_service.dart';
 import 'package:site_audit/utils/network.dart';
@@ -17,7 +19,7 @@ class AppService {
   static Future<Map<String, dynamic>?> login({payload}) async {
     try {
       var res = await Network.post(url: Api.login, payload: payload);
-      // print(res);
+      // dev.log(res);
       if (res != null) {
         var user = jsonDecode(res);
         _storageService.save(
@@ -37,7 +39,7 @@ class AppService {
         return null;
       }
     } catch (e) {
-      print("ERROR LOGIN: $e");
+      dev.log("ERROR LOGIN: $e");
       Get.rawSnackbar(
         message: "Error in login request!",
         backgroundColor: Colors.redAccent,
@@ -72,7 +74,7 @@ class AppService {
           backgroundColor: Colors.green,
           colorText: Colors.white,
           maxWidth: 300,
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             vertical: 8,
             horizontal: 20,
           ),
@@ -87,7 +89,7 @@ class AppService {
         return null;
       }
     } catch (e) {
-      print("ERROR LOGIN: $e");
+      dev.log("ERROR LOGIN: $e");
       Get.rawSnackbar(
           message: "Error in login request!",
           backgroundColor: Colors.redAccent);
@@ -100,7 +102,7 @@ class AppService {
       {required Map<String, String> payload,
       List<http.MultipartFile>? files}) async {
     try {
-      // print(payload);
+      // dev.log(payload);
       var header = {
         "Authorization": "Bearer ${_storageService.get(
           key: 'token',
@@ -112,14 +114,14 @@ class AppService {
         headers: header,
         files: files,
       );
-      print('POST SITE DETAIL: $response');
+      dev.log('POST SITE DETAIL: $response');
       if (response != null) {
         return response;
       } else {
         return '';
       }
     } on Exception catch (e) {
-      print("ERROR STORING DETAILS: $e");
+      dev.log("ERROR STORING DETAILS: $e");
       Get.rawSnackbar(
         message: "Error in Storing site details!",
         backgroundColor: Colors.redAccent,
@@ -140,8 +142,8 @@ class AppService {
         key: 'user',
       );
       data = jsonDecode(data);
-      String response = await Network.get(
-          url: Api.siteDetails + '${data['assigned_to_project_id']}',
+      String? response = await Network.get(
+          url: '${Api.siteDetails}${data['assigned_to_project_id']}',
           headers: header);
       if (response != null) {
         final data = jsonDecode(response);
@@ -157,7 +159,7 @@ class AppService {
         return null;
       }
     } on Exception catch (e) {
-      print("ERROR Getting Details: $e");
+      dev.log("ERROR Getting Details: $e");
       Get.rawSnackbar(
           message: "Error getting site details",
           backgroundColor: Colors.redAccent);
@@ -177,14 +179,14 @@ class AppService {
         key: 'user',
       );
       var response = await Network.get(
-        url: Api.physicalType + '${data['assigned_to_project_id']}',
+        url: '${Api.physicalType}${data['assigned_to_project_id']}',
         headers: header,
       );
       var map = jsonDecode(response);
       List<String> types = List.castFrom(map['data']);
       return types;
     } on Exception catch (e) {
-      print('Error in Physical Data: ' + e.toString());
+      dev.log('Error in Physical Data: $e');
       Get.rawSnackbar(
           message: "Error getting physical site types",
           backgroundColor: Colors.redAccent);
@@ -212,15 +214,15 @@ class AppService {
         key: 'user',
       );
       var response = await Network.get(
-        url: Api.weatherType + '${data['assigned_to_project_id']}',
+        url: '${Api.weatherType}${data['assigned_to_project_id']}',
         headers: header,
       );
       var map = jsonDecode(response);
-      print('Weather data: $response');
+      dev.log('Weather data: $response');
       List<String> types = List.castFrom(map['data']);
       return types;
     } on Exception catch (e) {
-      print('Error in Weather Data: ' + e.toString());
+      dev.log('Error in Weather Data: $e');
       Get.rawSnackbar(
           message: "Error getting weather types",
           backgroundColor: Colors.redAccent);
@@ -236,24 +238,55 @@ class AppService {
         )}"
       };
       final response = await Network.get(
-        url: Api.getModules + '$projectId',
+        url: '${Api.getModules}$projectId',
         headers: header,
       );
       if (response != null) {
         List<dynamic> jsonList = jsonDecode(response);
         List<Module> modules = [];
-        jsonList.forEach((element) {
+        for (var element in jsonList) {
           modules.add(Module.fromJson(element));
-        });
-        print('Modules data: $response');
+        }
+        dev.log('Modules data: $response');
         return modules;
       } else {
         return null;
       }
     } on Exception catch (e) {
-      print('Error in Modules Data: ' + e.toString());
+      dev.log('Error in Modules Data: $e');
       Get.rawSnackbar(
         message: "Error getting Modules",
+        backgroundColor: Colors.redAccent,
+      );
+      throw Exception(e);
+    }
+  }
+
+  static Future<FormModel?> getFormBySubModuleId(
+      {required String projectId, required int moduleId}) async {
+    try {
+      var header = {
+        "Authorization": "Bearer ${_storageService.get(
+          key: 'token',
+        )}"
+      };
+      final response = await Network.get(
+        url: '${Api.getForms}$projectId/$moduleId',
+        headers: header,
+      );
+      if (response != null) {
+        List<dynamic> jsonList = jsonDecode(response);
+        FormModel? form;
+        form = FormModel.fromJson(jsonList[0]);
+        dev.log('Form: $response');
+        return form;
+      } else {
+        return null;
+      }
+    } on Exception catch (e) {
+      dev.log('Error in Forms Data: $e');
+      Get.rawSnackbar(
+        message: "Error getting Forms",
         backgroundColor: Colors.redAccent,
       );
       throw Exception(e);

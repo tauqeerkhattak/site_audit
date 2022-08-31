@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/controllers/home_controller.dart';
 import 'package:site_audit/models/module_model.dart';
+import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/size_config.dart';
+import 'package:site_audit/utils/ui_utils.dart';
+import 'package:site_audit/widgets/default_layout.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -11,69 +14,43 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SizedBox(
-        height: SizeConfig.screenHeight,
-        width: SizeConfig.screenWidth,
-        child: Stack(
-          children: [
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Container(
-                width: SizeConfig.screenWidth * 0.4,
-                height: SizeConfig.screenHeight * 0.4,
-                child: Image.asset(
-                  'assets/images/istockphoto-1184778656-612x612.jpg',
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            _bodyWidget(),
-          ],
-        ),
+    return WillPopScope(
+      onWillPop: () async {
+        controller.animateBack();
+        return false;
+      },
+      child: DefaultLayout(
+        child: _bodyWidget(),
       ),
     );
   }
 
   Widget _bodyWidget() {
     return SafeArea(
-      child: Obx(() {
-        if (controller.loading.value) {
-          return Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(
-                Constants.primaryColor,
+      child: Obx(
+        () {
+          if (controller.loading.value) {
+            return Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(
+                  Constants.primaryColor,
+                ),
               ),
-            ),
-          );
-        } else {
-          List<Module> modules = controller.modules;
-          return GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisExtent: 120,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-            ),
-            itemCount: modules.length,
-            padding: EdgeInsets.only(
-              left: 8,
-              right: 8,
-              bottom: 8,
-              top: 40,
-            ),
-            itemBuilder: (context, index) {
-              Module module = modules[index];
-              return tileCard(
-                '${module.moduleName}',
-                module.subModules!.length,
-              );
-            },
-          );
-        }
-      }),
+            );
+          } else {
+            return PageView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: controller.pageController,
+              children: [
+                getModulesUi(),
+                getSubModulesUi(
+                  controller.selectedModule.value,
+                ),
+              ],
+            );
+          }
+        },
+      ),
     );
   }
 
@@ -93,30 +70,33 @@ class HomeScreen extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
+          UiUtils.spaceVrt10,
           Container(
             decoration: BoxDecoration(
               color: Colors.amber.withOpacity(0.3),
               borderRadius: BorderRadius.circular(5.0),
             ),
-            child: Row(
-              children: List.generate(
-                length,
-                (index) => Obx(
-                  () => Checkbox(
-                    checkColor: Colors.white,
-                    fillColor: MaterialStateProperty.all(
-                      Constants.primaryColor,
+            child: IgnorePointer(
+              child: Wrap(
+                children: [
+                  ...List.generate(
+                    length,
+                    (index) => Checkbox(
+                      checkColor: Colors.white,
+                      fillColor: MaterialStateProperty.all(
+                        Constants.primaryColor,
+                      ),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      value: checks[index],
+                      onChanged: (bool? value) {
+                        checks[index] = value ?? checks[index];
+                      },
                     ),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    value: checks[index],
-                    onChanged: (bool? value) {
-                      checks[index] = value ?? checks[index];
-                    },
+                    // (index) => Obx(
+                    //   () => ,
+                    // ),
                   ),
-                ),
+                ],
               ),
             ),
           ),
@@ -129,59 +109,129 @@ class HomeScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: new BorderRadius.circular(18.0),
+        borderRadius: BorderRadius.circular(18.0),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),
             blurRadius: 10.0,
             spreadRadius: 0.4,
-            offset: Offset(0, 0.0),
+            offset: const Offset(0, 0.0),
           ),
         ],
       ),
       clipBehavior: Clip.antiAlias,
-      height: height ?? null,
+      height: height,
       alignment: Alignment.center,
-      padding: EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(10.0),
       child: child,
     );
   }
 
-  Widget progress() {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Services',
-            style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.8),
-          ),
-          Text(
-            '128m/300m',
-            style: TextStyle(color: Colors.grey),
-          ),
-          Container(
-            height: 3,
-            width: 100,
-            margin: EdgeInsets.only(top: 5),
-            decoration: BoxDecoration(
-                color: Colors.grey, borderRadius: BorderRadius.circular(20)),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(
-                    20,
-                  ),
-                ),
-                height: 3,
-                width: 60,
+  Widget getModulesUi() {
+    List<Module> modules = controller.modules;
+    return Column(
+      children: [
+        Expanded(
+          flex: 1,
+          child: Center(
+            child: Text(
+              'Modules',
+              style: TextStyle(
+                color: Constants.primaryColor,
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+        Expanded(
+          flex: 11,
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: SizeConfig.screenWidth * 0.5,
+              mainAxisExtent: 120,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+            ),
+            itemCount: modules.length,
+            padding: UiUtils.allInsets8,
+            itemBuilder: (context, index) {
+              Module module = modules[index];
+              return InkWell(
+                onTap: () async {
+                  controller.animateForward(module);
+                },
+                child: tileCard(
+                  '${module.moduleName}',
+                  module.subModules!.length,
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget getSubModulesUi(Module? module) {
+    if (module == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    } else if (module.subModules == null || module.subModules!.isEmpty) {
+      return Center(
+        child: Text(
+          'No submodules available for ${module.moduleName}',
+        ),
+      );
+    }
+    List<SubModule> subModules = module.subModules!;
+    return Column(
+      children: [
+        Expanded(
+          flex: 1,
+          child: Center(
+            child: Text(
+              'SubModules',
+              style: TextStyle(
+                color: Constants.primaryColor,
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 11,
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: SizeConfig.screenWidth * 0.5,
+              mainAxisExtent: 120,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+            ),
+            itemCount: subModules.length,
+            padding: UiUtils.allInsets8,
+            itemBuilder: (context, index) {
+              SubModule subModule = subModules[index];
+              return InkWell(
+                onTap: () {
+                  Get.toNamed(
+                    AppRoutes.form,
+                    arguments: {
+                      'module_id': subModule.subModuleId,
+                    },
+                  );
+                },
+                child: tileCard(
+                  '${subModule.subModuleName}',
+                  2,
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

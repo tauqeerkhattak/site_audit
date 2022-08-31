@@ -9,9 +9,9 @@ class SplashController extends GetxController {
     super.onInit();
     Future.delayed(Duration(seconds: 3), () async {
       if (storage.hasKey(key: 'user')) {
-        Get.offAndToNamed(AppRoutes.HOME);
+        Get.offAndToNamed(AppRoutes.home);
       } else {
-        Get.offAndToNamed(AppRoutes.AUTH);
+        Get.offAndToNamed(AppRoutes.auth);
       }
     });
   }

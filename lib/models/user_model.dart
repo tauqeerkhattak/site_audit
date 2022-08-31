@@ -12,9 +12,9 @@ class User {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['status'] = this.status;
-    data['token'] = this.token;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['token'] = token;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
@@ -78,23 +78,23 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['id'] = this.id;
-    data['audit_company_id'] = this.auditCompanyId;
-    data['project_id'] = this.projectId;
-    data['status'] = this.status;
-    data['audit_team_id'] = this.auditTeamId;
-    data['password'] = this.password;
-    data['engineer_name_full'] = this.engineerNameFull;
-    data['engineer_mobile_number'] = this.engineerMobileNumber;
-    data['engineer_email_address'] = this.engineerEmailAddress;
-    data['location_managed_from'] = this.locationManagedFrom;
-    data['engineer_skills'] = this.engineerSkills;
-    data['engineer_certifications'] = this.engineerCertifications;
-    data['engineer_tools_carried'] = this.engineerToolsCarried;
-    data['engineer_id_copy'] = this.engineerIdCopy;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['audit_company_id'] = auditCompanyId;
+    data['project_id'] = projectId;
+    data['status'] = status;
+    data['audit_team_id'] = auditTeamId;
+    data['password'] = password;
+    data['engineer_name_full'] = engineerNameFull;
+    data['engineer_mobile_number'] = engineerMobileNumber;
+    data['engineer_email_address'] = engineerEmailAddress;
+    data['location_managed_from'] = locationManagedFrom;
+    data['engineer_skills'] = engineerSkills;
+    data['engineer_certifications'] = engineerCertifications;
+    data['engineer_tools_carried'] = engineerToolsCarried;
+    data['engineer_id_copy'] = engineerIdCopy;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

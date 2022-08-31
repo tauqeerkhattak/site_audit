@@ -6,7 +6,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:site_audit/models/user_model.dart';
 import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/service/local_storage_service.dart';
@@ -21,7 +20,7 @@ class AuthController extends GetxController {
   int index = 0;
 
   //IMAGE PICKER
-  final ImagePicker _picker = ImagePicker();
+  // final ImagePicker _picker = ImagePicker();
 
   // TEXT EDITING CONTROLLERS
   TextEditingController loginId = TextEditingController();
@@ -384,7 +383,7 @@ class AuthController extends GetxController {
       final res = await AppService.updateDetails(payload: payload);
       if (res != null) {
         _user.value = User.fromJson(res);
-        Get.offAndToNamed(AppRoutes.HOME);
+        Get.offAndToNamed(AppRoutes.home);
       }
     } catch (e) {
       print('Error: $e');

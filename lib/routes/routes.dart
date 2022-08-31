@@ -1,5 +1,6 @@
 class AppRoutes {
-  static const String SPLASH = '/';
-  static const String AUTH = "/auth";
-  static const String HOME = "/home";
+  static const String splash = '/';
+  static const String auth = "/auth";
+  static const String home = "/home";
+  static const String form = '/form';
 }

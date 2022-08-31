@@ -10,8 +10,11 @@ import 'package:site_audit/service/services.dart';
 
 class HomeController extends GetxController {
   RxBool loading = false.obs;
+  final pageController = PageController(initialPage: 0);
   final storageService = Get.find<LocalStorageService>();
   RxList<Module> modules = RxList([]);
+  Rxn<Module> selectedModule = Rxn();
+  Rxn<SubModule> selectedSubModule = Rxn();
 
   @override
   void onInit() {
@@ -31,7 +34,7 @@ class HomeController extends GetxController {
         modules.value = temp;
       }
     } catch (e) {
-      print('Error: $e');
+      log('Error: $e');
       Get.rawSnackbar(
         backgroundColor: Colors.red,
         message: 'Error: $e',
@@ -39,5 +42,25 @@ class HomeController extends GetxController {
     } finally {
       loading.value = false;
     }
+  }
+
+  void animateBack() async {
+    int currentPage = pageController.page!.toInt();
+    if (currentPage > 0) {
+      await pageController.animateToPage(
+        (currentPage - 1),
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.linear,
+      );
+    }
+  }
+
+  void animateForward(Module module) async {
+    selectedModule.value = module;
+    await pageController.animateToPage(
+      1,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.linear,
+    );
   }
 }
