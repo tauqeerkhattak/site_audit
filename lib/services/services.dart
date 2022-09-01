@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:site_audit/models/form_model.dart';
 import 'package:site_audit/models/module_model.dart';
-import 'package:site_audit/service/local_storage_service.dart';
+import 'package:site_audit/services/local_storage_service.dart';
 import 'package:site_audit/utils/network.dart';
 
 import 'apis.dart';

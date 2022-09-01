@@ -8,13 +8,13 @@ import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:site_audit/models/user_model.dart';
 import 'package:site_audit/routes/routes.dart';
-import 'package:site_audit/service/local_storage_service.dart';
-import 'package:site_audit/service/services.dart';
+import 'package:site_audit/services/local_storage_service.dart';
+import 'package:site_audit/services/services.dart';
 import 'package:site_audit/utils/network.dart';
 
 class AuthController extends GetxController {
   RxBool loading = false.obs;
-  Rx<User> _user = User().obs;
+  final Rx<User> _user = User().obs;
   final storageService = Get.find<LocalStorageService>();
   late PageController pageController;
   int index = 0;
@@ -344,6 +344,7 @@ class AuthController extends GetxController {
         if (res != null) {
           _user.value = User.fromJson(res);
           setUpdateDetails();
+          loading.value = false;
           //TODO: Uncomment this to call Site Detail API
           // await getSiteDetails();
           pageController.animateToPage(
@@ -355,12 +356,11 @@ class AuthController extends GetxController {
         }
       } catch (e) {
         print('Error: $e');
+        loading.value = false;
         Get.rawSnackbar(
           backgroundColor: Colors.red,
           message: 'Error: $e',
         );
-      } finally {
-        loading.value = false;
       }
     }
   }
@@ -383,16 +383,16 @@ class AuthController extends GetxController {
       final res = await AppService.updateDetails(payload: payload);
       if (res != null) {
         _user.value = User.fromJson(res);
+        loading.value = false;
         Get.offAndToNamed(AppRoutes.home);
       }
     } catch (e) {
-      print('Error: $e');
+      log('Error: $e');
+      loading.value = false;
       Get.rawSnackbar(
         backgroundColor: Colors.red,
         message: 'Error: $e',
       );
-    } finally {
-      loading.value = false;
     }
   }
 

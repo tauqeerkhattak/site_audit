@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:site_audit/service/local_storage_service.dart';
+import 'package:site_audit/services/image_picker_service.dart';
+import 'package:site_audit/services/local_storage_service.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/permssion_util.dart';
 
@@ -13,6 +14,7 @@ void main() async {
   await GetStorage.init();
   await PermissionUtil.request();
   Get.put(LocalStorageService());
+  Get.put(ImagePickerService());
   runApp(MyApp());
 }
 

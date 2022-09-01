@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/models/module_model.dart';
 import 'package:site_audit/models/user_model.dart';
-import 'package:site_audit/service/local_storage_service.dart';
-import 'package:site_audit/service/services.dart';
+import 'package:site_audit/services/local_storage_service.dart';
+import 'package:site_audit/services/services.dart';
 
 class HomeController extends GetxController {
   RxBool loading = false.obs;
@@ -26,21 +26,20 @@ class HomeController extends GetxController {
     try {
       final data = storageService.get(key: 'user');
       User user = User.fromJson(jsonDecode(data));
-      log('data: $data');
       loading.value = true;
       final temp =
           await AppService.getModules(projectId: user.data!.projectId!);
       if (temp != null) {
         modules.value = temp;
+        loading.value = false;
       }
     } catch (e) {
       log('Error: $e');
+      loading.value = false;
       Get.rawSnackbar(
         backgroundColor: Colors.red,
         message: 'Error: $e',
       );
-    } finally {
-      loading.value = false;
     }
   }
 

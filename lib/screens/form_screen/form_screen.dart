@@ -7,9 +7,9 @@ import 'package:site_audit/models/form_model.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/enums/enum_helper.dart';
 import 'package:site_audit/utils/enums/input_type.dart';
-import 'package:site_audit/utils/size_config.dart';
 import 'package:site_audit/utils/ui_utils.dart';
 import 'package:site_audit/widgets/custom_dropdown.dart';
+import 'package:site_audit/widgets/custom_radio_button.dart';
 import 'package:site_audit/widgets/default_layout.dart';
 import 'package:site_audit/widgets/image_input.dart';
 import 'package:site_audit/widgets/input_field.dart';
@@ -21,7 +21,6 @@ class FormScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('Data from: ${controller.data['textController'].text}');
     return DefaultLayout(
       backgroundImage: 'assets/images/hand-drawn-5g.jpg',
       child: Padding(
@@ -65,7 +64,7 @@ class FormScreen extends StatelessWidget {
                     Items item = form.items![index];
                     InputType type =
                         EnumHelper.inputTypeFromString(item.inputType);
-                    return _inputWidget(type, item);
+                    return _inputWidget(type, item, index);
                   },
                   separatorBuilder: (context, index) {
                     return const SizedBox(
@@ -79,111 +78,82 @@ class FormScreen extends StatelessWidget {
                 flex: 1,
                 child: RoundedButton(
                   text: 'Submit',
-                  onPressed: () {},
+                  onPressed: () {
+                    log('FINAL JSON: ${controller.data}');
+                  },
                 ),
               ),
             ],
           );
-          // return SingleChildScrollView(
-          //   child: Column(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     crossAxisAlignment: CrossAxisAlignment.stretch,
-          //     children: List.generate(
-          //       form.items!.length,
-          //       (index) {
-          //       },
-          //     ),
-          //   ),
-          // );
         }
       },
     );
   }
 
-  Widget _inputWidget(InputType type, Items item) {
+  Widget _inputWidget(InputType type, Items item, int index) {
     switch (type) {
       case InputType.DROPDOWN:
-        List<String> items = item.inputOption!.inputOptions!;
-        String currentValue = items.first;
-        return CustomDropdown(
-          items: items,
-          label: item.inputLabel,
-          value: currentValue,
-          onChanged: (String? value) {
-            currentValue = value!;
-          },
+        List<String> options = item.inputOption!.inputOptions!;
+        return Obx(
+          () => CustomDropdown(
+            items: options,
+            label: item.inputLabel,
+            value: controller.data['DROPDOWN$index']!.value,
+            onChanged: (String? value) {
+              controller.data['DROPDOWN$index']!.value = value!;
+              log('OnChanged: $value ${controller.data['DROPDOWN$index']!.value}');
+            },
+          ),
         );
-
       case InputType.AUTO_FILLED:
         return InputField(
+          controller: controller.data['AUTOFILLED$index']!.value,
           label: item.inputLabel,
           placeHolder: 'Tap to Enter Text',
           readOnly: true,
         );
       case InputType.TEXTBOX:
         return InputField(
+          controller: controller.data['TEXTBOX$index']!.value,
           label: item.inputLabel,
           placeHolder: 'Tap to Enter Text',
         );
       case InputType.INTEGER:
         return InputField(
+          controller: controller.data['INTEGER$index']!.value,
           label: item.inputLabel,
           placeHolder: 'Tap to Enter Text',
           inputType: TextInputType.number,
         );
       case InputType.PHOTO:
-        return ImageInput(
-          onTap: () {
-            log('Photo upload tapped!');
-          },
-          label: item.inputLabel,
-          hint: 'Upload a picture',
+        return Obx(
+          () => ImageInput(
+            onTap: () async {
+              final path = await controller.imagePickerService.pickImage();
+              controller.data['PHOTO$index']!.value = path;
+              log('Photo upload tapped!');
+            },
+            imagePath: controller.data['PHOTO$index']!.value,
+            label: item.inputLabel,
+            hint: 'Upload a picture',
+          ),
         );
       case InputType.RADIAL:
         String? label = item.inputLabel;
         List<String> options = item.inputOption!.inputOptions!;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (label != null)
-              Text(
-                label,
-                style: TextStyle(
-                  color: Constants.primaryColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            if (label != null) UiUtils.spaceVrt10,
-            GridView(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisExtent: SizeConfig.screenHeight * 0.06,
-              ),
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              children: List.generate(options.length, (index) {
-                return RadioListTile(
-                  value: index.isEven,
-                  title: Text(
-                    options[index],
-                    style: TextStyle(
-                      color: Constants.primaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                  groupValue: 1,
-                  onChanged: (value) {},
-                );
-              }),
-            ),
-          ],
+        return Obx(
+          () => CustomRadioButton(
+            label: label,
+            options: options,
+            value: controller.data['RADIAL$index']!.value,
+            onChanged: (value) {
+              controller.data['RADIAL$index']!.value = value;
+            },
+          ),
         );
       case InputType.FLOAT:
         return InputField(
+          controller: controller.data['FLOAT$index']!.value,
           label: item.inputLabel,
           placeHolder: 'Tap to Enter Text',
           inputType: TextInputType.number,
