@@ -2,12 +2,15 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:site_audit/controllers/form_controller.dart';
+import 'package:site_audit/domain/controllers/form_controller.dart';
 import 'package:site_audit/models/form_model.dart';
+import 'package:site_audit/models/static_drop_model.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/enums/enum_helper.dart';
 import 'package:site_audit/utils/enums/input_type.dart';
 import 'package:site_audit/utils/ui_utils.dart';
+import 'package:site_audit/utils/validator.dart';
+import 'package:site_audit/utils/widget_utils.dart';
 import 'package:site_audit/widgets/custom_dropdown.dart';
 import 'package:site_audit/widgets/custom_radio_button.dart';
 import 'package:site_audit/widgets/default_layout.dart';
@@ -38,6 +41,13 @@ class FormScreen extends StatelessWidget {
             child: UiUtils.loadingIndicator,
           );
         } else {
+          if (controller.form.value == null) {
+            return const Center(
+              child: Text(
+                'Error getting forms, please try again after a few minutes',
+              ),
+            );
+          }
           FormModel form = controller.form.value!;
           return Column(
             children: [
@@ -56,32 +66,99 @@ class FormScreen extends StatelessWidget {
               ),
               Expanded(
                 flex: 10,
-                child: ListView.separated(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10,
+                child: Form(
+                  key: controller.formKey,
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: UiUtils.vertInsets8,
+                      child: Column(
+                        children: [
+                          Obx(
+                            () => Row(
+                              children: [
+                                Expanded(
+                                  child: operatorDrop(
+                                    'Site Operator',
+                                    controller.operators,
+                                  ),
+                                ),
+                                UiUtils.spaceVrt20,
+                                Expanded(
+                                  child: regionDrop(
+                                    'Site Region',
+                                    controller.regions,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          WidgetUtils.spaceVrt10,
+                          Obx(
+                            () => Row(
+                              children: [
+                                Expanded(
+                                  child: subRegionDrop(
+                                    'Site Sub-Region',
+                                    controller.subRegions,
+                                  ),
+                                ),
+                                UiUtils.spaceVrt20,
+                                Expanded(
+                                  child: clusterDrop(
+                                    'Site Cluster',
+                                    controller.clusters,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          WidgetUtils.spaceVrt10,
+                          Obx(
+                            () => Row(
+                              children: [
+                                Expanded(
+                                  child: siteIdDrop(
+                                    'Site ID',
+                                    controller.siteIDs,
+                                  ),
+                                ),
+                                WidgetUtils.spaceHrz20,
+                                Expanded(
+                                  child: InputField(
+                                    label: 'Site Name',
+                                    placeHolder: 'Site Name',
+                                    validator: Validator.stringValidator,
+                                    controller: controller.siteName,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          ...List.generate(form.items!.length, (index) {
+                            Items item = form.items![index];
+                            InputType type =
+                                EnumHelper.inputTypeFromString(item.inputType);
+                            return Column(
+                              children: [
+                                UiUtils.spaceVrt10,
+                                _inputWidget(
+                                  type,
+                                  item,
+                                  index,
+                                ),
+                                UiUtils.spaceVrt10,
+                              ],
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
                   ),
-                  itemBuilder: (context, index) {
-                    Items item = form.items![index];
-                    InputType type =
-                        EnumHelper.inputTypeFromString(item.inputType);
-                    return _inputWidget(type, item, index);
-                  },
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(
-                      height: 20,
-                    );
-                  },
-                  itemCount: form.items!.length,
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: RoundedButton(
-                  text: 'Submit',
-                  onPressed: () {
-                    log('FINAL JSON: ${controller.data}');
-                  },
-                ),
+              RoundedButton(
+                text: 'Submit',
+                onPressed: controller.submit,
               ),
             ],
           );
@@ -95,10 +172,12 @@ class FormScreen extends StatelessWidget {
       case InputType.DROPDOWN:
         List<String> options = item.inputOption!.inputOptions!;
         return Obx(
-          () => CustomDropdown(
+          () => CustomDropdown<String>(
             items: options,
             label: item.inputLabel,
             value: controller.data['DROPDOWN$index']!.value,
+            validator:
+                item.mandatory ?? true ? Validator.stringValidator : null,
             onChanged: (String? value) {
               controller.data['DROPDOWN$index']!.value = value!;
               log('OnChanged: $value ${controller.data['DROPDOWN$index']!.value}');
@@ -110,6 +189,7 @@ class FormScreen extends StatelessWidget {
           controller: controller.data['AUTOFILLED$index']!.value,
           label: item.inputLabel,
           placeHolder: 'Tap to Enter Text',
+          validator: item.mandatory ?? true ? Validator.stringValidator : null,
           readOnly: true,
         );
       case InputType.TEXTBOX:
@@ -117,6 +197,7 @@ class FormScreen extends StatelessWidget {
           controller: controller.data['TEXTBOX$index']!.value,
           label: item.inputLabel,
           placeHolder: 'Tap to Enter Text',
+          validator: item.mandatory ?? true ? Validator.stringValidator : null,
         );
       case InputType.INTEGER:
         return InputField(
@@ -124,6 +205,7 @@ class FormScreen extends StatelessWidget {
           label: item.inputLabel,
           placeHolder: 'Tap to Enter Text',
           inputType: TextInputType.number,
+          validator: item.mandatory ?? true ? Validator.stringValidator : null,
         );
       case InputType.PHOTO:
         return Obx(
@@ -133,6 +215,7 @@ class FormScreen extends StatelessWidget {
               controller.data['PHOTO$index']!.value = path;
               log('Photo upload tapped!');
             },
+            isMandatory: item.mandatory ?? false,
             imagePath: controller.data['PHOTO$index']!.value,
             label: item.inputLabel,
             hint: 'Upload a picture',
@@ -157,7 +240,107 @@ class FormScreen extends StatelessWidget {
           label: item.inputLabel,
           placeHolder: 'Tap to Enter Text',
           inputType: TextInputType.number,
+          validator: item.mandatory ?? true ? Validator.stringValidator : null,
         );
     }
+  }
+
+  Widget operatorDrop(label, List<Datum> items) {
+    items = items.toSet().toList();
+    return CustomDropdown<Datum?>(
+      items: items,
+      hint: 'Select',
+      label: 'Site Operator',
+      validator: Validator.dynamicValidator,
+      value: controller.currentOperator.value,
+      onChanged: (value) {
+        controller.currentOperator.value = value!;
+        controller.regions.clear();
+        controller.regions.assignAll(controller.currentOperator.value!.region!);
+        controller.currentRegion.value = null;
+        controller.subRegions.clear();
+        controller.currentSubRegion.value = null;
+        controller.clusters.clear();
+        controller.currentCluster.value = null;
+        controller.siteIDs.clear();
+        controller.currentSite.value = null;
+        controller.siteName.text = '';
+      },
+    );
+  }
+
+  Widget regionDrop(label, List<Region> items) {
+    items = items.toSet().toList();
+    return CustomDropdown<Region>(
+      items: items,
+      label: 'Site Region',
+      hint: 'Select',
+      validator: Validator.dynamicValidator,
+      value: controller.currentRegion.value,
+      onChanged: (value) {
+        controller.currentRegion.value = value!;
+        controller.subRegions
+            .assignAll(controller.currentRegion.value!.subRegion!);
+        controller.currentSubRegion.value = null;
+        controller.clusters.clear();
+        controller.currentCluster.value = null;
+        controller.siteIDs.clear();
+        controller.currentSite.value = null;
+        controller.siteName.text = '';
+      },
+    );
+  }
+
+  Widget subRegionDrop(label, List<SubRegion> items) {
+    items = items.toSet().toList();
+    return CustomDropdown<SubRegion>(
+      label: 'Site Sub-Region',
+      hint: 'Select',
+      validator: Validator.dynamicValidator,
+      value: controller.currentSubRegion.value,
+      items: items,
+      onChanged: (value) {
+        controller.currentSubRegion.value = value!;
+        controller.clusters
+            .assignAll(controller.currentSubRegion.value!.clusterId!);
+        controller.currentCluster.value = null;
+        controller.siteIDs.clear();
+        controller.currentSite.value = null;
+        controller.siteName.text = '';
+      },
+    );
+  }
+
+  Widget clusterDrop(label, List<ClusterId> items) {
+    items = items.toSet().toList();
+    return CustomDropdown<ClusterId>(
+      label: 'Site Cluster',
+      hint: 'Select',
+      value: controller.currentCluster.value,
+      validator: Validator.dynamicValidator,
+      items: items,
+      onChanged: (value) {
+        controller.currentCluster.value = value!;
+        controller.siteIDs
+            .assignAll(controller.currentCluster.value!.siteReference!);
+        controller.currentSite.value = null;
+        controller.siteName.text = '';
+      },
+    );
+  }
+
+  Widget siteIdDrop(label, List<SiteReference> items) {
+    items = items.toSet().toList();
+    return CustomDropdown<SiteReference>(
+      items: items,
+      label: 'Site ID',
+      hint: 'Select',
+      value: controller.currentSite.value,
+      validator: Validator.dynamicValidator,
+      onChanged: (value) {
+        controller.currentSite.value = value;
+        controller.siteName.text = controller.currentSite.value!.name!;
+      },
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
@@ -6,7 +7,7 @@ import 'constants.dart';
 
 class Network {
   static var client = http.Client();
-  static bool isNetworkAvailable = false;
+  static bool isNetworkAvailable = true;
   static bool sendDataToNetwork = false;
 
   static get(
@@ -22,18 +23,16 @@ class Network {
       }
 
       Uri uri = Uri.https(Constants.baseUrl, url, params);
-      print("REQUESTED URL => $uri");
+      log("REQUESTED URL => $uri");
       var response = await client.get(uri, headers: apiHeaders);
       if (response.statusCode == 200) {
         return response.body;
       }
-      if (response.statusCode < 200 ||
-          response.statusCode > 400 ||
-          json == null) {
+      if (response.statusCode < 200 || response.statusCode > 400) {
         return null;
       }
     } catch (e) {
-      print("GET: $e");
+      log("GET: $e");
       return throw Exception(e);
     }
   }
@@ -55,7 +54,7 @@ class Network {
         Constants.baseUrl,
         url,
       );
-      print(uri);
+      log(uri.toString());
       http.MultipartRequest request = http.MultipartRequest(
         'POST',
         uri,
@@ -65,23 +64,23 @@ class Network {
       for (int i = 0; i < files!.length; i++) {
         request.files.add(files[i]);
       }
-      // print("FILES:::: ${request.fields.length}");
-      // print("PAYLOAD::::: $payload}");
+      // log("FILES:::: ${request.fields.length}");
+      // log("PAYLOAD::::: $payload}");
       var res = await request.send();
-      print("Error: ${res.statusCode}");
+      log("Error: ${res.statusCode}");
       String response = await res.stream.bytesToString();
-      print("Error: " + response);
+      log("Error: $response");
       if (res.statusCode == 200) {
         return response;
       } else {
-        print('Hello');
+        log('Hello');
       }
-      if (res.statusCode < 200 || res.statusCode > 400 || json == null) {
+      if (res.statusCode < 200 || res.statusCode > 400) {
         return null;
       }
       return null;
     } catch (e) {
-      print("POST: $e");
+      log("POST: $e");
       return throw Exception(e);
     }
   }
@@ -106,19 +105,17 @@ class Network {
           // Constants.baseUrl,
           url,
           params);
-      print(uri);
+      log(uri.toString());
       var response = await client.post(uri, body: body, headers: apiHeaders);
-      print('Response: ' + response.body);
+      log('Response: ${response.body}');
       if (response.statusCode == 200) {
         return response.body;
       }
-      if (response.statusCode < 200 ||
-          response.statusCode > 400 ||
-          json == null) {
+      if (response.statusCode < 200 || response.statusCode > 400) {
         return null;
       }
     } catch (e) {
-      print("POST: $e");
+      log("POST: $e");
       return throw Exception(e);
     }
   }
@@ -134,19 +131,17 @@ class Network {
       }
       var body = json.encode(payload);
       Uri uri = Uri.https(Constants.baseUrl, url, params);
-      print(uri);
+      log(uri.toString());
       var response = await client.put(uri, body: body, headers: apiHeaders);
-      print("Error: " + response.body);
+      log("Error: ${response.body}");
       if (response.statusCode == 200) {
         return response.body;
       }
-      if (response.statusCode < 200 ||
-          response.statusCode > 400 ||
-          json == null) {
+      if (response.statusCode < 200 || response.statusCode > 400) {
         return null;
       }
     } catch (e) {
-      print("POST: $e");
+      log("POST: $e");
       return throw Exception(e);
     }
   }

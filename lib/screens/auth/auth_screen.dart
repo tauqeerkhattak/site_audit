@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:site_audit/controllers/auth_controller.dart';
+import 'package:site_audit/domain/controllers/auth_controller.dart';
 import 'package:site_audit/screens/auth/confirm_detail.dart';
 import 'package:site_audit/screens/auth/login.dart';
 

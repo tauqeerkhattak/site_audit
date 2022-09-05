@@ -1,6 +1,7 @@
 class FormModel {
   int? subModuleId;
   String? subModuleName;
+  Map<String,String>? staticValues;
   List<Items>? items;
 
   FormModel({this.subModuleId, this.subModuleName, this.items});
@@ -20,6 +21,7 @@ class FormModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['sub_module_id'] = subModuleId;
     data['sub_module_name'] = subModuleName;
+    data['static_values'] = staticValues;
     if (items != null) {
       data['items'] = items!.map((v) => v.toJson()).toList();
     }
@@ -30,10 +32,11 @@ class FormModel {
 class Items {
   int? projectId;
   String? designRef;
-  int? mandatory;
+  bool? mandatory;
   String? inputDescription;
   String? inputType;
   String? inputLabel;
+  String? answer;
   int? status;
   InputOption? inputOption;
   Modules? modules;
@@ -45,6 +48,7 @@ class Items {
       this.inputDescription,
       this.inputType,
       this.inputLabel,
+      this.answer,
       this.status,
       this.inputOption,
       this.modules});
@@ -52,10 +56,11 @@ class Items {
   Items.fromJson(Map<String, dynamic> json) {
     projectId = json['project_id'];
     designRef = json['design_ref'];
-    mandatory = json['mandatory'];
+    mandatory = json['mandatory'] == 1 ? true : false;
     inputDescription = json['input_description'];
     inputType = json['input_type'];
     inputLabel = json['input_label'];
+    answer = json['answer'];
     status = json['status'];
     inputOption = json['input_option'] != null
         ? InputOption.fromJson(json['input_option'])
@@ -72,6 +77,7 @@ class Items {
     data['input_description'] = inputDescription;
     data['input_type'] = inputType;
     data['input_label'] = inputLabel;
+    data['answer'] = answer;
     data['status'] = status;
     if (inputOption != null) {
       data['input_option'] = inputOption!.toJson();

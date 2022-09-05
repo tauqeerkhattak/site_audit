@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:site_audit/controllers/auth_controller.dart';
+import 'package:site_audit/domain/controllers/auth_controller.dart';
 import 'package:site_audit/utils/size_config.dart';
+import 'package:site_audit/utils/validator.dart';
 import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
@@ -11,7 +12,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData _theme = Theme.of(context);
+    ThemeData theme = Theme.of(context);
     return Stack(
       children: [
         Positioned(
@@ -24,7 +25,8 @@ class LoginScreen extends StatelessWidget {
         ),
         SingleChildScrollView(
           // height: MediaQuery.of(context).size.height,
-          padding: EdgeInsets.only(top: 50, left: 30, right: 30, bottom: 30),
+          padding:
+              const EdgeInsets.only(top: 50, left: 30, right: 30, bottom: 30),
           child: Form(
             key: controller.loginFormKey,
             child: Column(
@@ -34,21 +36,21 @@ class LoginScreen extends StatelessWidget {
                   "assets/images/op_co_services.png",
                   scale: 3.0,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Text(
                   'iServAudit',
-                  style: _theme.textTheme.headline3,
+                  style: theme.textTheme.headline3,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Text(
                   'Site Audit\nApp\nLogin:',
-                  style: _theme.textTheme.headline4,
+                  style: theme.textTheme.headline4,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 DecoratedBox(
@@ -65,25 +67,25 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 InputField(
                   placeHolder: "Engineer ID",
                   lines: 1,
                   controller: controller.loginId,
-                  validator: controller.stringValidator,
+                  validator: Validator.stringValidator,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 InputField(
                   placeHolder: "Password",
                   lines: 1,
                   controller: controller.password,
-                  validator: controller.stringValidator,
+                  validator: Validator.stringValidator,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 Obx(

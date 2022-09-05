@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/models/module_model.dart';
 import 'package:site_audit/models/user_model.dart';
+import 'package:site_audit/services/local_storage_keys.dart';
 import 'package:site_audit/services/local_storage_service.dart';
 import 'package:site_audit/services/services.dart';
 
@@ -24,13 +25,16 @@ class HomeController extends GetxController {
 
   Future<void> getModules() async {
     try {
-      final data = storageService.get(key: 'user');
+      final data = storageService.get(key: userKey);
       User user = User.fromJson(jsonDecode(data));
       loading.value = true;
       final temp =
           await AppService.getModules(projectId: user.data!.projectId!);
       if (temp != null) {
         modules.value = temp;
+        modules.removeWhere((element) {
+          return element.moduleName!.toLowerCase() == 'site details';
+        });
         loading.value = false;
       }
     } catch (e) {

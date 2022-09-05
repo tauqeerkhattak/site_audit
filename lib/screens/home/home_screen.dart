@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:site_audit/controllers/home_controller.dart';
+import 'package:site_audit/domain/controllers/home_controller.dart';
 import 'package:site_audit/models/module_model.dart';
 import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/utils/constants.dart';
@@ -38,6 +38,11 @@ class HomeScreen extends StatelessWidget {
               ),
             );
           } else {
+            if (controller.modules.isEmpty) {
+              return const Center(
+                child: Text('Cannot get data!'),
+              );
+            }
             return PageView(
               physics: const NeverScrollableScrollPhysics(),
               controller: controller.pageController,

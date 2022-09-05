@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:site_audit/controllers/auth_controller.dart';
+import 'package:site_audit/domain/controllers/auth_controller.dart';
+import 'package:site_audit/utils/validator.dart';
 import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
@@ -10,7 +11,7 @@ class ConfirmDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData _theme = Theme.of(context);
+    ThemeData theme = Theme.of(context);
     return Stack(
       children: [
         Positioned(
@@ -21,7 +22,8 @@ class ConfirmDetail extends StatelessWidget {
               height: 300,
             )),
         SingleChildScrollView(
-          padding: EdgeInsets.only(left: 30, right: 30, top: 50, bottom: 30),
+          padding:
+              const EdgeInsets.only(left: 30, right: 30, top: 50, bottom: 30),
           child: Form(
             key: controller.formKey,
             child: Column(
@@ -29,33 +31,33 @@ class ConfirmDetail extends StatelessWidget {
               children: [
                 Text(
                   'Confirm\nEngineer\nDetails:',
-                  style: _theme.textTheme.headline4,
+                  style: theme.textTheme.headline4,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 InputField(
                   placeHolder: "Name",
                   controller: controller.name,
-                  validator: controller.stringValidator,
+                  validator: Validator.stringValidator,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 InputField(
                   placeHolder: "Email",
                   controller: controller.email,
-                  validator: controller.stringValidator,
+                  validator: Validator.stringValidator,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 InputField(
                   placeHolder: "Phone",
                   controller: controller.phone,
-                  validator: controller.stringValidator,
+                  validator: Validator.stringValidator,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 Obx(

@@ -61,6 +61,10 @@ class InputField extends StatelessWidget {
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.white,
+              constraints: const BoxConstraints(
+                minHeight: 60,
+                maxHeight: 60,
+              ),
               hintText: placeHolder.toString(),
               prefixIcon: icon,
               hintStyle: TextStyle(

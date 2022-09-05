@@ -4,9 +4,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:site_audit/models/form_model.dart';
 import 'package:site_audit/models/module_model.dart';
+import 'package:site_audit/models/static_drop_model.dart';
+import 'package:site_audit/services/local_storage_keys.dart';
 import 'package:site_audit/services/local_storage_service.dart';
 import 'package:site_audit/utils/network.dart';
 
@@ -23,11 +24,11 @@ class AppService {
       if (res != null) {
         var user = jsonDecode(res);
         _storageService.save(
-          key: 'user',
+          key: userKey,
           value: res,
         );
         _storageService.save(
-          key: "token",
+          key: tokenKey,
           value: user['token'],
         );
         return user;
@@ -53,7 +54,7 @@ class AppService {
     try {
       var header = {
         "Authorization": "Bearer ${_storageService.get(
-          key: 'token',
+          key: tokenKey,
         )}"
       };
       var res = await Network.post(
@@ -64,7 +65,7 @@ class AppService {
       if (res != null) {
         var data = jsonDecode(res);
         _storageService.save(
-          key: 'user',
+          key: tokenKey,
           value: res,
         );
         Get.snackbar(
@@ -97,66 +98,39 @@ class AppService {
     }
   }
 
-  // POST SITE DETAILS
-  static Future<String> storeSiteDetails(
-      {required Map<String, String> payload,
-      List<http.MultipartFile>? files}) async {
+  //STATIC DROPDOWNS
+  static Future<StaticDropModel?> getStaticDropdowns(String projectId) async {
     try {
-      // dev.log(payload);
-      var header = {
-        "Authorization": "Bearer ${_storageService.get(
-          key: 'token',
-        )}"
-      };
-      var response = await Network.multiPartRequest(
-        url: Api.postDetails,
-        payload: payload,
-        headers: header,
-        files: files,
-      );
-      dev.log('POST SITE DETAIL: $response');
-      if (response != null) {
-        return response;
-      } else {
-        return '';
-      }
-    } on Exception catch (e) {
-      dev.log("ERROR STORING DETAILS: $e");
-      Get.rawSnackbar(
-        message: "Error in Storing site details!",
-        backgroundColor: Colors.redAccent,
-      );
-      return throw Exception(e);
-    }
-  }
-
-  //SITE DETAILS
-  static getSiteDetails() async {
-    try {
-      var header = {
-        "Authorization": "Bearer ${_storageService.get(
-          key: 'token',
-        )}"
-      };
-      var data = _storageService.get(
-        key: 'user',
-      );
-      data = jsonDecode(data);
-      String? response = await Network.get(
-          url: '${Api.siteDetails}${data['assigned_to_project_id']}',
-          headers: header);
-      if (response != null) {
-        final data = jsonDecode(response);
-        await _storageService.save(
-          key: 'site_details',
-          value: data,
+      if (Network.isNetworkAvailable) {
+        var header = {
+          "Authorization": "Bearer ${_storageService.get(
+            key: tokenKey,
+          )}"
+        };
+        String? response = await Network.get(
+          url: '${Api.siteDetails}$projectId',
+          headers: header,
         );
-        return data;
+        dev.log('DEV: $response');
+        if (response != null) {
+          await _storageService.save(
+            key: staticValueKey,
+            value: response,
+          );
+          final data = jsonDecode(response);
+          return StaticDropModel.fromJson(data);
+        } else {
+          Get.rawSnackbar(
+              title: 'Unable to get site details',
+              backgroundColor: Colors.redAccent);
+          return null;
+        }
       } else {
-        Get.rawSnackbar(
-            title: 'Unable to get site details',
-            backgroundColor: Colors.redAccent);
-        return null;
+        if (_storageService.hasKey(key: staticValueKey)) {
+          final response = _storageService.get(key: staticValueKey);
+          final data = jsonDecode(response);
+          return StaticDropModel.fromJson(data);
+        }
       }
     } on Exception catch (e) {
       dev.log("ERROR Getting Details: $e");
@@ -165,6 +139,7 @@ class AppService {
           backgroundColor: Colors.redAccent);
       return throw Exception(e);
     }
+    return null;
   }
 
   //Physical Site types
@@ -176,7 +151,7 @@ class AppService {
         )}"
       };
       var data = _storageService.get(
-        key: 'user',
+        key: userKey,
       );
       var response = await Network.get(
         url: '${Api.physicalType}${data['assigned_to_project_id']}',
@@ -207,11 +182,11 @@ class AppService {
     try {
       var header = {
         "Authorization": "Bearer ${_storageService.get(
-          key: 'token',
+          key: tokenKey,
         )}"
       };
       var data = _storageService.get(
-        key: 'user',
+        key: userKey,
       );
       var response = await Network.get(
         url: '${Api.weatherType}${data['assigned_to_project_id']}',
@@ -232,25 +207,38 @@ class AppService {
 
   static Future<List<Module>?> getModules({required int projectId}) async {
     try {
-      var header = {
-        "Authorization": "Bearer ${_storageService.get(
-          key: 'token',
-        )}"
-      };
-      final response = await Network.get(
-        url: '${Api.getModules}$projectId',
-        headers: header,
-      );
-      if (response != null) {
-        List<dynamic> jsonList = jsonDecode(response);
-        List<Module> modules = [];
-        for (var element in jsonList) {
-          modules.add(Module.fromJson(element));
+      dev.log('NET: ${Network.isNetworkAvailable}');
+      if (Network.isNetworkAvailable) {
+        var header = {
+          "Authorization": "Bearer ${_storageService.get(
+            key: tokenKey,
+          )}"
+        };
+        final response = await Network.get(
+          url: '${Api.getModules}$projectId',
+          headers: header,
+        );
+        if (response != null) {
+          _storageService.save(key: modulesKey, value: response);
+          List<dynamic> jsonList = jsonDecode(response);
+          List<Module> modules = [];
+          for (var element in jsonList) {
+            modules.add(Module.fromJson(element));
+          }
+          dev.log('Modules data: $response');
+          return modules;
         }
-        dev.log('Modules data: $response');
-        return modules;
       } else {
-        return null;
+        dev.log('DATA IS COMING LOCAL STORAGE');
+        if (_storageService.hasKey(key: modulesKey)) {
+          final response = _storageService.get(key: modulesKey);
+          List<dynamic> jsonList = jsonDecode(response);
+          List<Module> modules = [];
+          for (var element in jsonList) {
+            modules.add(Module.fromJson(element));
+          }
+          return modules;
+        }
       }
     } on Exception catch (e) {
       dev.log('Error in Modules Data: $e');
@@ -260,28 +248,39 @@ class AppService {
       );
       throw Exception(e);
     }
+    return null;
   }
 
   static Future<FormModel?> getFormBySubModuleId(
       {required String projectId, required int moduleId}) async {
     try {
-      var header = {
-        "Authorization": "Bearer ${_storageService.get(
-          key: 'token',
-        )}"
-      };
-      final response = await Network.get(
-        url: '${Api.getForms}$projectId/$moduleId',
-        headers: header,
-      );
-      if (response != null) {
-        List<dynamic> jsonList = jsonDecode(response);
-        FormModel? form;
-        form = FormModel.fromJson(jsonList[0]);
-        dev.log('Form: $response');
-        return form;
+      if (Network.isNetworkAvailable) {
+        var header = {
+          "Authorization": "Bearer ${_storageService.get(
+            key: tokenKey,
+          )}"
+        };
+        final response = await Network.get(
+          url: '${Api.getForms}$projectId/$moduleId',
+          headers: header,
+        );
+        if (response != null) {
+          _storageService.save(key: formKey, value: response);
+          List<dynamic> jsonList = jsonDecode(response);
+          FormModel? form;
+          form = FormModel.fromJson(jsonList[0]);
+          return form;
+        } else {
+          return null;
+        }
       } else {
-        return null;
+        if (_storageService.hasKey(key: formKey)) {
+          final response = _storageService.get(key: formKey);
+          List<dynamic> jsonList = jsonDecode(response);
+          FormModel? form;
+          form = FormModel.fromJson(jsonList[0]);
+          return form;
+        }
       }
     } on Exception catch (e) {
       dev.log('Error in Forms Data: $e');
@@ -291,5 +290,6 @@ class AppService {
       );
       throw Exception(e);
     }
+    return null;
   }
 }

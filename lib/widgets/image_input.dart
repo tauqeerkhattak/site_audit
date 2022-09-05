@@ -9,10 +9,12 @@ class ImageInput extends StatelessWidget {
   final Function() onTap;
   final String? imagePath, label, hint;
   final double? horizontal, vertical;
+  final bool isMandatory;
   const ImageInput({
     Key? key,
     required this.imagePath,
     required this.onTap,
+    required this.isMandatory,
     this.label,
     this.hint,
     this.horizontal,
@@ -79,6 +81,15 @@ class ImageInput extends StatelessWidget {
                       ],
                     ),
             ),
+            if (isMandatory)
+              UiUtils.spaceVrt10,
+            if (isMandatory)
+              const Text(
+                '* required',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
           ],
         ),
       ),
