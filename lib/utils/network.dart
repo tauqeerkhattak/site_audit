@@ -23,12 +23,13 @@ class Network {
       }
 
       Uri uri = Uri.https(Constants.baseUrl, url, params);
-      log("REQUESTED URL => $uri");
+      log('REQUESTED URL => $uri');
       var response = await client.get(uri, headers: apiHeaders);
       if (response.statusCode == 200) {
         return response.body;
       }
       if (response.statusCode < 200 || response.statusCode > 400) {
+        log('ERROR: ${response.body}');
         return null;
       }
     } catch (e) {

@@ -14,6 +14,10 @@ class UiUtils {
   );
 
   static const spaceVrt20 = SizedBox(
+    height: 20,
+  );
+
+  static const spaceHzt20 = SizedBox(
     width: 20,
   );
 

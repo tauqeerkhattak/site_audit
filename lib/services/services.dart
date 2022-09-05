@@ -65,7 +65,7 @@ class AppService {
       if (res != null) {
         var data = jsonDecode(res);
         _storageService.save(
-          key: tokenKey,
+          key: userKey,
           value: res,
         );
         Get.snackbar(
@@ -207,7 +207,6 @@ class AppService {
 
   static Future<List<Module>?> getModules({required int projectId}) async {
     try {
-      dev.log('NET: ${Network.isNetworkAvailable}');
       if (Network.isNetworkAvailable) {
         var header = {
           "Authorization": "Bearer ${_storageService.get(
@@ -219,13 +218,12 @@ class AppService {
           headers: header,
         );
         if (response != null) {
-          _storageService.save(key: modulesKey, value: response);
+          await _storageService.save(key: modulesKey, value: response);
           List<dynamic> jsonList = jsonDecode(response);
           List<Module> modules = [];
           for (var element in jsonList) {
             modules.add(Module.fromJson(element));
           }
-          dev.log('Modules data: $response');
           return modules;
         }
       } else {
@@ -242,10 +240,6 @@ class AppService {
       }
     } on Exception catch (e) {
       dev.log('Error in Modules Data: $e');
-      Get.rawSnackbar(
-        message: "Error getting Modules",
-        backgroundColor: Colors.redAccent,
-      );
       throw Exception(e);
     }
     return null;
@@ -265,7 +259,7 @@ class AppService {
           headers: header,
         );
         if (response != null) {
-          _storageService.save(key: formKey, value: response);
+          await _storageService.save(key: formKey, value: response);
           List<dynamic> jsonList = jsonDecode(response);
           FormModel? form;
           form = FormModel.fromJson(jsonList[0]);
@@ -284,10 +278,6 @@ class AppService {
       }
     } on Exception catch (e) {
       dev.log('Error in Forms Data: $e');
-      Get.rawSnackbar(
-        message: "Error getting Forms",
-        backgroundColor: Colors.redAccent,
-      );
       throw Exception(e);
     }
     return null;

@@ -35,15 +35,16 @@ class HomeController extends GetxController {
         modules.removeWhere((element) {
           return element.moduleName!.toLowerCase() == 'site details';
         });
-        loading.value = false;
       }
     } catch (e) {
       log('Error: $e');
-      loading.value = false;
+
       Get.rawSnackbar(
         backgroundColor: Colors.red,
         message: 'Error: $e',
       );
+    } finally {
+      loading.value = false;
     }
   }
 

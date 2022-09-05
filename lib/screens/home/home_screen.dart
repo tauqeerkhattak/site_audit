@@ -7,6 +7,7 @@ import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/size_config.dart';
 import 'package:site_audit/utils/ui_utils.dart';
 import 'package:site_audit/widgets/default_layout.dart';
+import 'package:site_audit/widgets/error_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -26,36 +27,34 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _bodyWidget() {
-    return SafeArea(
-      child: Obx(
-        () {
-          if (controller.loading.value) {
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(
-                  Constants.primaryColor,
-                ),
+    return Obx(
+      () {
+        if (controller.loading.value) {
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(
+                Constants.primaryColor,
               ),
-            );
-          } else {
-            if (controller.modules.isEmpty) {
-              return const Center(
-                child: Text('Cannot get data!'),
-              );
-            }
-            return PageView(
-              physics: const NeverScrollableScrollPhysics(),
-              controller: controller.pageController,
-              children: [
-                getModulesUi(),
-                getSubModulesUi(
-                  controller.selectedModule.value,
-                ),
-              ],
+            ),
+          );
+        } else {
+          if (controller.modules.isEmpty) {
+            return const CustomErrorWidget(
+              errorText: 'Cannot get Modules!',
             );
           }
-        },
-      ),
+          return PageView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: controller.pageController,
+            children: [
+              getModulesUi(),
+              getSubModulesUi(
+                controller.selectedModule.value,
+              ),
+            ],
+          );
+        }
+      },
     );
   }
 

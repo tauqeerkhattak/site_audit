@@ -74,10 +74,6 @@ class FormController extends GetxController {
       }
     } catch (e) {
       log('Error in Forms: $e');
-      Get.rawSnackbar(
-        backgroundColor: Colors.red,
-        message: 'Error: $e',
-      );
     }
   }
 
@@ -91,10 +87,6 @@ class FormController extends GetxController {
       }
     } catch (e) {
       log('Error in Static Dropdown: $e');
-      Get.rawSnackbar(
-        backgroundColor: Colors.red,
-        message: 'Cant get data, please check your connection',
-      );
     }
   }
 

@@ -14,6 +14,7 @@ import 'package:site_audit/utils/widget_utils.dart';
 import 'package:site_audit/widgets/custom_dropdown.dart';
 import 'package:site_audit/widgets/custom_radio_button.dart';
 import 'package:site_audit/widgets/default_layout.dart';
+import 'package:site_audit/widgets/error_widget.dart';
 import 'package:site_audit/widgets/image_input.dart';
 import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
@@ -42,10 +43,8 @@ class FormScreen extends StatelessWidget {
           );
         } else {
           if (controller.form.value == null) {
-            return const Center(
-              child: Text(
-                'Error getting forms, please try again after a few minutes',
-              ),
+            return const CustomErrorWidget(
+              errorText: 'Error getting forms.',
             );
           }
           FormModel form = controller.form.value!;
@@ -82,7 +81,7 @@ class FormScreen extends StatelessWidget {
                                     controller.operators,
                                   ),
                                 ),
-                                UiUtils.spaceVrt20,
+                                UiUtils.spaceHzt20,
                                 Expanded(
                                   child: regionDrop(
                                     'Site Region',
@@ -102,7 +101,7 @@ class FormScreen extends StatelessWidget {
                                     controller.subRegions,
                                   ),
                                 ),
-                                UiUtils.spaceVrt20,
+                                UiUtils.spaceHzt20,
                                 Expanded(
                                   child: clusterDrop(
                                     'Site Cluster',
@@ -122,7 +121,7 @@ class FormScreen extends StatelessWidget {
                                     controller.siteIDs,
                                   ),
                                 ),
-                                WidgetUtils.spaceHrz20,
+                                UiUtils.spaceHzt20,
                                 Expanded(
                                   child: InputField(
                                     label: 'Site Name',
