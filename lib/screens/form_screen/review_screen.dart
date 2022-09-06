@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/review_controller.dart';
+import 'package:site_audit/routes/routes.dart';
+import 'package:site_audit/utils/constants.dart';
+import 'package:site_audit/utils/ui_utils.dart';
+import 'package:site_audit/widgets/custom_card.dart';
+import 'package:site_audit/widgets/default_layout.dart';
+import 'package:site_audit/widgets/error_widget.dart';
+import 'package:site_audit/widgets/rounded_button.dart';
 
 class ReviewScreen extends StatelessWidget {
   final controller = Get.find<ReviewController>();
@@ -8,12 +15,118 @@ class ReviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: const [
-          Text('DATA IS VALIDATED AND SAVED LOCALLY'),
+    return DefaultLayout(
+      appBar: AppBar(
+        title: Text(
+          controller.formName.value,
+          style: TextStyle(
+            color: Constants.primaryColor,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        leadingWidth: 0.0,
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+      ),
+      child: Obx(() {
+        if (controller.loading.value) {
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(
+                Constants.primaryColor,
+              ),
+            ),
+          );
+        } else {
+          return Padding(
+            padding: UiUtils.allInsets8,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ..._headingText(),
+                UiUtils.spaceVrt20,
+                getSubmittedFormsList(),
+                UiUtils.spaceVrt20,
+                _footerText(),
+              ],
+            ),
+          );
+        }
+      }),
+    );
+  }
+
+  Widget getSubmittedFormsList() {
+    if (controller.formItems == null || controller.formItems!.isEmpty) {
+      return const Expanded(
+        child: CustomErrorWidget(
+          errorText: 'No Forms submitted yet!',
+        ),
+      );
+    } else {
+      return Expanded(
+        child: ListView.separated(
+          itemBuilder: (context, index) {
+            return CustomCard(
+              title: 'This is a title',
+              onTap: () {},
+              buttonText: 'Review Me',
+            );
+          },
+          separatorBuilder: (context, index) {
+            return UiUtils.spaceVrt20;
+          },
+          itemCount: controller.formItems!.length,
+        ),
+      );
+    }
+  }
+
+  List<Widget> _headingText() {
+    return [
+      const Text(
+        'Audit Review',
+        style: TextStyle(
+          // color: Constants.primaryColor,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
+      ),
+      UiUtils.spaceVrt10,
+      const Text(
+        'Select an existing Audit item to view previously collected data',
+      ),
+    ];
+  }
+
+  Widget _footerText() {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Audit New Item',
+            style: TextStyle(
+              // color: Constants.primaryColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+          UiUtils.spaceVrt10,
+          RoundedButton(
+            text: 'Start Audit on New Item',
+            onPressed: () {
+              Get.toNamed(AppRoutes.form, arguments: {
+                'module': controller.module,
+                'subModule': controller.subModule,
+              });
+            },
+          ),
         ],
       ),
     );

@@ -161,13 +161,16 @@ class HomeScreen extends StatelessWidget {
             padding: UiUtils.allInsets8,
             itemBuilder: (context, index) {
               Module module = modules[index];
+              int? moduleCount = controller.storageService.get(
+                key: module.moduleName!,
+              );
               return InkWell(
                 onTap: () async {
                   controller.animateForward(module);
                 },
                 child: tileCard(
                   '${module.moduleName}',
-                  module.subModules!.length,
+                  moduleCount ?? 0,
                 ),
               );
             },
@@ -218,18 +221,22 @@ class HomeScreen extends StatelessWidget {
             padding: UiUtils.allInsets8,
             itemBuilder: (context, index) {
               SubModule subModule = subModules[index];
+              int? subModuleCount = controller.storageService.get(
+                key: subModule.subModuleName!,
+              );
               return InkWell(
                 onTap: () {
                   Get.toNamed(
-                    AppRoutes.form,
+                    AppRoutes.reviewForm,
                     arguments: {
-                      'module_id': subModule.subModuleId,
+                      'module': module,
+                      'subModule': subModule,
                     },
                   );
                 },
                 child: tileCard(
-                  '${subModule.subModuleName}',
-                  2,
+                  '${module.moduleName} >> ${subModule.subModuleName}',
+                  subModuleCount ?? 0,
                 ),
               );
             },

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:site_audit/models/form_model.dart';
+import 'package:site_audit/models/module_model.dart';
 import 'package:site_audit/models/static_drop_model.dart';
 import 'package:site_audit/models/user_model.dart';
 import 'package:site_audit/routes/routes.dart';
@@ -25,6 +26,8 @@ class FormController extends GetxController {
   final formKey = GlobalKey<FormState>();
   String? projectId;
   Rxn<FormModel> form = Rxn();
+  Module? module;
+  SubModule? subModule;
   Rxn<StaticDropModel> staticDrops = Rxn<StaticDropModel>();
   User? user;
   Map<String, Rx<dynamic>> data = <String, Rx<dynamic>>{};
@@ -63,10 +66,12 @@ class FormController extends GetxController {
   Future<void> getForms() async {
     try {
       final arguments = Get.arguments;
+      subModule = arguments['subModule'];
+      module = arguments['module'];
       final temp = await AppService.getFormBySubModuleId(
         projectId: projectId!,
         // moduleId: 1,
-        moduleId: arguments['module_id'],
+        moduleId: subModule!.subModuleId!,
       );
       if (temp != null) {
         form.value = temp;
@@ -121,7 +126,7 @@ class FormController extends GetxController {
     }
   }
 
-  void submit() {
+  Future<void> submit() async {
     loading.value = true;
     bool validate = formKey.currentState!.validate();
     List<Items> items = form.value!.items!;
@@ -159,7 +164,7 @@ class FormController extends GetxController {
           items[i].answer = data[keys[i]]!.value;
         }
       }
-      Map<String, String> staticValues = {
+      Map<String, dynamic> staticValues = {
         'operator': currentOperator.value?.operator ?? '',
         'region': currentRegion.value?.name ?? '',
         'sub_region': currentSubRegion.value?.name ?? '',
@@ -173,7 +178,7 @@ class FormController extends GetxController {
       UiUtils.showSnackBar(
         message: 'All data is validated!',
       );
-      goToReviewPage();
+      await saveToLocalStorage();
     } else {
       log('NOT VALIDATED');
       UiUtils.showSnackBar(message: 'Please fill all the fields');
@@ -204,16 +209,21 @@ class FormController extends GetxController {
     return base64;
   }
 
-  void goToReviewPage() {
-    Future.delayed(
+  Future<void> goToReviewPage() async {
+    await Future.delayed(
       const Duration(
         seconds: 2,
       ),
       () {
-        Get.toNamed(AppRoutes.reviewForm);
+        Get.toNamed(
+          AppRoutes.reviewForm,
+          arguments: {
+            'form_name': form.value!.items!.first.modules!.description,
+            'form': form.value!.toJson(),
+          },
+        );
       },
     );
-    log('UPDATED: ${form.value?.toJson()}');
   }
 
   Future<void> saveJsonFileLocally() async {
@@ -224,5 +234,32 @@ class FormController extends GetxController {
     await file.writeAsString('${form.value?.toJson()}').then((value) {
       log('File saved at: $path/data.json');
     });
+  }
+
+  Future<void> saveToLocalStorage() async {
+    final moduleName = module!.moduleName!;
+    final subModuleName = subModule!.subModuleName!;
+    final key = '$moduleName >> $subModuleName';
+    if (storageService.hasKey(key: key)) {
+      List<dynamic> formData = storageService.get(key: key);
+      formData.add(form.value!.toJson());
+      await storageService.save(key: key, value: formData);
+      final moduleCount = storageService.get(key: moduleName);
+      final subModuleCount = storageService.get(key: subModuleName);
+      await storageService.save(key: moduleName, value: moduleCount + 1);
+      await storageService.save(key: subModuleName, value: subModuleCount + 1);
+      Get.offNamedUntil(AppRoutes.home, (route) => false);
+    } else {
+      await storageService
+          .save(key: key, value: <dynamic>[form.value!.toJson()]);
+      if (storageService.hasKey(key: moduleName)) {
+        final moduleCount = storageService.get(key: moduleName);
+        await storageService.save(key: moduleName, value: moduleCount + 1);
+      } else {
+        await storageService.save(key: moduleName, value: 1);
+      }
+      await storageService.save(key: subModuleName, value: 1);
+      Get.offNamedUntil(AppRoutes.home, (route) => false);
+    }
   }
 }

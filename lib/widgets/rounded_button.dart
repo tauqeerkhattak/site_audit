@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/utils/constants.dart';
-import 'package:site_audit/utils/size_config.dart';
 
 class RoundedButton extends StatelessWidget {
   final String text;
@@ -16,7 +15,7 @@ class RoundedButton extends StatelessWidget {
       this.width,
       this.onPressed,
       this.color,
-        this.disabled = false,
+      this.disabled = false,
       this.loading = false})
       : super(key: key);
 
@@ -26,7 +25,7 @@ class RoundedButton extends StatelessWidget {
       child: InkWell(
         onTap: disabled ? null : onPressed,
         child: AnimatedContainer(
-          duration: Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 500),
           decoration: BoxDecoration(
             color: disabled ? Colors.grey : (color ?? Constants.primaryColor),
             borderRadius: loading!
@@ -38,9 +37,9 @@ class RoundedButton extends StatelessWidget {
           width: Get.width * (width ?? 1),
           // width: width ?? 500,
           alignment: Alignment.center,
-          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 0),
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 0),
           child: loading!
-              ? CircularProgressIndicator(
+              ? const CircularProgressIndicator(
                   color: Colors.white,
                 )
               : Text(

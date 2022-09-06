@@ -258,6 +258,7 @@ class AppService {
           url: '${Api.getForms}$projectId/$moduleId',
           headers: header,
         );
+        dev.log('RESPONSE: $response');
         if (response != null) {
           await _storageService.save(key: formKey, value: response);
           List<dynamic> jsonList = jsonDecode(response);
