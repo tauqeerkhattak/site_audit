@@ -12,14 +12,7 @@ class ImagePickerService extends GetxService {
       source: ImageSource.camera,
     );
     if (image != null) {
-      final directory = await getApplicationDocumentsDirectory();
-      String path = directory.path;
-      String imagePath = image.path;
-      List<String> splits = imagePath.split('.');
-      final extension = splits.last;
-      File imageFile = File(imagePath);
-      imageFile = await imageFile.copy('$path/.$extension');
-      return imageFile.path;
+      return image.path;
     } else {
       return null;
     }

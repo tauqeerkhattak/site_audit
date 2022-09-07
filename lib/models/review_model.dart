@@ -1,15 +1,20 @@
-class FormModel {
+import 'dart:convert';
+
+class ReviewModel {
   int? subModuleId;
   String? subModuleName;
-  String? staticValues;
+  StaticValues? staticValues;
   List<Items>? items;
 
-  FormModel({this.subModuleId, this.subModuleName, this.items});
+  ReviewModel(
+      {this.subModuleId, this.subModuleName, this.staticValues, this.items});
 
-  FormModel.fromJson(Map<String, dynamic> json) {
+  ReviewModel.fromJson(Map<String, dynamic> json) {
     subModuleId = json['sub_module_id'];
     subModuleName = json['sub_module_name'];
-    staticValues = json['staticValues'];
+    staticValues = json['static_values'] != null
+        ? StaticValues.fromJson(jsonDecode(json['static_values']))
+        : null;
     if (json['items'] != null) {
       items = <Items>[];
       json['items'].forEach((v) {
@@ -22,10 +27,49 @@ class FormModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['sub_module_id'] = subModuleId;
     data['sub_module_name'] = subModuleName;
-    data['static_values'] = staticValues.toString();
+    if (staticValues != null) {
+      data['static_values'] = staticValues!.toJson();
+    }
     if (items != null) {
       data['items'] = items!.map((v) => v.toJson()).toList();
     }
+    return data;
+  }
+}
+
+class StaticValues {
+  String? operator;
+  String? region;
+  String? subRegion;
+  String? cluster;
+  String? siteId;
+  String? siteName;
+
+  StaticValues(
+      {this.operator,
+      this.region,
+      this.subRegion,
+      this.cluster,
+      this.siteId,
+      this.siteName});
+
+  StaticValues.fromJson(Map<String, dynamic> json) {
+    operator = json['operator'];
+    region = json['region'];
+    subRegion = json['sub_region'];
+    cluster = json['cluster'];
+    siteId = json['site_id'];
+    siteName = json['site_name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['operator'] = operator;
+    data['region'] = region;
+    data['sub_region'] = subRegion;
+    data['cluster'] = cluster;
+    data['site_id'] = siteId;
+    data['site_name'] = siteName;
     return data;
   }
 }
@@ -57,7 +101,7 @@ class Items {
   Items.fromJson(Map<String, dynamic> json) {
     projectId = json['project_id'];
     designRef = json['design_ref'];
-    mandatory = json['mandatory'] == 1 ? true : false;
+    mandatory = json['mandatory'];
     inputDescription = json['input_description'];
     inputType = json['input_type'];
     inputLabel = json['input_label'];

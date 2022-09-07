@@ -61,10 +61,11 @@ class InputField extends StatelessWidget {
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.white,
-              constraints: const BoxConstraints(
-                minHeight: 60,
-                maxHeight: 60,
-              ),
+              // constraints: const BoxConstraints(
+              //   minHeight: 60,
+              //   maxHeight: 60,
+              // ),
+
               hintText: placeHolder.toString(),
               prefixIcon: icon,
               hintStyle: TextStyle(
@@ -94,13 +95,13 @@ class InputField extends StatelessWidget {
                   width: 2.0,
                 ),
               ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18.0),
-                borderSide: const BorderSide(
-                  color: Colors.red,
-                  width: 2.0,
-                ),
-              ),
+              // focusedErrorBorder: OutlineInputBorder(
+              //   borderRadius: BorderRadius.circular(18.0),
+              //   borderSide: const BorderSide(
+              //     color: Colors.red,
+              //     width: 2.0,
+              //   ),
+              // ),
             ),
           ),
         ],

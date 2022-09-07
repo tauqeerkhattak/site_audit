@@ -10,6 +10,7 @@ class CustomDropdown<T> extends StatelessWidget {
   final String? label, hint;
   final String? Function(T?)? validator;
   final Function(T?) onChanged;
+  final bool enabled;
   const CustomDropdown({
     Key? key,
     required this.items,
@@ -18,6 +19,7 @@ class CustomDropdown<T> extends StatelessWidget {
     required this.onChanged,
     this.value,
     this.validator,
+    this.enabled = true,
   }) : super(key: key);
 
   @override
@@ -46,12 +48,14 @@ class CustomDropdown<T> extends StatelessWidget {
               ),
             ),
             decoration: InputDecoration(
+              enabled: enabled,
               filled: true,
               fillColor: Colors.white,
-              constraints: const BoxConstraints(
-                minHeight: 60,
-                maxHeight: 60,
-              ),
+              // constraints: const BoxConstraints(
+              //   minHeight: 60,
+              //   maxHeight: 60,
+              // ),
+
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18.0),
                 borderSide: BorderSide(

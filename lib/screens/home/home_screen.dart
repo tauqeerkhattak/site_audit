@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/home_controller.dart';
 import 'package:site_audit/models/module_model.dart';
@@ -82,25 +81,27 @@ class HomeScreen extends StatelessWidget {
               color: Colors.amber.withOpacity(0.3),
               borderRadius: BorderRadius.circular(5.0),
             ),
-            child: GridView.count(
-              shrinkWrap: true,
-              crossAxisCount: 3,
-              physics: const NeverScrollableScrollPhysics(),
-              children: List.generate(
-                length,
-                (index) {
-                  return Checkbox(
-                    checkColor: Colors.white,
-                    fillColor: MaterialStateProperty.all(
-                      Constants.primaryColor,
-                    ),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    value: checks[index],
-                    onChanged: (bool? value) {
-                      checks[index] = value ?? checks[index];
-                    },
-                  );
-                },
+            child: IgnorePointer(
+              child: GridView.count(
+                shrinkWrap: true,
+                crossAxisCount: 3,
+                physics: const NeverScrollableScrollPhysics(),
+                children: List.generate(
+                  length,
+                  (index) {
+                    return Checkbox(
+                      checkColor: Colors.white,
+                      fillColor: MaterialStateProperty.all(
+                        Constants.primaryColor,
+                      ),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      value: checks[index],
+                      onChanged: (bool? value) {
+                        checks[index] = value ?? checks[index];
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -213,7 +214,7 @@ class HomeScreen extends StatelessWidget {
               return InkWell(
                 onTap: () {
                   Get.toNamed(
-                    AppRoutes.reviewForm,
+                    AppRoutes.review,
                     arguments: {
                       'module': module,
                       'subModule': subModule,

@@ -211,6 +211,7 @@ class FormScreen extends StatelessWidget {
           () => ImageInput(
             onTap: () async {
               final path = await controller.imagePickerService.pickImage();
+              log('PHOTO AT INDEX: $index');
               controller.data['PHOTO$index']!.value = path;
               log('Photo upload tapped!');
             },

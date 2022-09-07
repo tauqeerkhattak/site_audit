@@ -4,7 +4,7 @@ import 'package:site_audit/utils/size_config.dart';
 class DefaultLayout extends StatelessWidget {
   final Widget child;
   final String? backgroundImage;
-  final AppBar? appBar;
+  final Widget? appBar;
   const DefaultLayout({
     Key? key,
     required this.child,
@@ -15,7 +15,15 @@ class DefaultLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar,
+      appBar: appBar != null
+          ? PreferredSize(
+              preferredSize: Size(
+                SizeConfig.screenWidth,
+                kToolbarHeight,
+              ),
+              child: appBar!,
+            )
+          : null,
       backgroundColor: Colors.white,
       body: SizedBox(
         width: SizeConfig.screenWidth,

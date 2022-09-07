@@ -173,7 +173,7 @@ class FormController extends GetxController {
         'site_name': siteName.text,
       };
       form.value!.items = items;
-      form.value!.staticValues = staticValues;
+      form.value!.staticValues = jsonEncode(staticValues);
       // saveJsonFileLocally();
       UiUtils.showSnackBar(
         message: 'All data is validated!',
@@ -216,7 +216,7 @@ class FormController extends GetxController {
       ),
       () {
         Get.toNamed(
-          AppRoutes.reviewForm,
+          AppRoutes.review,
           arguments: {
             'form_name': form.value!.items!.first.modules!.description,
             'form': form.value!.toJson(),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/review_controller.dart';
+import 'package:site_audit/models/review_model.dart';
 import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/ui_utils.dart';
+import 'package:site_audit/widgets/custom_app_bar.dart';
 import 'package:site_audit/widgets/custom_card.dart';
 import 'package:site_audit/widgets/default_layout.dart';
 import 'package:site_audit/widgets/error_widget.dart';
@@ -16,19 +18,8 @@ class ReviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      appBar: AppBar(
-        title: Text(
-          controller.formName.value,
-          style: TextStyle(
-            color: Constants.primaryColor,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        leadingWidth: 0.0,
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
+      appBar: CustomAppBar(
+        titleText: controller.formName.value,
       ),
       child: Obx(() {
         if (controller.loading.value) {
@@ -70,9 +61,20 @@ class ReviewScreen extends StatelessWidget {
         child: ListView.separated(
           itemBuilder: (context, index) {
             return CustomCard(
-              title: 'This is a title',
-              onTap: () {},
-              buttonText: 'Review Me',
+              title:
+                  '${controller.module?.moduleName} >> ${controller.subModule?.subModuleName} ${index + 1}',
+              onTap: () {
+                ReviewModel model = ReviewModel.fromJson(
+                  controller.formItems![index],
+                );
+                Get.toNamed(
+                  AppRoutes.formReview,
+                  arguments: {
+                    'form_item': model,
+                  },
+                );
+              },
+              buttonText: 'Review Audit',
             );
           },
           separatorBuilder: (context, index) {
