@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/home_controller.dart';
 import 'package:site_audit/models/module_model.dart';
@@ -6,6 +7,7 @@ import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/size_config.dart';
 import 'package:site_audit/utils/ui_utils.dart';
+import 'package:site_audit/widgets/custom_grid_view.dart';
 import 'package:site_audit/widgets/default_layout.dart';
 import 'package:site_audit/widgets/error_widget.dart';
 
@@ -61,7 +63,7 @@ class HomeScreen extends StatelessWidget {
   Widget tileCard(text, length) {
     List<bool> checks = List.generate(length, (index) {
       return true;
-    }).obs;
+    });
     return customCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -80,27 +82,25 @@ class HomeScreen extends StatelessWidget {
               color: Colors.amber.withOpacity(0.3),
               borderRadius: BorderRadius.circular(5.0),
             ),
-            child: IgnorePointer(
-              child: Wrap(
-                children: [
-                  ...List.generate(
-                    length,
-                    (index) => Checkbox(
-                      checkColor: Colors.white,
-                      fillColor: MaterialStateProperty.all(
-                        Constants.primaryColor,
-                      ),
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      value: checks[index],
-                      onChanged: (bool? value) {
-                        checks[index] = value ?? checks[index];
-                      },
+            child: GridView.count(
+              shrinkWrap: true,
+              crossAxisCount: 3,
+              physics: const NeverScrollableScrollPhysics(),
+              children: List.generate(
+                length,
+                (index) {
+                  return Checkbox(
+                    checkColor: Colors.white,
+                    fillColor: MaterialStateProperty.all(
+                      Constants.primaryColor,
                     ),
-                    // (index) => Obx(
-                    //   () => ,
-                    // ),
-                  ),
-                ],
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    value: checks[index],
+                    onChanged: (bool? value) {
+                      checks[index] = value ?? checks[index];
+                    },
+                  );
+                },
               ),
             ),
           ),
@@ -150,15 +150,8 @@ class HomeScreen extends StatelessWidget {
         ),
         Expanded(
           flex: 11,
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: SizeConfig.screenWidth * 0.5,
-              mainAxisExtent: 120,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-            ),
-            itemCount: modules.length,
-            padding: UiUtils.allInsets8,
+          child: CustomGridView(
+            length: modules.length,
             itemBuilder: (context, index) {
               Module module = modules[index];
               int? moduleCount = controller.storageService.get(
@@ -210,15 +203,8 @@ class HomeScreen extends StatelessWidget {
         ),
         Expanded(
           flex: 11,
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: SizeConfig.screenWidth * 0.5,
-              mainAxisExtent: 120,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-            ),
-            itemCount: subModules.length,
-            padding: UiUtils.allInsets8,
+          child: CustomGridView(
+            length: subModules.length,
             itemBuilder: (context, index) {
               SubModule subModule = subModules[index];
               int? subModuleCount = controller.storageService.get(
@@ -241,6 +227,19 @@ class HomeScreen extends StatelessWidget {
               );
             },
           ),
+          // child: GridView.builder(
+          //   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          //     maxCrossAxisExtent: SizeConfig.screenWidth * 0.5,
+          //     // mainAxisExtent: 120,
+          //     mainAxisSpacing: 10,
+          //     crossAxisSpacing: 10,
+          //   ),
+          //   itemCount: subModules.length,
+          //   padding: UiUtils.allInsets8,
+          //   itemBuilder: (context, index) {
+          //
+          //   },
+          // ),
         ),
       ],
     );
