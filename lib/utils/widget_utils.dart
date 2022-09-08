@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class WidgetUtils {
   static SizedBox spaceVrt10 = const SizedBox(
@@ -41,6 +44,67 @@ class WidgetUtils {
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(18.0),
         borderSide: const BorderSide(color: Colors.white),
+      ),
+    );
+  }
+
+  static Widget imageWidget({
+    required File image,
+    required double lat,
+    required double long,
+    required DateTime dateTime,
+  }) {
+    DateFormat format = DateFormat('dd-MM-yyyy hh:mm a');
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Stack(
+        children: [
+          Image.file(
+            image,
+            fit: BoxFit.fill,
+            // height: Get.height * 0.8,
+            // width: Get.width,
+          ),
+          Positioned(
+            bottom: 60,
+            left: 20,
+            child: Text(
+              'Lat: $lat',
+              style: const TextStyle(
+                color: Colors.pink,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 40,
+            left: 20,
+            child: Text(
+              'Long: $long',
+              style: const TextStyle(
+                color: Colors.pink,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 20,
+            left: 20,
+            child: Text(
+              'Dated: ${format.format(dateTime)}',
+              style: const TextStyle(
+                color: Colors.pink,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

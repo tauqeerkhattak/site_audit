@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 class StaticDropModel {
   int? status;
   List<Datum>? data;
@@ -24,7 +26,7 @@ class StaticDropModel {
   }
 }
 
-class Datum {
+class Datum extends Equatable {
   String? operator;
   List<Region>? region;
 
@@ -48,9 +50,12 @@ class Datum {
     }
     return data;
   }
+
+  @override
+  List<Object?> get props => [operator];
 }
 
-class Region {
+class Region extends Equatable {
   String? name;
   List<SubRegion>? subRegion;
 
@@ -74,9 +79,12 @@ class Region {
     }
     return data;
   }
+
+  @override
+  List<Object?> get props => [name];
 }
 
-class SubRegion {
+class SubRegion extends Equatable {
   String? name;
   List<ClusterId>? clusterId;
 
@@ -100,9 +108,12 @@ class SubRegion {
     }
     return data;
   }
+
+  @override
+  List<Object?> get props => [name];
 }
 
-class ClusterId {
+class ClusterId extends Equatable {
   String? id;
   List<SiteReference>? siteReference;
 
@@ -126,9 +137,12 @@ class ClusterId {
     }
     return data;
   }
+
+  @override
+  List<Object?> get props => [id];
 }
 
-class SiteReference {
+class SiteReference extends Equatable {
   String? id;
   String? name;
 
@@ -145,4 +159,7 @@ class SiteReference {
     data['name'] = name;
     return data;
   }
+
+  @override
+  List<Object?> get props => [id];
 }

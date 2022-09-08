@@ -54,6 +54,7 @@ class ReviewScreen extends StatelessWidget {
       return const Expanded(
         child: CustomErrorWidget(
           errorText: 'No Forms submitted yet!',
+          type: ErrorType.emptyList,
         ),
       );
     } else {
@@ -64,6 +65,8 @@ class ReviewScreen extends StatelessWidget {
               title:
                   '${controller.module?.moduleName} >> ${controller.subModule?.subModuleName} ${index + 1}',
               onTap: () {
+                // final data = controller.formItems![index];
+                // log('DATA: $data');
                 ReviewModel model = ReviewModel.fromJson(
                   controller.formItems![index],
                 );

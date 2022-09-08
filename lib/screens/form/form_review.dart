@@ -7,13 +7,13 @@ import 'package:site_audit/utils/enums/input_type.dart';
 import 'package:site_audit/utils/ui_utils.dart';
 import 'package:site_audit/utils/widget_utils.dart';
 import 'package:site_audit/widgets/custom_app_bar.dart';
+import 'package:site_audit/widgets/custom_dropdown.dart';
 import 'package:site_audit/widgets/default_layout.dart';
 import 'package:site_audit/widgets/image_input.dart';
 import 'package:site_audit/widgets/input_field.dart';
 
 class FormReview extends StatelessWidget {
   final controller = Get.find<ReviewController>();
-  final ReviewModel formItem = Get.arguments['form_item'];
 
   FormReview({Key? key}) : super(key: key);
   @override
@@ -28,13 +28,13 @@ class FormReview extends StatelessWidget {
           child: Column(
             children: [
               ...staticDropdowns(),
-              for (int i = 0; i < formItem.items!.length; i++)
+              for (int i = 0; i < controller.formItem.items!.length; i++)
                 Container(
                   margin: const EdgeInsets.only(
                     top: 10,
                     bottom: 10,
                   ),
-                  child: getItem(formItem.items![i]),
+                  child: getItem(controller.formItem.items![i]),
                 ),
             ],
           ),
@@ -81,25 +81,9 @@ class FormReview extends StatelessWidget {
     return [
       Row(
         children: [
-          Expanded(
-            child: InputField(
-              label: 'Site Operator',
-              readOnly: true,
-              controller: TextEditingController(
-                text: formItem.staticValues?.operator,
-              ),
-            ),
-          ),
+          operatorDrop(),
           WidgetUtils.spaceHrz10,
-          Expanded(
-            child: InputField(
-              label: 'Site Region',
-              readOnly: true,
-              controller: TextEditingController(
-                text: formItem.staticValues?.region,
-              ),
-            ),
-          ),
+          subRegionDrop(),
         ],
       ),
       WidgetUtils.spaceVrt10,
@@ -110,8 +94,8 @@ class FormReview extends StatelessWidget {
               label: 'Site Sub Region',
               readOnly: true,
               controller: TextEditingController(
-                text: formItem.staticValues?.subRegion,
-              ),
+                  // text: formItem.staticValues?.subRegion?.value,
+                  ),
             ),
           ),
           WidgetUtils.spaceHrz10,
@@ -120,8 +104,8 @@ class FormReview extends StatelessWidget {
               label: 'Site Cluster',
               readOnly: true,
               controller: TextEditingController(
-                text: formItem.staticValues?.cluster,
-              ),
+                  // text: formItem.staticValues?.cluster?.value,
+                  ),
             ),
           ),
         ],
@@ -134,8 +118,8 @@ class FormReview extends StatelessWidget {
               label: 'Site ID',
               readOnly: true,
               controller: TextEditingController(
-                text: formItem.staticValues?.siteId,
-              ),
+                  // text: formItem.staticValues?.siteId?.value,
+                  ),
             ),
           ),
           WidgetUtils.spaceHrz10,
@@ -144,12 +128,36 @@ class FormReview extends StatelessWidget {
               label: 'Site Name',
               readOnly: true,
               controller: TextEditingController(
-                text: formItem.staticValues?.siteName,
+                text: controller.formItem.staticValues?.siteName,
               ),
             ),
           ),
         ],
       ),
     ];
+  }
+
+  Widget operatorDrop() {
+    return Expanded(
+      child: CustomDropdown(
+        label: 'Site Operator',
+        onChanged: (value) {},
+        hint: 'Select',
+        items: controller.operators,
+        value: controller.currentOperator.value,
+      ),
+    );
+  }
+
+  Widget subRegionDrop() {
+    return Expanded(
+      child: CustomDropdown(
+        label: 'Site Region',
+        onChanged: (value) {},
+        hint: 'Select',
+        items: controller.regions,
+        value: controller.currentRegion.value,
+      ),
+    );
   }
 }

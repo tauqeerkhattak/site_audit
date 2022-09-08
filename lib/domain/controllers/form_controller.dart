@@ -1,10 +1,15 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:location/location.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:site_audit/models/form_model.dart';
 import 'package:site_audit/models/module_model.dart';
 import 'package:site_audit/models/static_drop_model.dart';
@@ -18,12 +23,15 @@ import 'package:site_audit/utils/enums/enum_helper.dart';
 import 'package:site_audit/utils/enums/input_type.dart';
 import 'package:site_audit/utils/ui_utils.dart';
 import 'package:site_audit/utils/validator.dart';
+import 'package:site_audit/utils/widget_utils.dart';
 
 class FormController extends GetxController {
   final loading = RxBool(false);
   final storageService = Get.find<LocalStorageService>();
   final imagePickerService = Get.find<ImagePickerService>();
   final formKey = GlobalKey<FormState>();
+  final location = Location();
+  LocationData? locationData;
   String? projectId;
   Rxn<FormModel> form = Rxn();
   Module? module;
@@ -32,6 +40,7 @@ class FormController extends GetxController {
   User? user;
   Map<String, Rx<dynamic>> data = <String, Rx<dynamic>>{};
   TextEditingController siteName = TextEditingController();
+  ScreenshotController controller = ScreenshotController();
 
   //STATIC DROPDOWNS
   List<Datum> operators = <Datum>[].obs;
@@ -58,6 +67,7 @@ class FormController extends GetxController {
     final userData = storageService.get(key: userKey);
     user = User.fromJson(jsonDecode(userData));
     projectId = '${user!.data!.projectId}';
+    locationData = await location.getLocation();
     await getForms();
     await getStaticDropdowns(projectId!);
     loading.value = false;
@@ -155,6 +165,7 @@ class FormController extends GetxController {
         } else if (type == InputType.PHOTO) {
           final imagePath = data[keys[i]]!.value;
           if (imagePath != null && imagePath != '') {
+            saveImageToGallery(File(imagePath));
             String base64 = covertToBase64(imagePath);
             items[i].answer = base64;
           } else {
@@ -165,11 +176,26 @@ class FormController extends GetxController {
         }
       }
       Map<String, dynamic> staticValues = {
-        'operator': currentOperator.value?.operator ?? '',
-        'region': currentRegion.value?.name ?? '',
-        'sub_region': currentSubRegion.value?.name ?? '',
-        'cluster': currentCluster.value?.id ?? '',
-        'site_id': currentSite.value?.id ?? '',
+        'operator': {
+          'value': currentOperator.value,
+          'items': operators,
+        },
+        'region': {
+          'value': currentRegion.value,
+          'items': regions,
+        },
+        'sub_region': {
+          'value': currentSubRegion.value,
+          'items': subRegions,
+        },
+        'cluster': {
+          'value': currentCluster.value,
+          'items': clusters,
+        },
+        'site_id': {
+          'value': currentSite.value,
+          'items': siteIDs,
+        },
         'site_name': siteName.text,
       };
       form.value!.items = items;
@@ -178,12 +204,24 @@ class FormController extends GetxController {
       UiUtils.showSnackBar(
         message: 'All data is validated!',
       );
-      await saveToLocalStorage();
+      await saveDataToLocalStorage();
     } else {
       log('NOT VALIDATED');
       UiUtils.showSnackBar(message: 'Please fill all the fields');
     }
     loading.value = false;
+  }
+
+  String getImageName(DateTime now) {
+    DateFormat format = DateFormat('yyyy-MM-dd_hh-mm-ss');
+    final projectId = user?.data?.projectId;
+    final siteId = currentSite.value?.id;
+    final engineerId = user?.data?.auditTeamId;
+    final fieldId = form.value?.items?.first.designRef;
+    final date = format.format(now);
+    final name = '${projectId}_${siteId}_${engineerId}_${fieldId}_$date';
+    log('Date: $name');
+    return name;
   }
 
   bool isTextController(InputType type) {
@@ -201,7 +239,6 @@ class FormController extends GetxController {
   }
 
   String covertToBase64(String imagePath) {
-    log('Hello kitty $imagePath');
     File imageFile = File(imagePath);
     List<int> bytes = imageFile.readAsBytesSync();
     final ext = imagePath.split('.').last;
@@ -236,7 +273,7 @@ class FormController extends GetxController {
     });
   }
 
-  Future<void> saveToLocalStorage() async {
+  Future<void> saveDataToLocalStorage() async {
     final moduleName = module!.moduleName!;
     final subModuleName = subModule!.subModuleName!;
     final key = '$moduleName >> $subModuleName';
@@ -260,6 +297,37 @@ class FormController extends GetxController {
       }
       await storageService.save(key: subModuleName, value: 1);
       Get.offNamedUntil(AppRoutes.home, (route) => false);
+    }
+  }
+
+  Future<void> saveImageToGallery(File image) async {
+    final time = DateTime.now();
+
+    Uint8List imageData = await controller.captureFromWidget(
+      WidgetUtils.imageWidget(
+        image: image,
+        lat: locationData!.latitude!,
+        long: locationData!.longitude!,
+        dateTime: time,
+      ),
+      context: Get.context,
+      delay: const Duration(
+        seconds: 3,
+      ),
+    );
+    final directory = await getTemporaryDirectory();
+    final ext = image.path.split('.').last;
+    File file = await File(
+      '${directory.path}/${getImageName(time)}.$ext',
+    ).create();
+    file.writeAsBytesSync(imageData);
+
+    await GallerySaver.saveImage(
+      file.path,
+      albumName: 'SiteAudit',
+    );
+    try {} catch (e) {
+      UiUtils.showSnackBar(message: 'EXCEPTION IN SAVING IMAGE: $e');
     }
   }
 }
