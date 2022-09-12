@@ -8,7 +8,7 @@ class ReviewController extends GetxController {
   RxBool loading = true.obs;
   final storageService = Get.find<LocalStorageService>();
   RxString formName = RxString('');
-  final ReviewModel formItem = Get.arguments['form_item'];
+  ReviewModel? formItem;
   Module? module;
   SubModule? subModule;
   int subModuleId = 0;
@@ -40,19 +40,23 @@ class ReviewController extends GetxController {
     formName.value = '${module!.moduleName} >> ${subModule!.subModuleName}';
     subModuleId = subModule!.subModuleId!;
     formItems = storageService.get(key: formName.value);
-    StaticValues value = formItem.staticValues!;
+    StaticValues? value = formItem?.staticValues!;
 
     //Set Dropdowns
-    currentOperator.value = value.operator?.value;
-    operators = value.operator!.items!;
+    currentOperator.value = value?.operator?.value;
+    operators = value?.operator!.items! ?? [];
 
-    currentRegion.value = value.region?.value;
-    regions = value.region!.items!;
+    currentRegion.value = value?.region?.value;
+    regions = value?.region!.items! ?? [];
 
-    currentSubRegion.value = value.subRegion?.value;
-    subRegions = value.subRegion!.items!;
+    currentSubRegion.value = value?.subRegion?.value;
+    subRegions = value?.subRegion!.items! ?? [];
 
-    currentCluster.value = value.cluster?.value;
+    currentCluster.value = value?.cluster?.value;
+    clusters = value?.cluster!.items ?? [];
+
+    currentSite.value = value?.siteId!.value;
+    siteIDs = value?.siteId!.items ?? [];
 
     loading.value = false;
   }

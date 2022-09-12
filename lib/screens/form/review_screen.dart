@@ -67,14 +67,12 @@ class ReviewScreen extends StatelessWidget {
               onTap: () {
                 // final data = controller.formItems![index];
                 // log('DATA: $data');
-                ReviewModel model = ReviewModel.fromJson(
+                controller.formItem = ReviewModel.fromJson(
                   controller.formItems![index],
                 );
+                controller.setData();
                 Get.toNamed(
                   AppRoutes.formReview,
-                  arguments: {
-                    'form_item': model,
-                  },
                 );
               },
               buttonText: 'Review Audit',

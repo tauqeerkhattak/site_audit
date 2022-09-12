@@ -28,13 +28,13 @@ class FormReview extends StatelessWidget {
           child: Column(
             children: [
               ...staticDropdowns(),
-              for (int i = 0; i < controller.formItem.items!.length; i++)
+              for (int i = 0; i < controller.formItem!.items!.length; i++)
                 Container(
                   margin: const EdgeInsets.only(
                     top: 10,
                     bottom: 10,
                   ),
-                  child: getItem(controller.formItem.items![i]),
+                  child: getItem(controller.formItem!.items![i]),
                 ),
             ],
           ),
@@ -128,8 +128,8 @@ class FormReview extends StatelessWidget {
               label: 'Site Name',
               readOnly: true,
               controller: TextEditingController(
-                text: controller.formItem.staticValues?.siteName,
-              ),
+                  // text: controller.formItem!.staticValues?.siteName,
+                  ),
             ),
           ),
         ],
