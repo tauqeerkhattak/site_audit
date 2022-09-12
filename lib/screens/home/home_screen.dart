@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/home_controller.dart';
@@ -191,15 +192,34 @@ class HomeScreen extends StatelessWidget {
       children: [
         Expanded(
           flex: 1,
-          child: Center(
-            child: Text(
-              'SubModules',
-              style: TextStyle(
-                color: Constants.primaryColor,
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: IconButton(
+                  icon: Icon(
+                    CupertinoIcons.back,
+                    color: Constants.primaryColor,
+                  ),
+                  onPressed: () {
+                    controller.animateBack();
+                  },
+                ),
               ),
-            ),
+              Expanded(
+                flex: 9,
+                child: Center(
+                  child: Text(
+                    '${module.moduleName} Sub Menu',
+                    style: TextStyle(
+                      color: Constants.primaryColor,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         Expanded(

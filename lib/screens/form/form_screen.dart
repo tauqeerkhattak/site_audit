@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/form_controller.dart';
@@ -52,15 +53,38 @@ class FormScreen extends StatelessWidget {
             children: [
               Expanded(
                 flex: 1,
-                child: Center(
-                  child: Text(
-                    '${form.subModuleName}',
-                    style: TextStyle(
-                      color: Constants.primaryColor,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Icon(
+                            CupertinoIcons.back,
+                            color: Constants.primaryColor,
+                            size: 30,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    Expanded(
+                      flex: 9,
+                      child: Center(
+                        child: Text(
+                          '${form.subModuleName}',
+                          style: TextStyle(
+                            color: Constants.primaryColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Expanded(
@@ -72,66 +96,60 @@ class FormScreen extends StatelessWidget {
                       padding: UiUtils.vertInsets8,
                       child: Column(
                         children: [
-                          Obx(
-                            () => Row(
-                              children: [
-                                Expanded(
-                                  child: operatorDrop(
-                                    'Site Operator',
-                                    controller.operators,
-                                  ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: operatorDrop(
+                                  'Site Operator',
+                                  controller.operators,
                                 ),
-                                UiUtils.spaceHzt20,
-                                Expanded(
-                                  child: regionDrop(
-                                    'Site Region',
-                                    controller.regions,
-                                  ),
+                              ),
+                              UiUtils.spaceHzt20,
+                              Expanded(
+                                child: regionDrop(
+                                  'Site Region',
+                                  controller.regions,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                           WidgetUtils.spaceVrt10,
-                          Obx(
-                            () => Row(
-                              children: [
-                                Expanded(
-                                  child: subRegionDrop(
-                                    'Site Sub-Region',
-                                    controller.subRegions,
-                                  ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: subRegionDrop(
+                                  'Site Sub-Region',
+                                  controller.subRegions,
                                 ),
-                                UiUtils.spaceHzt20,
-                                Expanded(
-                                  child: clusterDrop(
-                                    'Site Cluster',
-                                    controller.clusters,
-                                  ),
+                              ),
+                              UiUtils.spaceHzt20,
+                              Expanded(
+                                child: clusterDrop(
+                                  'Site Cluster',
+                                  controller.clusters,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                           WidgetUtils.spaceVrt10,
-                          Obx(
-                            () => Row(
-                              children: [
-                                Expanded(
-                                  child: siteIdDrop(
-                                    'Site ID',
-                                    controller.siteIDs,
-                                  ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: siteIdDrop(
+                                  'Site ID',
+                                  controller.siteIDs,
                                 ),
-                                UiUtils.spaceHzt20,
-                                Expanded(
-                                  child: InputField(
-                                    label: 'Site Name',
-                                    placeHolder: 'Site Name',
-                                    validator: Validator.stringValidator,
-                                    controller: controller.siteName,
-                                  ),
+                              ),
+                              UiUtils.spaceHzt20,
+                              Expanded(
+                                child: InputField(
+                                  label: 'Site Name',
+                                  placeHolder: 'Site Name',
+                                  validator: Validator.stringValidator,
+                                  controller: controller.siteName,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                           ...List.generate(form.items!.length, (index) {
                             Items item = form.items![index];
@@ -279,14 +297,14 @@ class FormScreen extends StatelessWidget {
       value: controller.currentRegion.value,
       onChanged: (value) {
         controller.currentRegion.value = value!;
-        controller.subRegions
-            .assignAll(controller.currentRegion.value!.subRegion!);
+        controller.subRegions.assignAll(value.subRegion!);
         controller.currentSubRegion.value = null;
         controller.clusters.clear();
         controller.currentCluster.value = null;
         controller.siteIDs.clear();
         controller.currentSite.value = null;
         controller.siteName.text = '';
+        log('VALUE: ${value.subRegion} LIST: ${controller.subRegions}');
       },
     );
   }

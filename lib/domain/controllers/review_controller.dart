@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/models/module_model.dart';
 import 'package:site_audit/models/review_model.dart';
@@ -26,6 +27,7 @@ class ReviewController extends GetxController {
   Rxn<SubRegion?> currentSubRegion = Rxn<SubRegion?>();
   Rxn<ClusterId?> currentCluster = Rxn<ClusterId?>();
   Rxn<SiteReference?> currentSite = Rxn<SiteReference?>();
+  TextEditingController siteNameController = TextEditingController();
 
   @override
   void onInit() {
@@ -53,10 +55,12 @@ class ReviewController extends GetxController {
     subRegions = value?.subRegion!.items! ?? [];
 
     currentCluster.value = value?.cluster?.value;
-    clusters = value?.cluster!.items ?? [];
+    clusters = value?.cluster!.items! ?? [];
 
     currentSite.value = value?.siteId!.value;
-    siteIDs = value?.siteId!.items ?? [];
+    siteIDs = value?.siteId!.items! ?? [];
+
+    siteNameController = TextEditingController(text: currentSite.value?.name);
 
     loading.value = false;
   }

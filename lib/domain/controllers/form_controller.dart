@@ -12,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:site_audit/models/form_model.dart';
 import 'package:site_audit/models/module_model.dart';
+import 'package:site_audit/models/review_model.dart' as rm;
 import 'package:site_audit/models/static_drop_model.dart';
 import 'package:site_audit/models/user_model.dart';
 import 'package:site_audit/routes/routes.dart';
@@ -70,6 +71,7 @@ class FormController extends GetxController {
     locationData = await location.getLocation();
     await getForms();
     await getStaticDropdowns(projectId!);
+    fillForm();
     loading.value = false;
   }
 
@@ -279,12 +281,19 @@ class FormController extends GetxController {
     final key = '$moduleName >> $subModuleName';
     if (storageService.hasKey(key: key)) {
       List<dynamic> formData = storageService.get(key: key);
-      formData.add(form.value!.toJson());
-      await storageService.save(key: key, value: formData);
       final moduleCount = storageService.get(key: moduleName);
       final subModuleCount = storageService.get(key: subModuleName);
-      await storageService.save(key: moduleName, value: moduleCount + 1);
-      await storageService.save(key: subModuleName, value: subModuleCount + 1);
+      if (Get.arguments['reviewForm'] != null) {
+        formData = [form.value!.toJson()];
+        await storageService.save(key: moduleName, value: moduleCount);
+        await storageService.save(key: subModuleName, value: subModuleCount);
+      } else {
+        formData.add(form.value!.toJson());
+        await storageService.save(key: moduleName, value: moduleCount + 1);
+        await storageService.save(
+            key: subModuleName, value: subModuleCount + 1);
+      }
+      await storageService.save(key: key, value: formData);
       Get.offNamedUntil(AppRoutes.home, (route) => false);
     } else {
       await storageService
@@ -328,6 +337,70 @@ class FormController extends GetxController {
     );
     try {} catch (e) {
       UiUtils.showSnackBar(message: 'EXCEPTION IN SAVING IMAGE: $e');
+    }
+  }
+
+  Future<void> fillForm() async {
+    final arguments = Get.arguments;
+    if (arguments['reviewForm'] != null) {
+      final rm.ReviewModel model = arguments['reviewForm'];
+
+      // Static Dropdowns
+      currentOperator.value = model.staticValues?.operator?.value;
+      currentRegion.value = model.staticValues?.region?.value;
+      regions = model.staticValues?.region?.items ?? [];
+      currentSubRegion.value = model.staticValues?.subRegion?.value;
+      subRegions = model.staticValues?.subRegion?.items ?? [];
+      currentCluster.value = model.staticValues?.cluster?.value;
+      clusters = model.staticValues?.cluster?.items ?? [];
+      currentSite.value = model.staticValues?.siteId?.value;
+      siteIDs = model.staticValues?.siteId?.items ?? [];
+      siteName.text = currentSite.value?.name ?? '';
+
+      //Dynamic Data
+      List<Items> items = form.value!.items!;
+      for (int i = 0; i < items.length; i++) {
+        Items item = items[i];
+        final type = EnumHelper.inputTypeFromString(item.inputType!);
+        switch (type) {
+          case InputType.DROPDOWN:
+            data['DROPDOWN$i']!.value = model.items?[i].answer;
+            break;
+          case InputType.AUTO_FILLED:
+            data['AUTOFILLED$i']!.value = TextEditingController(
+              text: model.items?[i].answer,
+            );
+            break;
+          case InputType.TEXTBOX:
+            data['TEXTBOX$i']!.value = TextEditingController(
+              text: model.items?[i].answer,
+            );
+            break;
+          case InputType.INTEGER:
+            data['INTEGER$i']!.value = TextEditingController(
+              text: model.items?[i].answer,
+            );
+            break;
+          case InputType.PHOTO:
+            String? answer = model.items?[i].answer;
+            if (answer != null) {
+              data['PHOTO$i']!.value = answer;
+              break;
+            } else {
+              break;
+            }
+          case InputType.RADIAL:
+            data['RADIAL$i']!.value = model.items?[i].answer;
+            break;
+          case InputType.FLOAT:
+            data['FLOAT$i']!.value = TextEditingController(
+              text: model.items?[i].answer,
+            );
+            break;
+        }
+      }
+    } else {
+      log('No forms to review!');
     }
   }
 }

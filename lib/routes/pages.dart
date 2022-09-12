@@ -6,7 +6,6 @@ import 'package:site_audit/domain/bindings/review_bindings.dart';
 import 'package:site_audit/domain/bindings/splash_bindings.dart';
 import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/screens/auth/auth_screen.dart';
-import 'package:site_audit/screens/form/form_review.dart';
 import 'package:site_audit/screens/form/form_screen.dart';
 import 'package:site_audit/screens/form/review_screen.dart';
 import 'package:site_audit/screens/home/home_screen.dart';
@@ -38,10 +37,6 @@ class AppPages {
       name: AppRoutes.review,
       binding: ReviewBindings(),
       page: () => ReviewScreen(),
-    ),
-    GetPage(
-      name: AppRoutes.formReview,
-      page: () => FormReview(),
     ),
   ];
 }

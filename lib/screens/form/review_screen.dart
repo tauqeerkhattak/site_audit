@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/review_controller.dart';
@@ -5,7 +6,6 @@ import 'package:site_audit/models/review_model.dart';
 import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/ui_utils.dart';
-import 'package:site_audit/widgets/custom_app_bar.dart';
 import 'package:site_audit/widgets/custom_card.dart';
 import 'package:site_audit/widgets/default_layout.dart';
 import 'package:site_audit/widgets/error_widget.dart';
@@ -18,9 +18,10 @@ class ReviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      appBar: CustomAppBar(
-        titleText: controller.formName.value,
-      ),
+      // appBar: CustomAppBar(
+      //   titleText: controller.formName.value,
+      //   backButton:
+      // ),
       child: Obx(() {
         if (controller.loading.value) {
           return Center(
@@ -36,6 +37,39 @@ class ReviewScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Icon(
+                            CupertinoIcons.back,
+                            color: Constants.primaryColor,
+                            size: 30,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 9,
+                      child: Center(
+                        child: Text(
+                          controller.formName.value,
+                          style: TextStyle(
+                            color: Constants.primaryColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 ..._headingText(),
                 UiUtils.spaceVrt20,
                 getSubmittedFormsList(),
@@ -72,7 +106,12 @@ class ReviewScreen extends StatelessWidget {
                 );
                 controller.setData();
                 Get.toNamed(
-                  AppRoutes.formReview,
+                  AppRoutes.form,
+                  arguments: {
+                    'module': controller.module,
+                    'subModule': controller.subModule,
+                    'reviewForm': controller.formItem,
+                  },
                 );
               },
               buttonText: 'Review Audit',

@@ -8,7 +8,7 @@ import 'package:site_audit/utils/ui_utils.dart';
 
 class ImageInput extends StatelessWidget {
   final Function() onTap;
-  final String? imagePath, label, hint, base64;
+  final String? imagePath, label, hint;
   final double? horizontal, vertical;
   final bool isMandatory;
   const ImageInput({
@@ -20,7 +20,6 @@ class ImageInput extends StatelessWidget {
     this.hint,
     this.horizontal,
     this.vertical,
-    this.base64,
   }) : super(key: key);
 
   @override
@@ -71,21 +70,24 @@ class ImageInput extends StatelessWidget {
 
   Widget getImage() {
     if (imagePath != null && imagePath != '') {
-      return Image.file(
-        File(
-          imagePath!,
-        ),
-        fit: BoxFit.cover,
-        height: double.infinity,
-        width: double.infinity,
-      );
-    } else if (base64 != null && base64 != '') {
-      return Image.memory(
-        base64Decode(base64!),
-        fit: BoxFit.cover,
-        height: double.infinity,
-        width: double.infinity,
-      );
+      if (imagePath!.contains('base64')) {
+        final data = imagePath?.split(',').last;
+        return Image.memory(
+          base64Decode(data!),
+          fit: BoxFit.cover,
+          height: double.infinity,
+          width: double.infinity,
+        );
+      } else {
+        return Image.file(
+          File(
+            imagePath!,
+          ),
+          fit: BoxFit.cover,
+          height: double.infinity,
+          width: double.infinity,
+        );
+      }
     } else {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,

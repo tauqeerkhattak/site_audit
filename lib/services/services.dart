@@ -102,6 +102,7 @@ class AppService {
   static Future<StaticDropModel?> getStaticDropdowns(String projectId) async {
     try {
       if (Network.isNetworkAvailable) {
+        dev.log('DATA IS COMING INTERNET');
         var header = {
           "Authorization": "Bearer ${_storageService.get(
             key: tokenKey,
@@ -111,7 +112,6 @@ class AppService {
           url: '${Api.siteDetails}$projectId',
           headers: header,
         );
-        dev.log('DEV: $response');
         if (response != null) {
           await _storageService.save(
             key: staticValueKey,
@@ -126,6 +126,7 @@ class AppService {
           return null;
         }
       } else {
+        dev.log('DATA IS COMING LOCAL STORAGE');
         if (_storageService.hasKey(key: staticValueKey)) {
           final response = _storageService.get(key: staticValueKey);
           final data = jsonDecode(response);
@@ -208,6 +209,7 @@ class AppService {
   static Future<List<Module>?> getModules({required int projectId}) async {
     try {
       if (Network.isNetworkAvailable) {
+        dev.log('DATA IS COMING INTERNET');
         var header = {
           "Authorization": "Bearer ${_storageService.get(
             key: tokenKey,
@@ -249,6 +251,7 @@ class AppService {
       {required String projectId, required int moduleId}) async {
     try {
       if (Network.isNetworkAvailable) {
+        dev.log('DATA IS COMING INTERNET');
         var header = {
           "Authorization": "Bearer ${_storageService.get(
             key: tokenKey,
@@ -258,7 +261,6 @@ class AppService {
           url: '${Api.getForms}$projectId/$moduleId',
           headers: header,
         );
-        dev.log('RESPONSE: $response');
         if (response != null) {
           await _storageService.save(key: formKey, value: response);
           List<dynamic> jsonList = jsonDecode(response);
@@ -269,6 +271,7 @@ class AppService {
           return null;
         }
       } else {
+        dev.log('DATA IS COMING LOCAL STORAGE');
         if (_storageService.hasKey(key: formKey)) {
           final response = _storageService.get(key: formKey);
           List<dynamic> jsonList = jsonDecode(response);
