@@ -9,15 +9,17 @@ class RoundedButton extends StatelessWidget {
   final bool disabled;
   final double? width;
   final VoidCallback? onPressed;
-  const RoundedButton(
-      {Key? key,
-      required this.text,
-      this.width,
-      this.onPressed,
-      this.color,
-      this.disabled = false,
-      this.loading = false})
-      : super(key: key);
+  final double? fontScaleFactor;
+  const RoundedButton({
+    Key? key,
+    required this.text,
+    this.width,
+    this.onPressed,
+    this.color,
+    this.disabled = false,
+    this.loading = false,
+    this.fontScaleFactor,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,7 @@ class RoundedButton extends StatelessWidget {
                   text,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: Get.textScaleFactor * 20.0,
+                    fontSize: Get.textScaleFactor * (fontScaleFactor ?? 20.0),
                     fontFamily: 'Ubuntu',
                     fontWeight: FontWeight.w500,
                   ),

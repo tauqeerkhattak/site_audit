@@ -12,6 +12,7 @@ import 'package:site_audit/utils/enums/input_type.dart';
 import 'package:site_audit/utils/ui_utils.dart';
 import 'package:site_audit/utils/validator.dart';
 import 'package:site_audit/utils/widget_utils.dart';
+import 'package:site_audit/widgets/custom_app_bar.dart';
 import 'package:site_audit/widgets/custom_dropdown.dart';
 import 'package:site_audit/widgets/custom_radio_button.dart';
 import 'package:site_audit/widgets/default_layout.dart';
@@ -27,12 +28,40 @@ class FormScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
+      appBar: CustomAppBar(
+        titleText: getTitleText(),
+        backButton: GestureDetector(
+          onTap: () {
+            log('Go back');
+            Get.back();
+          },
+          child: const Padding(
+            padding: EdgeInsets.all(10),
+            child: Icon(
+              CupertinoIcons.back,
+              color: Constants.primaryColor,
+              size: 30,
+            ),
+          ),
+        ),
+      ),
       backgroundImage: 'assets/images/hand-drawn-5g.jpg',
       child: Padding(
         padding: UiUtils.allInsets10,
         child: _bodyWidget(),
       ),
     );
+  }
+
+  String getTitleText() {
+    String? title = controller.form.value?.items?.first.modules?.description;
+    if (title != null) {
+      return 'ADD $title';
+    }
+    final args = Get.arguments;
+    title =
+        '${args['module'].moduleName} >> ${args['subModule'].subModuleName}';
+    return 'ADD $title';
   }
 
   Widget _bodyWidget() {
@@ -52,43 +81,7 @@ class FormScreen extends StatelessWidget {
           return Column(
             children: [
               Expanded(
-                flex: 1,
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: InkWell(
-                        onTap: () {
-                          Get.back();
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Icon(
-                            CupertinoIcons.back,
-                            color: Constants.primaryColor,
-                            size: 30,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 9,
-                      child: Center(
-                        child: Text(
-                          '${form.subModuleName}',
-                          style: TextStyle(
-                            color: Constants.primaryColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 10,
+                flex: 11,
                 child: Form(
                   key: controller.formKey,
                   child: SingleChildScrollView(

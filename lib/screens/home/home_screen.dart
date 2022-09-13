@@ -10,6 +10,7 @@ import 'package:site_audit/utils/ui_utils.dart';
 import 'package:site_audit/widgets/custom_grid_view.dart';
 import 'package:site_audit/widgets/default_layout.dart';
 import 'package:site_audit/widgets/error_widget.dart';
+import 'package:site_audit/widgets/rounded_button.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -32,7 +33,7 @@ class HomeScreen extends StatelessWidget {
     return Obx(
       () {
         if (controller.loading.value) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation(
                 Constants.primaryColor,
@@ -137,11 +138,11 @@ class HomeScreen extends StatelessWidget {
     List<Module> modules = controller.modules;
     return Column(
       children: [
-        Expanded(
+        const Expanded(
           flex: 1,
           child: Center(
             child: Text(
-              'Modules',
+              'Site Audit Home Screen',
               style: TextStyle(
                 color: Constants.primaryColor,
                 fontSize: 25,
@@ -151,7 +152,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         Expanded(
-          flex: 11,
+          flex: 10,
           child: CustomGridView(
             length: modules.length,
             itemBuilder: (context, index) {
@@ -169,6 +170,32 @@ class HomeScreen extends StatelessWidget {
                 ),
               );
             },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 8,
+            bottom: 8,
+            right: 8,
+          ),
+          child: Row(
+            children: [
+              RoundedButton(
+                text: 'Help',
+                color: Constants.primaryColor,
+                width: 0.2,
+                fontScaleFactor: 15,
+                onPressed: () {},
+              ),
+              const Spacer(),
+              RoundedButton(
+                text: 'Audit Completed Send Data',
+                color: Constants.successColor,
+                width: 0.7,
+                fontScaleFactor: 15,
+                onPressed: () {},
+              ),
+            ],
           ),
         ),
       ],
@@ -192,38 +219,19 @@ class HomeScreen extends StatelessWidget {
       children: [
         Expanded(
           flex: 1,
-          child: Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: IconButton(
-                  icon: Icon(
-                    CupertinoIcons.back,
-                    color: Constants.primaryColor,
-                  ),
-                  onPressed: () {
-                    controller.animateBack();
-                  },
-                ),
+          child: Center(
+            child: Text(
+              '${module.moduleName} Sub Menu',
+              style: const TextStyle(
+                color: Constants.primaryColor,
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
               ),
-              Expanded(
-                flex: 9,
-                child: Center(
-                  child: Text(
-                    '${module.moduleName} Sub Menu',
-                    style: TextStyle(
-                      color: Constants.primaryColor,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
         Expanded(
-          flex: 11,
+          flex: 10,
           child: CustomGridView(
             length: subModules.length,
             itemBuilder: (context, index) {
@@ -248,19 +256,34 @@ class HomeScreen extends StatelessWidget {
               );
             },
           ),
-          // child: GridView.builder(
-          //   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          //     maxCrossAxisExtent: SizeConfig.screenWidth * 0.5,
-          //     // mainAxisExtent: 120,
-          //     mainAxisSpacing: 10,
-          //     crossAxisSpacing: 10,
-          //   ),
-          //   itemCount: subModules.length,
-          //   padding: UiUtils.allInsets8,
-          //   itemBuilder: (context, index) {
-          //
-          //   },
-          // ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 8,
+            bottom: 8,
+            right: 8,
+          ),
+          child: Row(
+            children: [
+              RoundedButton(
+                text: 'Help',
+                color: Constants.primaryColor,
+                width: 0.2,
+                fontScaleFactor: 16,
+                onPressed: () {},
+              ),
+              const Spacer(),
+              RoundedButton(
+                text: 'Back',
+                color: Constants.primaryColor,
+                width: 0.2,
+                fontScaleFactor: 16,
+                onPressed: () {
+                  controller.animateBack();
+                },
+              ),
+            ],
+          ),
         ),
       ],
     );

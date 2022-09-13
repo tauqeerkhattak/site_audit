@@ -13,7 +13,8 @@ import 'utils/size_config.dart';
 void main() async {
   await GetStorage.init();
   await PermissionUtil.request();
-  Get.put(LocalStorageService());
+  final llo = Get.put(LocalStorageService());
+  // await llo.clearAll();
   Get.put(ImagePickerService());
   runApp(MyApp());
 }

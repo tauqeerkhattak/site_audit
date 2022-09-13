@@ -17,14 +17,13 @@ class CustomAppBar extends StatelessWidget {
       leading: backButton,
       title: Text(
         titleText,
-        style: TextStyle(
+        style: const TextStyle(
           color: Constants.primaryColor,
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
       ),
       centerTitle: true,
-      leadingWidth: 0.0,
       backgroundColor: Colors.transparent,
       elevation: 0.0,
     );
