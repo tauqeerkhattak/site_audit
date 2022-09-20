@@ -167,9 +167,13 @@ class FormController extends GetxController {
         } else if (type == InputType.PHOTO) {
           final imagePath = data[keys[i]]!.value;
           if (imagePath != null && imagePath != '') {
-            saveImageToGallery(File(imagePath));
-            String base64 = covertToBase64(imagePath);
-            items[i].answer = base64;
+            if (imagePath.contains('base64')) {
+              items[i].answer = imagePath;
+            } else {
+              saveImageToGallery(File(imagePath));
+              String base64 = covertToBase64(imagePath);
+              items[i].answer = base64;
+            }
           } else {
             items[i].answer = data[keys[i]]!.value;
           }
@@ -207,6 +211,7 @@ class FormController extends GetxController {
         message: 'All data is validated!',
       );
       await saveDataToLocalStorage();
+      Get.offNamedUntil(AppRoutes.home, (route) => false);
     } else {
       log('NOT VALIDATED');
       UiUtils.showSnackBar(message: 'Please fill all the fields');
@@ -269,6 +274,7 @@ class FormController extends GetxController {
     final moduleName = module!.moduleName!;
     final subModuleName = subModule!.subModuleName!;
     final key = '$moduleName >> $subModuleName';
+    form.value!.moduleName = moduleName;
     if (storageService.hasKey(key: key)) {
       List<dynamic> formData = storageService.get(key: key);
       final moduleCount = storageService.get(key: moduleName);
@@ -284,7 +290,6 @@ class FormController extends GetxController {
             key: subModuleName, value: subModuleCount + 1);
       }
       await storageService.save(key: key, value: formData);
-      Get.offNamedUntil(AppRoutes.home, (route) => false);
     } else {
       await storageService
           .save(key: key, value: <dynamic>[form.value!.toJson()]);
@@ -295,7 +300,6 @@ class FormController extends GetxController {
         await storageService.save(key: moduleName, value: 1);
       }
       await storageService.save(key: subModuleName, value: 1);
-      Get.offNamedUntil(AppRoutes.home, (route) => false);
     }
   }
 

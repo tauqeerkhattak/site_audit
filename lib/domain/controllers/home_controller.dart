@@ -16,8 +16,8 @@ import 'package:site_audit/utils/network.dart';
 
 class HomeController extends GetxController {
   RxBool loading = false.obs;
-  RxBool auditLoading = false.obs;
   final pageController = PageController(initialPage: 0);
+  Rxn<User> user = Rxn();
   final storageService = Get.find<LocalStorageService>();
   RxList<Module> modules = RxList([]);
   Rxn<Module> selectedModule = Rxn();
@@ -27,6 +27,8 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     getModules();
+    final userData = storageService.get(key: userKey);
+    user.value = User.fromJson(jsonDecode(userData));
   }
 
   Future<void> getModules() async {
@@ -75,6 +77,7 @@ class HomeController extends GetxController {
   }
 
   Future<void> submitAudits() async {
+    loading.value = true;
     final data = await storageService.getAllKeys();
     List<String> keysToSend = [];
     for (String key in data) {
@@ -84,16 +87,26 @@ class HomeController extends GetxController {
       }
     }
     if (Network.isNetworkAvailable) {
-      // for (String key in keysToSend) {
-      //   final data = storageService.ge
-      // }
-      List<dynamic> listOfItems = storageService.get(key: keysToSend.first);
-      for (var item in listOfItems) {
-        await sendJsonFile(item);
+      for (String key in keysToSend) {
+        List<dynamic> listOfItems = storageService.get(key: key);
+        for (var item in listOfItems) {
+          int code = await sendJsonFile(item);
+          if (code == 200) {
+            storageService.remove(key: key);
+          }
+        }
       }
-    } else {
       loading.value = false;
+    } else {
+      if (storageService.hasKey(key: offlineSavedData)) {
+        final List<String> list = await storageService.get(
+          key: offlineSavedData,
+        );
+        list.addAll(keysToSend);
+        await storageService.save(key: offlineSavedData, value: list);
+      }
       await storageService.save(key: offlineSavedData, value: keysToSend);
+      loading.value = false;
       Get.rawSnackbar(
         title: "No Internet!",
         message:
@@ -110,16 +123,47 @@ class HomeController extends GetxController {
     // AppService.sendJsonFile(moduleId: 1);
   }
 
-  Future<void> sendJsonFile(dynamic data) async {
+  Future<int> sendJsonFile(dynamic data) async {
     try {
       ReviewModel model = ReviewModel.fromJson(data);
       File file = await saveJsonFileLocally(model);
-      AppService.sendJsonFile(
+      String? response = await AppService.sendJsonFile(
         moduleId: model.subModuleId!,
+        projectId: user.value!.data!.projectId!,
+        engineerId: user.value!.data!.id!,
         file: file,
       );
+      if (response != null) {
+        final data = jsonDecode(response);
+        if (data['status'] == 200) {
+          int moduleCount = storageService.get(
+                key: model.moduleName!,
+              ) ??
+              0;
+          int subModuleCount = storageService.get(
+                key: model.subModuleName!,
+              ) ??
+              0;
+          if (moduleCount != 0) {
+            storageService.save(
+              key: model.moduleName!,
+              value: --moduleCount,
+            );
+          }
+          if (subModuleCount != 0) {
+            storageService.save(
+              key: model.subModuleName!,
+              value: --subModuleCount,
+            );
+          }
+        }
+        return data['status'];
+      } else {
+        return 0;
+      }
     } catch (e) {
       log('Exception in sendJsonFile=>HomeController: $e');
+      return 0;
     }
   }
 

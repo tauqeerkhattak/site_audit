@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide MultipartFile;
 import 'package:http/http.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:site_audit/models/form_model.dart';
 import 'package:site_audit/models/module_model.dart';
 import 'package:site_audit/models/static_drop_model.dart';
@@ -292,6 +293,8 @@ class AppService {
 
   static Future<String?> sendJsonFile({
     required int moduleId,
+    required int projectId,
+    required int engineerId,
     required File file,
   }) async {
     try {
@@ -303,27 +306,21 @@ class AppService {
       MultipartFile httpFile = await MultipartFile.fromPath(
         'file',
         file.path,
+        contentType: MediaType('text', 'json'),
       );
       final response = await Network.multiPartRequest(
         url: Api.postFile,
         headers: header,
         payload: {
-          'module_id': moduleId.toString(),
+          'module_id': '$moduleId',
+          'project_id': '$projectId',
+          'engineer_id': '$engineerId',
         },
         files: [
           httpFile,
         ],
       );
-      dev.log('RESPONSE: $response');
-      // if (response != null) {
-      //   await _storageService.save(key: key, value: response);
-      //   List<dynamic> jsonList = jsonDecode(response);
-      //   FormModel? form;
-      //   form = FormModel.fromJson(jsonList[0]);
-      //   return form;
-      // } else {
-      //   return null;
-      //
+      return response;
     } on Exception catch (e) {
       dev.log('Error in sending json file: $e');
       throw Exception(e);

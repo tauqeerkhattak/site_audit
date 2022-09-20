@@ -24,6 +24,16 @@ class LocalStorageService extends GetxService {
     }
   }
 
+  void listen({required String key, required void Function(dynamic) listener}) {
+    _box.listenKey(key, listener);
+  }
+
+  void remove({required String key}) {
+    if (hasKey(key: key)) {
+      _box.remove(key);
+    }
+  }
+
   Future<void> clearAll() async {
     await _box.erase();
   }

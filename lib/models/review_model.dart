@@ -5,6 +5,7 @@ import 'package:site_audit/models/static_drop_model.dart';
 class ReviewModel {
   int? subModuleId;
   String? subModuleName;
+  String? moduleName;
   StaticValues? staticValues;
   List<Items>? items;
 
@@ -14,6 +15,7 @@ class ReviewModel {
   ReviewModel.fromJson(Map<String, dynamic> json) {
     subModuleId = json['sub_module_id'];
     subModuleName = json['sub_module_name'];
+    moduleName = json['module_name'];
     staticValues = json['static_values'] != null
         ? StaticValues.fromJson(jsonDecode(json['static_values']))
         : null;
@@ -29,6 +31,7 @@ class ReviewModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['sub_module_id'] = subModuleId;
     data['sub_module_name'] = subModuleName;
+    data['module_name'] = moduleName;
     if (staticValues != null) {
       data['static_values'] = staticValues!.toJson();
     }

@@ -1,6 +1,7 @@
 class FormModel {
   int? subModuleId;
   String? subModuleName;
+  String? moduleName;
   String? staticValues;
   List<Items>? items;
 
@@ -9,6 +10,7 @@ class FormModel {
   FormModel.fromJson(Map<String, dynamic> json) {
     subModuleId = json['sub_module_id'];
     subModuleName = json['sub_module_name'];
+    moduleName = json['module_name'];
     staticValues = json['staticValues'];
     if (json['items'] != null) {
       items = <Items>[];
@@ -22,6 +24,7 @@ class FormModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['sub_module_id'] = subModuleId;
     data['sub_module_name'] = subModuleName;
+    data['module_name'] = moduleName;
     data['static_values'] = staticValues.toString();
     if (items != null) {
       data['items'] = items!.map((v) => v.toJson()).toList();
