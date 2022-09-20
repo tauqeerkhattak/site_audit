@@ -193,7 +193,7 @@ class HomeScreen extends StatelessWidget {
                 color: Constants.successColor,
                 width: 0.7,
                 fontScaleFactor: 15,
-                onPressed: () {},
+                onPressed: controller.submitAudits,
               ),
             ],
           ),

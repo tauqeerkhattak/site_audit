@@ -22,7 +22,7 @@ class Network {
         apiHeaders.addAll(headers);
       }
 
-      Uri uri = Uri.https(Constants.baseUrl, url, params);
+      Uri uri = Uri.http(Constants.baseUrl, url, params);
       log('REQUESTED URL => $uri');
       var response = await client.get(uri, headers: apiHeaders);
       if (response.statusCode == 200) {
@@ -51,7 +51,7 @@ class Network {
       if (headers != null) {
         apiHeaders.addAll(headers);
       }
-      Uri uri = Uri.https(
+      Uri uri = Uri.http(
         Constants.baseUrl,
         url,
       );
@@ -68,13 +68,13 @@ class Network {
       // log("FILES:::: ${request.fields.length}");
       // log("PAYLOAD::::: $payload}");
       var res = await request.send();
-      log("Error: ${res.statusCode}");
+      log("ResponseCode: ${res.statusCode}");
       String response = await res.stream.bytesToString();
-      log("Error: $response");
+      log("Response: $response");
       if (res.statusCode == 200) {
         return response;
       } else {
-        log('Hello');
+        log('Data not sent!');
       }
       if (res.statusCode < 200 || res.statusCode > 400) {
         return null;
@@ -101,7 +101,7 @@ class Network {
         apiHeaders.addAll(headers);
       }
       var body = json.encode(payload);
-      Uri uri = Uri.https(
+      Uri uri = Uri.http(
           Constants.baseUrl,
           // Constants.baseUrl,
           url,
@@ -131,7 +131,7 @@ class Network {
         apiHeaders.addAll(headers);
       }
       var body = json.encode(payload);
-      Uri uri = Uri.https(Constants.baseUrl, url, params);
+      Uri uri = Uri.http(Constants.baseUrl, url, params);
       log(uri.toString());
       var response = await client.put(uri, body: body, headers: apiHeaders);
       log("Error: ${response.body}");

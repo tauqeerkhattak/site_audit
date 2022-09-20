@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide MultipartFile;
+import 'package:http/http.dart';
 import 'package:site_audit/models/form_model.dart';
 import 'package:site_audit/models/module_model.dart';
 import 'package:site_audit/models/static_drop_model.dart';
@@ -283,6 +285,47 @@ class AppService {
       }
     } on Exception catch (e) {
       dev.log('Error in Forms Data: $e');
+      throw Exception(e);
+    }
+    return null;
+  }
+
+  static Future<String?> sendJsonFile({
+    required int moduleId,
+    required File file,
+  }) async {
+    try {
+      var header = {
+        "Authorization": "Bearer ${_storageService.get(
+          key: tokenKey,
+        )}"
+      };
+      MultipartFile httpFile = await MultipartFile.fromPath(
+        'file',
+        file.path,
+      );
+      final response = await Network.multiPartRequest(
+        url: Api.postFile,
+        headers: header,
+        payload: {
+          'module_id': moduleId.toString(),
+        },
+        files: [
+          httpFile,
+        ],
+      );
+      dev.log('RESPONSE: $response');
+      // if (response != null) {
+      //   await _storageService.save(key: key, value: response);
+      //   List<dynamic> jsonList = jsonDecode(response);
+      //   FormModel? form;
+      //   form = FormModel.fromJson(jsonList[0]);
+      //   return form;
+      // } else {
+      //   return null;
+      //
+    } on Exception catch (e) {
+      dev.log('Error in sending json file: $e');
       throw Exception(e);
     }
     return null;

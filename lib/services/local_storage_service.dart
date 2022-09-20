@@ -27,4 +27,9 @@ class LocalStorageService extends GetxService {
   Future<void> clearAll() async {
     await _box.erase();
   }
+
+  Future<List<String>> getAllKeys() async {
+    final data = await _box.getKeys().toList();
+    return data;
+  }
 }

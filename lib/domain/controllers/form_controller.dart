@@ -265,16 +265,6 @@ class FormController extends GetxController {
     );
   }
 
-  Future<void> saveJsonFileLocally() async {
-    // final directory = await getApplicationDocumentsDirectory();
-    final directory = await getExternalStorageDirectory();
-    final path = directory?.path;
-    File file = File('$path/data.json');
-    await file.writeAsString('${form.value?.toJson()}').then((value) {
-      log('File saved at: $path/data.json');
-    });
-  }
-
   Future<void> saveDataToLocalStorage() async {
     final moduleName = module!.moduleName!;
     final subModuleName = subModule!.subModuleName!;
