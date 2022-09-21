@@ -19,7 +19,6 @@ import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/services/image_picker_service.dart';
 import 'package:site_audit/services/local_storage_keys.dart';
 import 'package:site_audit/services/local_storage_service.dart';
-import 'package:site_audit/services/services.dart';
 import 'package:site_audit/utils/enums/enum_helper.dart';
 import 'package:site_audit/utils/enums/input_type.dart';
 import 'package:site_audit/utils/ui_utils.dart';
@@ -30,7 +29,7 @@ class FormController extends GetxController {
   final loading = RxBool(false);
   final storageService = Get.find<LocalStorageService>();
   final imagePickerService = Get.find<ImagePickerService>();
-  final formKey = GlobalKey<FormState>();
+  final formDataKey = GlobalKey<FormState>();
   final location = Location();
   LocationData? locationData;
   String? projectId;
@@ -76,27 +75,28 @@ class FormController extends GetxController {
   }
 
   Future<void> getForms() async {
-    try {
-      final arguments = Get.arguments;
-      subModule = arguments['subModule'];
-      module = arguments['module'];
-      final temp = await AppService.getFormBySubModuleId(
-        projectId: projectId!,
-        // moduleId: 1,
-        moduleId: subModule!.subModuleId!,
-      );
-      if (temp != null) {
-        form.value = temp;
-        assignControllersToFields();
-      }
-    } catch (e) {
-      log('Error in Forms: $e');
+    // try {
+    final arguments = Get.arguments;
+    subModule = arguments['subModule'];
+    module = arguments['module'];
+    final key0 = '$formKey$projectId${subModule?.subModuleId}';
+    log('Key: $key0 $projectId ${subModule?.subModuleId}');
+    final storedData = storageService.get(key: key0);
+    final forms = jsonDecode(storedData);
+    final temp = FormModel.fromJson(forms[0]);
+    if (temp != null) {
+      form.value = temp;
+      assignControllersToFields();
     }
+    // } catch (e) {
+    //   log('Error in Forms: $e');
+    // }
   }
 
   Future<void> getStaticDropdowns(String projectId) async {
     try {
-      final temp = await AppService.getStaticDropdowns(projectId);
+      final data = storageService.get(key: staticValueKey);
+      final temp = StaticDropModel.fromJson(jsonDecode(data));
       if (temp != null) {
         staticDrops.value = temp;
         operators = staticDrops.value!.data!;
@@ -140,7 +140,7 @@ class FormController extends GetxController {
 
   Future<void> submit() async {
     loading.value = true;
-    bool validate = formKey.currentState!.validate();
+    bool validate = formDataKey.currentState!.validate();
     List<Items> items = form.value!.items!;
     if (validate) {
       final keys = data.keys.toList();

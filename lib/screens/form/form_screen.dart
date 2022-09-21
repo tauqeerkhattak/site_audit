@@ -83,7 +83,7 @@ class FormScreen extends StatelessWidget {
               Expanded(
                 flex: 11,
                 child: Form(
-                  key: controller.formKey,
+                  key: controller.formDataKey,
                   child: SingleChildScrollView(
                     child: Padding(
                       padding: UiUtils.vertInsets8,
