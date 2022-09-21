@@ -14,12 +14,14 @@ void main() async {
   await GetStorage.init();
   await PermissionUtil.request();
   final llo = Get.put(LocalStorageService());
-  // await llo.clearAll();
+  await llo.clearAll();
   Get.put(ImagePickerService());
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,7 @@ class MyApp extends StatelessWidget {
               ),
             ),
           ),
+          debugShowCheckedModeBanner: false,
           initialRoute: AppRoutes.splash,
           getPages: AppPages.list,
         );

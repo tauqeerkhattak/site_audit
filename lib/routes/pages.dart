@@ -11,6 +11,9 @@ import 'package:site_audit/screens/form/review_screen.dart';
 import 'package:site_audit/screens/home/home_screen.dart';
 import 'package:site_audit/screens/splash/splash.dart';
 
+import '../domain/bindings/load_bindings.dart';
+import '../screens/load_data/load_data.dart';
+
 class AppPages {
   static var list = [
     GetPage(
@@ -22,6 +25,11 @@ class AppPages {
       name: AppRoutes.auth,
       binding: AuthBindings(),
       page: () => const AuthScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.loadData,
+      binding: LoadBindings(),
+      page: () => LoadData(),
     ),
     GetPage(
       name: AppRoutes.home,

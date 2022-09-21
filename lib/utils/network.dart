@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import 'constants.dart';
 
 class Network {
   static var client = http.Client();
-  static bool isNetworkAvailable = true;
+  static RxBool isNetworkAvailable = true.obs;
   static bool sendDataToNetwork = false;
 
   static get(

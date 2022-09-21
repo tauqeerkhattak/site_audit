@@ -15,12 +15,13 @@ class ConfirmDetail extends StatelessWidget {
     return Stack(
       children: [
         Positioned(
-            bottom: 0,
-            right: 0,
-            child: Image.asset(
-              "assets/images/33810963.jpg",
-              height: 300,
-            )),
+          bottom: 0,
+          right: 0,
+          child: Image.asset(
+            "assets/images/33810963.jpg",
+            height: 300,
+          ),
+        ),
         SingleChildScrollView(
           padding:
               const EdgeInsets.only(left: 30, right: 30, top: 50, bottom: 30),

@@ -39,13 +39,13 @@ class SplashController extends GetxController {
         .listen((ConnectivityResult result) async {
       if (result == ConnectivityResult.none) {
         log('No network!');
-        Network.isNetworkAvailable = false;
+        Network.isNetworkAvailable.value = false;
       } else {
         if (await hasNetwork()) {
-          Network.isNetworkAvailable = true;
+          Network.isNetworkAvailable.value = true;
           log('Network available!');
         } else {
-          Network.isNetworkAvailable = false;
+          Network.isNetworkAvailable.value = false;
           log('No network!');
         }
       }

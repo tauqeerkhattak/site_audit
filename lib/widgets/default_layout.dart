@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:site_audit/utils/network.dart';
 import 'package:site_audit/utils/size_config.dart';
+
+import '../utils/constants.dart';
 
 class DefaultLayout extends StatelessWidget {
   final Widget child;
@@ -44,6 +48,27 @@ class DefaultLayout extends StatelessWidget {
                 ),
               ),
               child,
+              Positioned(
+                top: 10,
+                right: 10,
+                child: Obx(
+                  () => PhysicalModel(
+                    color: Colors.white,
+                    elevation: 8.0,
+                    shape: BoxShape.circle,
+                    child: Container(
+                      width: SizeConfig.screenWidth * 0.05,
+                      height: SizeConfig.screenWidth * 0.05,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Network.isNetworkAvailable.value
+                            ? Constants.successColor
+                            : Colors.red,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

@@ -88,7 +88,7 @@ class AuthController extends GetxController {
       if (res != null) {
         _user.value = User.fromJson(res);
         loading.value = false;
-        Get.offAndToNamed(AppRoutes.home);
+        Get.offAndToNamed(AppRoutes.loadData);
       }
     } catch (e) {
       log('Error: $e');

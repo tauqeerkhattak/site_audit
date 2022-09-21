@@ -18,16 +18,14 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Container(
-        child: PageView(
-          physics: NeverScrollableScrollPhysics(),
-          controller: controller.pageController,
-          children: [
-            LoginScreen(),
-            ConfirmDetail(),
-            // SiteDetail(),
-          ],
-        ),
+      body: PageView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: controller.pageController,
+        children: [
+          LoginScreen(),
+          ConfirmDetail(),
+          // SiteDetail(),
+        ],
       ),
     );
   }

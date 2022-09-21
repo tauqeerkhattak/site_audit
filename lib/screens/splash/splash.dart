@@ -21,7 +21,7 @@ class Splash extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            CircularProgressIndicator(
+            const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation(
                 Constants.primaryColor,
               ),

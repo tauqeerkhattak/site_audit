@@ -104,7 +104,7 @@ class AppService {
   //STATIC DROPDOWNS
   static Future<StaticDropModel?> getStaticDropdowns(String projectId) async {
     try {
-      if (Network.isNetworkAvailable) {
+      if (Network.isNetworkAvailable.value) {
         dev.log('DATA IS COMING INTERNET');
         var header = {
           "Authorization": "Bearer ${_storageService.get(
@@ -211,7 +211,7 @@ class AppService {
 
   static Future<List<Module>?> getModules({required int projectId}) async {
     try {
-      if (Network.isNetworkAvailable) {
+      if (Network.isNetworkAvailable.value) {
         dev.log('DATA IS COMING INTERNET');
         var header = {
           "Authorization": "Bearer ${_storageService.get(
@@ -254,7 +254,7 @@ class AppService {
       {required String projectId, required int moduleId}) async {
     try {
       final key = '$formKey$projectId$moduleId';
-      if (Network.isNetworkAvailable) {
+      if (Network.isNetworkAvailable.value) {
         dev.log('DATA IS COMING INTERNET');
         var header = {
           "Authorization": "Bearer ${_storageService.get(

@@ -20,40 +20,27 @@ class HomeController extends GetxController {
   Rxn<User> user = Rxn();
   final storageService = Get.find<LocalStorageService>();
   RxList<Module> modules = RxList([]);
+
   Rxn<Module> selectedModule = Rxn();
   Rxn<SubModule> selectedSubModule = Rxn();
 
   @override
   void onInit() {
     super.onInit();
-    getModules();
     final userData = storageService.get(key: userKey);
+    getModules();
     user.value = User.fromJson(jsonDecode(userData));
   }
 
   Future<void> getModules() async {
-    try {
-      final data = storageService.get(key: userKey);
-      User user = User.fromJson(jsonDecode(data));
-      loading.value = true;
-      final temp =
-          await AppService.getModules(projectId: user.data!.projectId!);
-      if (temp != null) {
-        modules.value = temp;
-        modules.removeWhere((element) {
-          return element.moduleName!.toLowerCase() == 'site details';
-        });
-      }
-    } catch (e) {
-      log('Error: $e');
-
-      Get.rawSnackbar(
-        backgroundColor: Colors.red,
-        message: 'Error: $e',
-      );
-    } finally {
-      loading.value = false;
+    final data = storageService.get(key: modulesKey);
+    List<dynamic> jsonList = jsonDecode(data);
+    for (var item in jsonList) {
+      modules.add(Module.fromJson(item));
     }
+    modules.removeWhere((element) {
+      return element.moduleName?.toLowerCase() == 'site details';
+    });
   }
 
   void animateBack() async {
@@ -86,7 +73,7 @@ class HomeController extends GetxController {
         keysToSend.add(key);
       }
     }
-    if (Network.isNetworkAvailable) {
+    if (Network.isNetworkAvailable.value) {
       for (String key in keysToSend) {
         List<dynamic> listOfItems = storageService.get(key: key);
         for (var item in listOfItems) {
