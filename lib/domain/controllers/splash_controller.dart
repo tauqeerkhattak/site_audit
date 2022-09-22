@@ -33,7 +33,12 @@ class SplashController extends GetxController {
     sub?.cancel();
   }
 
-  void initNetwork() {
+  void initNetwork() async {
+    if (await hasNetwork()) {
+      Network.isNetworkAvailable.value = true;
+    } else {
+      Network.isNetworkAvailable.value = false;
+    }
     sub = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) async {

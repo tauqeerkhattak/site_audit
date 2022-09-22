@@ -113,7 +113,29 @@ class HomeController extends GetxController {
   Future<int> sendJsonFile(dynamic data) async {
     try {
       ReviewModel model = ReviewModel.fromJson(data);
-      File file = await saveJsonFileLocally(model);
+      final jsonData = model.toJson();
+      final staticValues = model.staticValues;
+      jsonData['static_values'] = {
+        'operator': {
+          'value': staticValues?.operator?.value?.operator,
+        },
+        'region': {
+          'value': staticValues?.region?.value?.name,
+        },
+        'sub_region': {
+          'value': staticValues?.subRegion?.value?.name,
+        },
+        'cluster': {
+          'value': staticValues?.cluster?.value?.id,
+        },
+        'site_id': {
+          'value': staticValues?.siteId?.value?.id,
+        },
+        'site_name': {
+          'value': staticValues?.siteId?.value?.name,
+        }
+      };
+      File file = await saveJsonFileLocally(jsonData);
       String? response = await AppService.sendJsonFile(
         moduleId: model.subModuleId!,
         projectId: user.value!.data!.projectId!,
@@ -154,12 +176,12 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<File> saveJsonFileLocally(ReviewModel model) async {
+  Future<File> saveJsonFileLocally(Map<String, dynamic> model) async {
     // final directory = await getApplicationDocumentsDirectory();
     final directory = await getExternalStorageDirectory();
     final path = directory?.path;
     File file = File('$path/data.json');
-    await file.writeAsString(jsonEncode(model.toJson())).then((value) {
+    await file.writeAsString(jsonEncode(model)).then((value) {
       log('File saved at: $path/data.json');
     });
     return file;

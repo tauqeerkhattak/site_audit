@@ -29,19 +29,25 @@ class LoadController extends GetxController {
   }
 
   Future<void> getData() async {
-    modules = await AppService.getModules(
-      projectId: user.value!.data!.projectId!,
-    );
-    if (modules != null) {
-      for (Module module in modules!) {
-        totalForms = totalForms + (module.subModules?.length ?? 0);
+    try {
+      modules = await AppService.getModules(
+        projectId: user.value!.data!.projectId!,
+      );
+      if (modules != null) {
+        for (Module module in modules!) {
+          totalForms = totalForms + (module.subModules?.length ?? 0);
+        }
+        log('Totla: ${totalForms.value}');
+        await getForms();
       }
-      log('Totla: ${totalForms.value}');
-      await getForms();
+      Get.offAndToNamed(
+        AppRoutes.home,
+      );
+    } catch (e) {
+      log('Exception in load_controller.dart: ${e.toString()}');
+    } finally {
+      loading.value = false;
     }
-    Get.offAndToNamed(
-      AppRoutes.home,
-    );
   }
 
   Future<void> getForms() async {
