@@ -21,6 +21,7 @@ class LoadController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    loading.value = true;
     final userData = storageService.get(key: userKey);
     user.value = User.fromJson(jsonDecode(userData));
     if (user.value != null) {
@@ -46,7 +47,9 @@ class LoadController extends GetxController {
     } catch (e) {
       log('Exception in load_controller.dart: ${e.toString()}');
     } finally {
-      loading.value = false;
+      Future.delayed(const Duration(seconds: 2), () {
+        loading.value = false;
+      });
     }
   }
 

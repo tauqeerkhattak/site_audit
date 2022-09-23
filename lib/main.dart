@@ -14,7 +14,7 @@ void main() async {
   await GetStorage.init();
   await PermissionUtil.request();
   final llo = Get.put(LocalStorageService());
-  // await llo.clearAll();
+  await llo.clearAll();
   Get.put(ImagePickerService());
   runApp(const MyApp());
 }

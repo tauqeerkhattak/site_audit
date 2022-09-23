@@ -16,6 +16,7 @@ import 'package:site_audit/utils/network.dart';
 
 class HomeController extends GetxController {
   RxBool loading = false.obs;
+  bool isLocallySaved = false;
   final pageController = PageController(initialPage: 0);
   Rxn<User> user = Rxn();
   final storageService = Get.find<LocalStorageService>();
@@ -73,27 +74,18 @@ class HomeController extends GetxController {
         keysToSend.add(key);
       }
     }
-    if (Network.isNetworkAvailable.value) {
-      for (String key in keysToSend) {
-        List<dynamic> listOfItems = storageService.get(key: key);
-        for (var item in listOfItems) {
-          int code = await sendJsonFile(item);
-          if (code == 200) {
-            storageService.remove(key: key);
-          }
+    for (String key in keysToSend) {
+      List<dynamic> listOfItems = storageService.get(key: key);
+      for (var item in listOfItems) {
+        int code = await sendJsonFile(item);
+        if (code == 200) {
+          storageService.remove(key: key);
         }
       }
-      loading.value = false;
-    } else {
-      if (storageService.hasKey(key: offlineSavedData)) {
-        final List<String> list = await storageService.get(
-          key: offlineSavedData,
-        );
-        list.addAll(keysToSend);
-        await storageService.save(key: offlineSavedData, value: list);
-      }
-      await storageService.save(key: offlineSavedData, value: keysToSend);
-      loading.value = false;
+    }
+    loading.value = false;
+    if (isLocallySaved) {
+      isLocallySaved = false;
       Get.rawSnackbar(
         title: "No Internet!",
         message:
@@ -107,12 +99,12 @@ class HomeController extends GetxController {
         margin: const EdgeInsets.all(10),
       );
     }
-    // AppService.sendJsonFile(moduleId: 1);
   }
 
   Future<int> sendJsonFile(dynamic data) async {
     try {
       ReviewModel model = ReviewModel.fromJson(data);
+
       final jsonData = model.toJson();
       final staticValues = model.staticValues;
       jsonData['static_values'] = {
@@ -136,39 +128,44 @@ class HomeController extends GetxController {
         }
       };
       File file = await saveJsonFileLocally(jsonData);
-      String? response = await AppService.sendJsonFile(
-        moduleId: model.subModuleId!,
-        projectId: user.value!.data!.projectId!,
-        engineerId: user.value!.data!.id!,
-        file: file,
-      );
-      if (response != null) {
-        final data = jsonDecode(response);
-        if (data['status'] == 200) {
-          int moduleCount = storageService.get(
-                key: model.moduleName!,
-              ) ??
-              0;
-          int subModuleCount = storageService.get(
-                key: model.subModuleName!,
-              ) ??
-              0;
-          if (moduleCount != 0) {
-            storageService.save(
-              key: model.moduleName!,
-              value: --moduleCount,
+      if (Network.isNetworkAvailable.value) {
+        String? response = await AppService.sendJsonFile(
+          moduleId: model.subModuleId!,
+          projectId: user.value!.data!.projectId!,
+          engineerId: user.value!.data!.id!,
+          file: file,
+        );
+        if (response != null) {
+          final data = jsonDecode(response);
+          if (data['status'] == 200) {
+            removeFromLocalStorage(
+              data: null,
+              moduleName: model.moduleName!,
+              subModuleName: model.subModuleName!,
+            );
+          } else {
+            Get.rawSnackbar(
+              backgroundColor: Colors.red,
+              icon: const Icon(
+                Icons.error,
+                color: Colors.white,
+              ),
+              message:
+                  'Form with Module: ${model.subModuleName} could not be uploaded!',
             );
           }
-          if (subModuleCount != 0) {
-            storageService.save(
-              key: model.subModuleName!,
-              value: --subModuleCount,
-            );
-          }
+          return data['status'];
+        } else {
+          return 0;
         }
-        return data['status'];
       } else {
-        return 0;
+        isLocallySaved = true;
+        removeFromLocalStorage(
+          data: jsonData,
+          moduleName: model.moduleName!,
+          subModuleName: model.subModuleName!,
+        );
+        return 200;
       }
     } catch (e) {
       log('Exception in sendJsonFile=>HomeController: $e');
@@ -185,5 +182,46 @@ class HomeController extends GetxController {
       log('File saved at: $path/data.json');
     });
     return file;
+  }
+
+  Future<void> removeFromLocalStorage({
+    Map<String, dynamic>? data,
+    required String moduleName,
+    required String subModuleName,
+  }) async {
+    if (data != null) {
+      if (storageService.hasKey(key: offlineSavedDataKey)) {
+        final List<dynamic> list = await storageService.get(
+          key: offlineSavedDataKey,
+        );
+        list.add(data);
+        await storageService.save(
+          key: offlineSavedDataKey,
+          value: list,
+        );
+      } else {
+        await storageService.save(key: offlineSavedDataKey, value: [data]);
+      }
+    }
+    int moduleCount = storageService.get(
+          key: moduleName,
+        ) ??
+        0;
+    int subModuleCount = storageService.get(
+          key: subModuleName,
+        ) ??
+        0;
+    if (moduleCount != 0) {
+      storageService.save(
+        key: moduleName,
+        value: --moduleCount,
+      );
+    }
+    if (subModuleCount != 0) {
+      storageService.save(
+        key: subModuleName,
+        value: --subModuleCount,
+      );
+    }
   }
 }

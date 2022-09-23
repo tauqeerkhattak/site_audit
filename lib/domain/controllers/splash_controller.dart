@@ -1,14 +1,21 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:site_audit/models/user_model.dart';
 import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/services/local_storage_keys.dart';
 import 'package:site_audit/services/local_storage_service.dart';
+import 'package:site_audit/services/services.dart';
 import 'package:site_audit/utils/network.dart';
+
+import '../../utils/constants.dart';
 
 class SplashController extends GetxController {
   final storage = Get.find<LocalStorageService>();
@@ -48,6 +55,7 @@ class SplashController extends GetxController {
       } else {
         if (await hasNetwork()) {
           Network.isNetworkAvailable.value = true;
+          await sendSavedData();
           log('Network available!');
         } else {
           Network.isNetworkAvailable.value = false;
@@ -69,5 +77,52 @@ class SplashController extends GetxController {
       log('Exception: ${_.message}');
       return false;
     }
+  }
+
+  Future<void> sendSavedData() async {
+    if (storage.hasKey(key: offlineSavedDataKey)) {
+      final List<dynamic> list = storage.get(key: offlineSavedDataKey);
+      final userData = storage.get(key: userKey);
+      final User user = User.fromJson(jsonDecode(userData));
+      int length = list.length;
+      final temp = List.of(list);
+      for (int i = 0; i < length; i++) {
+        var element = temp[i];
+        File file = await saveJsonFileLocally(element);
+        final String? response = await AppService.sendJsonFile(
+          moduleId: element['sub_module_id'],
+          projectId: user.data!.projectId!,
+          engineerId: user.data!.id!,
+          file: file,
+        );
+        if (response != null) {
+          final res = jsonDecode(response);
+          if (res['status'] == 200) {
+            list.remove(element);
+          }
+        }
+      }
+      if (list.isEmpty) {
+        storage.remove(key: offlineSavedDataKey);
+        Get.rawSnackbar(
+          backgroundColor: Constants.successColor,
+          icon: const Icon(
+            Icons.save,
+            color: Colors.white,
+          ),
+          message: 'All locally saved audits have been uploaded to server',
+        );
+      }
+    }
+  }
+
+  Future<File> saveJsonFileLocally(Map<String, dynamic> model) async {
+    final directory = await getExternalStorageDirectory();
+    final path = directory?.path;
+    File file = File('$path/data.json');
+    await file.writeAsString(jsonEncode(model)).then((value) {
+      log('File saved at: $path/data.json');
+    });
+    return file;
   }
 }
