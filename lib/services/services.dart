@@ -291,6 +291,42 @@ class AppService {
     return null;
   }
 
+  static Future<String?> sendJson({
+    required int moduleId,
+    required int engineerId,
+    required int projectId,
+    required Map<String, dynamic> json,
+  }) async {
+    var header = {
+      "Authorization": "Bearer ${_storageService.get(
+        key: tokenKey,
+      )}"
+    };
+    final payload = {
+      'module_id': moduleId,
+      'engineer_id': engineerId,
+      'project_id': projectId,
+      'json': json.toString(),
+    };
+    final response = await Network.post(
+      url: Api.postJson,
+      payload: payload,
+      headers: header,
+    );
+    if (response != null) {
+      final res = jsonDecode(response);
+      if (res['status'] == 200) {
+        dev.log('GONE $response');
+        return res['message'];
+      } else {
+        dev.log('NOT GONE');
+        return 'error';
+      }
+    } else {
+      return 'error';
+    }
+  }
+
   static Future<String?> sendJsonFile({
     required int moduleId,
     required int projectId,

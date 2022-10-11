@@ -180,7 +180,11 @@ class FormScreen extends StatelessWidget {
   Widget _inputWidget(InputType type, Items item, int index) {
     switch (type) {
       case InputType.DROPDOWN:
-        List<String> options = item.inputOption!.inputOptions!;
+        List<String> options = item.inputOption?.inputOptions ??
+            [
+              'Abc',
+              'Def',
+            ];
         return Obx(
           () => CustomDropdown<String>(
             items: options,

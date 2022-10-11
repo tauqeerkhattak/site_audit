@@ -87,7 +87,7 @@ class Network {
     }
   }
 
-  static post({
+  static Future<String?> post({
     url,
     payload,
     headers,
@@ -103,10 +103,10 @@ class Network {
       }
       var body = json.encode(payload);
       Uri uri = Uri.http(
-          Constants.baseUrl,
-          // Constants.baseUrl,
-          url,
-          params);
+        Constants.baseUrl,
+        url,
+        params,
+      );
       log(uri.toString());
       var response = await client.post(uri, body: body, headers: apiHeaders);
       log('Response: ${response.body}');

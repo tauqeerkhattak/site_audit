@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -86,7 +87,7 @@ class FormController extends GetxController {
     final temp = FormModel.fromJson(forms[0]);
     if (temp != null) {
       form.value = temp;
-      assignControllersToFields();
+      await assignControllersToFields();
     }
     // } catch (e) {
     //   log('Error in Forms: $e');
@@ -107,7 +108,23 @@ class FormController extends GetxController {
     }
   }
 
-  void assignControllersToFields() {
+  ///
+  /// Assigns controllers to each type of fields.
+  ///
+  ///
+  /// *  If any of the following types, then assigns a TextEditingController() to them:
+  ///    [AUTO_FILLED,TEXTBOX,INTEGER,FLOAT].
+  ///
+  ///
+  /// *  If it is a dropdown, then a null value assigned so that the dropdown will be
+  ///    empty when form is loaded.
+  ///
+  ///
+  /// *  If it is a radial, then the first inputOption is assigned.
+  ///
+  /// *  If it is a photo, then an empty path is assigned.
+  ///
+  Future<void> assignControllersToFields() async {
     final fields = form.value!.items!;
     for (int i = 0; i < fields.length; i++) {
       final item = fields[i];
@@ -137,6 +154,46 @@ class FormController extends GetxController {
       }
     }
   }
+
+  ///
+  /// For testing use this method
+  ///
+  // Future<void> assignControllersToFields() async {
+  //   final fields = form.value!.items!;
+  //   for (int i = 0; i < fields.length; i++) {
+  //     final item = fields[i];
+  //     InputType type = EnumHelper.inputTypeFromString(item.inputType);
+  //     switch (type) {
+  //       case InputType.DROPDOWN:
+  //         data['DROPDOWN$i'] = Rxn<dynamic>();
+  //         break;
+  //       case InputType.AUTO_FILLED:
+  //         data['AUTOFILLED$i'] = TextEditingController(text: 'AUTO-FILLED').obs;
+  //         break;
+  //       case InputType.TEXTBOX:
+  //         data['TEXTBOX$i'] = TextEditingController(text: 'TEXTBOX').obs;
+  //         break;
+  //       case InputType.INTEGER:
+  //         data['INTEGER$i'] = TextEditingController(text: '123456').obs;
+  //         break;
+  //       case InputType.PHOTO:
+  //         final photo = await rootBundle
+  //             .load('assets/images/istockphoto-1184778656-612x612.jpg');
+  //         final byteData = photo.buffer.asUint8List();
+  //         final dir = await getApplicationDocumentsDirectory();
+  //         final file = await File('${dir.path}/image.jpg').create();
+  //         await file.writeAsBytes(byteData);
+  //         data['PHOTO$i'] = file.path.obs;
+  //         break;
+  //       case InputType.RADIAL:
+  //         data['RADIAL$i'] = item.inputOption!.inputOptions!.first.obs;
+  //         break;
+  //       case InputType.FLOAT:
+  //         data['FLOAT$i'] = TextEditingController(text: '1234.567').obs;
+  //         break;
+  //     }
+  //   }
+  // }
 
   Future<void> submit() async {
     loading.value = true;
@@ -170,7 +227,7 @@ class FormController extends GetxController {
             if (imagePath.contains('base64')) {
               items[i].answer = imagePath;
             } else {
-              saveImageToGallery(File(imagePath));
+              // saveImageToGallery(File(imagePath));
               String base64 = covertToBase64(imagePath);
               items[i].answer = base64;
             }

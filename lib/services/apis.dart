@@ -11,4 +11,5 @@ class Api {
   static String getModules = '$middleware/project/modules/';
   static String getForms = '$middleware/module/form/';
   static String postFile = '$middleware/post/file';
+  static String postJson = '$middleware/post/json';
 }

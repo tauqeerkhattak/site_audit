@@ -49,6 +49,10 @@ class MyApp extends StatelessWidget {
               ),
             ),
           ),
+          builder: (context, child) {
+            final data = MediaQuery.of(context).copyWith(textScaleFactor: 1);
+            return MediaQuery(data: data, child: child!);
+          },
           debugShowCheckedModeBanner: false,
           initialRoute: AppRoutes.splash,
           getPages: AppPages.list,

@@ -129,6 +129,12 @@ class HomeController extends GetxController {
       };
       File file = await saveJsonFileLocally(jsonData);
       if (Network.isNetworkAvailable.value) {
+        await AppService.sendJson(
+          moduleId: model.subModuleId!,
+          engineerId: user.value!.data!.id!,
+          projectId: user.value!.data!.projectId!,
+          json: jsonData,
+        );
         String? response = await AppService.sendJsonFile(
           moduleId: model.subModuleId!,
           projectId: user.value!.data!.projectId!,
