@@ -76,22 +76,22 @@ class FormController extends GetxController {
   }
 
   Future<void> getForms() async {
-    // try {
-    final arguments = Get.arguments;
-    subModule = arguments['subModule'];
-    module = arguments['module'];
-    final key0 = '$formKey$projectId${subModule?.subModuleId}';
-    log('Key: $key0 $projectId ${subModule?.subModuleId}');
-    final storedData = storageService.get(key: key0);
-    final forms = jsonDecode(storedData);
-    final temp = FormModel.fromJson(forms[0]);
-    if (temp != null) {
-      form.value = temp;
-      await assignControllersToFields();
+    try {
+      final arguments = Get.arguments;
+      subModule = arguments['subModule'];
+      module = arguments['module'];
+      final key0 = '$formKey$projectId${subModule?.subModuleId}';
+      log('Key: $key0 $projectId ${subModule?.subModuleId}');
+      final storedData = storageService.get(key: key0);
+      final forms = jsonDecode(storedData);
+      final temp = FormModel.fromJson(forms[0]);
+      if (temp != null) {
+        form.value = temp;
+        await assignControllersToFields();
+      }
+    } catch (e) {
+      log('Error in Forms: $e');
     }
-    // } catch (e) {
-    //   log('Error in Forms: $e');
-    // }
   }
 
   Future<void> getStaticDropdowns(String projectId) async {
