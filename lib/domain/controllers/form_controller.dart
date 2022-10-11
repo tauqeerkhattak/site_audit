@@ -91,6 +91,7 @@ class FormController extends GetxController {
       }
     } catch (e) {
       log('Error in Forms: $e');
+      return;
     }
   }
 
