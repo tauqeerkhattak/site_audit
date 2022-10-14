@@ -26,6 +26,8 @@ import 'package:site_audit/utils/ui_utils.dart';
 import 'package:site_audit/utils/validator.dart';
 import 'package:site_audit/utils/widget_utils.dart';
 
+import '../../models/static_values.dart';
+
 class FormController extends GetxController {
   final loading = RxBool(false);
   final storageService = Get.find<LocalStorageService>();
@@ -71,7 +73,7 @@ class FormController extends GetxController {
     locationData = await location.getLocation();
     await getForms();
     await getStaticDropdowns(projectId!);
-    fillForm();
+
     loading.value = false;
   }
 
@@ -85,10 +87,9 @@ class FormController extends GetxController {
       final storedData = storageService.get(key: key0);
       final forms = jsonDecode(storedData);
       final temp = FormModel.fromJson(forms[0]);
-      if (temp != null) {
-        form.value = temp;
-        await assignControllersToFields();
-      }
+      form.value = temp;
+      await assignControllersToFields();
+      fillForm();
     } catch (e) {
       log('Error in Forms: $e');
       return;
@@ -99,11 +100,9 @@ class FormController extends GetxController {
     try {
       final data = storageService.get(key: staticValueKey);
       final temp = StaticDropModel.fromJson(jsonDecode(data));
-      if (temp != null) {
-        staticDrops.value = temp;
-        operators = staticDrops.value!.data!;
-        loading.value = false;
-      }
+      staticDrops.value = temp;
+      operators = staticDrops.value!.data!;
+      loading.value = false;
     } catch (e) {
       log('Error in Static Dropdown: $e');
     }
@@ -127,18 +126,13 @@ class FormController extends GetxController {
   ///
   Future<void> assignControllersToFields() async {
     final fields = form.value!.items!;
+    final now = DateTime.now();
     for (int i = 0; i < fields.length; i++) {
       final item = fields[i];
       InputType type = EnumHelper.inputTypeFromString(item.inputType);
       switch (type) {
         case InputType.DROPDOWN:
           data['DROPDOWN$i'] = Rxn<dynamic>();
-          break;
-        case InputType.AUTO_FILLED:
-          data['AUTOFILLED$i'] = TextEditingController().obs;
-          break;
-        case InputType.TEXTBOX:
-          data['TEXTBOX$i'] = TextEditingController().obs;
           break;
         case InputType.INTEGER:
           data['INTEGER$i'] = TextEditingController().obs;
@@ -151,6 +145,38 @@ class FormController extends GetxController {
           break;
         case InputType.FLOAT:
           data['FLOAT$i'] = TextEditingController().obs;
+          break;
+        case InputType.LOCATION:
+          final lat = locationData?.latitude;
+          final long = locationData?.longitude;
+          data['LOCATION$i'] = Rx(
+            [
+              TextEditingController(
+                text: '$lat',
+              ),
+              TextEditingController(
+                text: '$long',
+              ),
+            ],
+          );
+          break;
+        case InputType.DATE_TIME:
+          data['DATETIME$i'] = now.toString().obs;
+          break;
+        case InputType.DATE:
+          data['DATE$i'] = now.toString().obs;
+          break;
+        case InputType.TIME:
+          data['TIME$i'] = now.toString().obs;
+          break;
+        case InputType.TEXT:
+          data['TEXT$i'] = TextEditingController().obs;
+          break;
+        case InputType.TEXTBOX:
+          data['TEXTBOX$i'] = TextEditingController().obs;
+          break;
+        case InputType.TEXT_AREA:
+          data['TEXTAREA$i'] = TextEditingController().obs;
           break;
       }
     }
@@ -219,9 +245,20 @@ class FormController extends GetxController {
       final items = form.value!.items!;
       final keys = data.keys.toList();
       for (int i = 0; i < items.length; i++) {
+        final runtimeType = data[keys[i]]!.value.runtimeType;
         final type = EnumHelper.inputTypeFromString(items[i].inputType);
         if (isTextController(type)) {
-          items[i].answer = data[keys[i]]!.value.text;
+          final controller = data[keys[i]]!.value;
+          if (runtimeType == TextEditingController) {
+            log('IS TEXTCONTROLLER');
+            items[i].answer = controller.text;
+          } else {
+            String data = '';
+            for (final textController in controller) {
+              data += '${textController.text} ';
+            }
+            items[i].answer = data;
+          }
         } else if (type == InputType.PHOTO) {
           final imagePath = data[keys[i]]!.value;
           if (imagePath != null && imagePath != '') {
@@ -235,6 +272,16 @@ class FormController extends GetxController {
           } else {
             items[i].answer = data[keys[i]]!.value;
           }
+        } else if (type == InputType.LOCATION) {
+          String answer = '';
+          final controllers = data[keys[i]]!.value;
+          log('LENGTH: ${controllers.length} HEHE');
+          for (final controller in controllers) {
+            log('LOCATION: ${controller.text}');
+            answer += '${controller.text} ';
+          }
+          log('CORRECT ANSWER: $answer');
+          items[i].answer = answer;
         } else {
           items[i].answer = data[keys[i]]!.value;
         }
@@ -263,7 +310,7 @@ class FormController extends GetxController {
         'site_name': siteName.text,
       };
       form.value!.items = items;
-      form.value!.staticValues = jsonEncode(staticValues);
+      form.value!.staticValues = StaticValues.fromJson(staticValues);
       // saveJsonFileLocally();
       UiUtils.showSnackBar(
         message: 'All data is validated!',
@@ -290,9 +337,11 @@ class FormController extends GetxController {
   }
 
   bool isTextController(InputType type) {
-    if (type == InputType.TEXTBOX) {
+    if (type == InputType.TEXT) {
       return true;
-    } else if (type == InputType.AUTO_FILLED) {
+    } else if (type == InputType.TEXT_AREA) {
+      return true;
+    } else if (type == InputType.TEXTBOX) {
       return true;
     } else if (type == InputType.FLOAT) {
       return true;
@@ -345,7 +394,9 @@ class FormController extends GetxController {
         formData.add(form.value!.toJson());
         await storageService.save(key: moduleName, value: moduleCount + 1);
         await storageService.save(
-            key: subModuleName, value: subModuleCount + 1);
+          key: subModuleName,
+          value: subModuleCount + 1,
+        );
       }
       await storageService.save(key: key, value: formData);
     } else {
@@ -418,13 +469,13 @@ class FormController extends GetxController {
           case InputType.DROPDOWN:
             data['DROPDOWN$i']!.value = model.items?[i].answer;
             break;
-          case InputType.AUTO_FILLED:
-            data['AUTOFILLED$i']!.value = TextEditingController(
+          case InputType.TEXT:
+            data['TEXT$i']!.value = TextEditingController(
               text: model.items?[i].answer,
             );
             break;
-          case InputType.TEXTBOX:
-            data['TEXTBOX$i']!.value = TextEditingController(
+          case InputType.TEXT_AREA:
+            data['TEXTAREA$i']!.value = TextEditingController(
               text: model.items?[i].answer,
             );
             break;
@@ -449,10 +500,35 @@ class FormController extends GetxController {
               text: model.items?[i].answer,
             );
             break;
+          case InputType.LOCATION:
+            final answer = model.items?[i].answer?.split(' ');
+            log('ANSWER: ${model.items?[i].answer}');
+            data['LOCATION$i']!.value = List.generate(
+              answer!.length,
+              (index) {
+                return TextEditingController(text: 'Hello');
+              },
+            );
+            break;
+          case InputType.DATE_TIME:
+            data['DATETIME$i']!.value = model.items?[i].answer ?? '';
+            break;
+          case InputType.DATE:
+            data['DATE$i']!.value = model.items?[i].answer;
+            break;
+          case InputType.TIME:
+            data['TIME$i']!.value = model.items?[i].answer;
+            break;
+          case InputType.TEXTBOX:
+            log('le TEXTBOX');
+            data['TEXTBOX$i']?.value = TextEditingController(
+              text: model.items?[i].answer,
+            );
+            break;
         }
       }
     } else {
-      log('No forms to review!');
+      log('No form to review');
     }
   }
 }

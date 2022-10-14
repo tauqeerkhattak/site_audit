@@ -1,15 +1,20 @@
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:site_audit/utils/constants.dart';
-import 'package:site_audit/utils/size_config.dart';
-import 'package:site_audit/utils/ui_utils.dart';
 
-class InputField extends StatelessWidget {
-  const InputField({
+import '../utils/constants.dart';
+import '../utils/size_config.dart';
+import '../utils/ui_utils.dart';
+
+class CustomDateTime extends StatelessWidget {
+  const CustomDateTime({
     Key? key,
+    required this.type,
     this.onTap,
     this.placeHolder,
     this.readOnly,
     this.icon,
+    this.suffixIcon,
+    this.initialDate,
     this.vertical,
     this.horizontal,
     this.lines,
@@ -17,11 +22,17 @@ class InputField extends StatelessWidget {
     this.validator,
     this.inputType,
     this.label,
+    this.dateMask,
+    this.onSaved,
   }) : super(key: key);
 
+  final DateTimePickerType type;
   final String? placeHolder;
+  final DateTime? initialDate;
   final String? label;
+  final String? dateMask;
   final Widget? icon;
+  final Widget? suffixIcon;
   final bool? readOnly;
   final double? vertical, horizontal;
   final VoidCallback? onTap;
@@ -29,6 +40,7 @@ class InputField extends StatelessWidget {
   final TextInputType? inputType;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
+  final Function(String?)? onSaved;
 
   @override
   Widget build(BuildContext context) {
@@ -50,24 +62,24 @@ class InputField extends StatelessWidget {
               ),
             ),
           if (label != null) UiUtils.spaceVrt10,
-          TextFormField(
+          DateTimePicker(
+            type: type,
             controller: controller,
+            dateMask: dateMask,
+            onSaved: onSaved,
             validator: validator,
+            initialDate: initialDate,
+            firstDate: DateTime(1800),
+            lastDate: DateTime(3000),
             readOnly: readOnly ?? false,
-            onTap: onTap,
-            keyboardType: inputType,
             maxLines: lines ?? 1,
             style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.4),
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.white,
-              // constraints: const BoxConstraints(
-              //   minHeight: 60,
-              //   maxHeight: 60,
-              // ),
-
               hintText: placeHolder.toString(),
               prefixIcon: icon,
+              suffix: suffixIcon,
               hintStyle: TextStyle(
                 fontFamily: 'Ubuntu',
                 color: Colors.grey.withOpacity(0.8),

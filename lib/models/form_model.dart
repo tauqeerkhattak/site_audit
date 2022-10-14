@@ -1,17 +1,25 @@
+import 'package:site_audit/models/static_values.dart';
+
 class FormModel {
   int? subModuleId;
   String? subModuleName;
-  String? moduleName;
-  String? staticValues;
   List<Items>? items;
+  StaticValues? staticValues;
+  String? moduleName;
 
-  FormModel({this.subModuleId, this.subModuleName, this.items});
+  FormModel({
+    this.subModuleId,
+    this.subModuleName,
+    this.moduleName,
+    this.items,
+    this.staticValues,
+  });
 
   FormModel.fromJson(Map<String, dynamic> json) {
     subModuleId = json['sub_module_id'];
     subModuleName = json['sub_module_name'];
     moduleName = json['module_name'];
-    staticValues = json['staticValues'];
+    staticValues = json['static_values'];
     if (json['items'] != null) {
       items = <Items>[];
       json['items'].forEach((v) {
@@ -24,8 +32,7 @@ class FormModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['sub_module_id'] = subModuleId;
     data['sub_module_name'] = subModuleName;
-    data['module_name'] = moduleName;
-    data['static_values'] = staticValues.toString();
+    data['static_values'] = staticValues;
     if (items != null) {
       data['items'] = items!.map((v) => v.toJson()).toList();
     }
@@ -39,11 +46,13 @@ class Items {
   bool? mandatory;
   String? inputDescription;
   String? inputType;
-  String? inputLabel;
+  String? inputParameter;
   String? answer;
+  int? inputLength;
+  String? inputLabel;
   int? status;
-  InputOption? inputOption;
   Modules? modules;
+  InputOption? inputOption;
 
   Items(
       {this.projectId,
@@ -51,11 +60,13 @@ class Items {
       this.mandatory,
       this.inputDescription,
       this.inputType,
-      this.inputLabel,
+      this.inputParameter,
       this.answer,
+      this.inputLength,
+      this.inputLabel,
       this.status,
-      this.inputOption,
-      this.modules});
+      this.modules,
+      this.inputOption});
 
   Items.fromJson(Map<String, dynamic> json) {
     projectId = json['project_id'];
@@ -63,14 +74,15 @@ class Items {
     mandatory = json['mandatory'] == 1 ? true : false;
     inputDescription = json['input_description'];
     inputType = json['input_type'];
+    inputParameter = json['input_parameter'];
+    inputLength = json['input_length'];
     inputLabel = json['input_label'];
-    answer = json['answer'];
     status = json['status'];
+    modules =
+        json['modules'] != null ? Modules.fromJson(json['modules']) : null;
     inputOption = json['input_option'] != null
         ? InputOption.fromJson(json['input_option'])
         : null;
-    modules =
-        json['modules'] != null ? Modules.fromJson(json['modules']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -80,34 +92,16 @@ class Items {
     data['mandatory'] = mandatory;
     data['input_description'] = inputDescription;
     data['input_type'] = inputType;
+    data['input_parameter'] = inputParameter;
+    data['input_length'] = inputLength;
     data['input_label'] = inputLabel;
-    data['answer'] = answer;
     data['status'] = status;
-    if (inputOption != null) {
-      data['input_option'] = inputOption!.toJson();
-    }
     if (modules != null) {
       data['modules'] = modules!.toJson();
     }
-    return data;
-  }
-}
-
-class InputOption {
-  int? status;
-  List<String>? inputOptions;
-
-  InputOption({this.status, this.inputOptions});
-
-  InputOption.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    inputOptions = json['input_options'].cast<String>();
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = status;
-    data['input_options'] = inputOptions;
+    if (inputOption != null) {
+      data['input_option'] = inputOption!.toJson();
+    }
     return data;
   }
 }
@@ -161,6 +155,25 @@ class Modules {
     data['design_ref'] = designRef;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
+    return data;
+  }
+}
+
+class InputOption {
+  int? status;
+  List<String>? inputOptions;
+
+  InputOption({this.status, this.inputOptions});
+
+  InputOption.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    inputOptions = json['input_options'].cast<String>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['input_options'] = inputOptions;
     return data;
   }
 }

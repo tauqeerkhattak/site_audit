@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,6 +21,9 @@ import 'package:site_audit/widgets/error_widget.dart';
 import 'package:site_audit/widgets/image_input.dart';
 import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
+
+import '../../utils/enums/input_parameter.dart';
+import '../../widgets/custom_date_time.dart';
 
 class FormScreen extends StatelessWidget {
   final controller = Get.find<FormController>();
@@ -48,7 +52,7 @@ class FormScreen extends StatelessWidget {
       backgroundImage: 'assets/images/hand-drawn-5g.jpg',
       child: Padding(
         padding: UiUtils.allInsets10,
-        child: _bodyWidget(),
+        child: _bodyWidget(context),
       ),
     );
   }
@@ -64,10 +68,11 @@ class FormScreen extends StatelessWidget {
     return 'ADD $title';
   }
 
-  Widget _bodyWidget() {
+  Widget _bodyWidget(BuildContext context) {
     return Obx(
       () {
         if (controller.loading.value) {
+          controller.loading.value = false;
           return Center(
             child: UiUtils.loadingIndicator,
           );
@@ -146,15 +151,22 @@ class FormScreen extends StatelessWidget {
                           ),
                           ...List.generate(form.items!.length, (index) {
                             Items item = form.items![index];
-                            InputType type =
-                                EnumHelper.inputTypeFromString(item.inputType);
+                            InputType type = EnumHelper.inputTypeFromString(
+                              item.inputType,
+                            );
+                            InputParameter parameter =
+                                EnumHelper.inputParameterFromString(
+                              item.inputParameter,
+                            );
                             return Column(
                               children: [
                                 UiUtils.spaceVrt10,
                                 _inputWidget(
-                                  type,
-                                  item,
-                                  index,
+                                  context: context,
+                                  type: type,
+                                  item: item,
+                                  index: index,
+                                  parameter: parameter,
                                 ),
                                 UiUtils.spaceVrt10,
                               ],
@@ -177,14 +189,17 @@ class FormScreen extends StatelessWidget {
     );
   }
 
-  Widget _inputWidget(InputType type, Items item, int index) {
+  Widget _inputWidget({
+    required BuildContext context,
+    required InputType type,
+    required Items item,
+    required int index,
+    required InputParameter parameter,
+  }) {
+    final isEditable = parameter == InputParameter.EDITABLE;
     switch (type) {
       case InputType.DROPDOWN:
-        List<String> options = item.inputOption?.inputOptions ??
-            [
-              'Abc',
-              'Def',
-            ];
+        List<String> options = item.inputOption?.inputOptions ?? [];
         return Obx(
           () => CustomDropdown<String>(
             items: options,
@@ -196,22 +211,16 @@ class FormScreen extends StatelessWidget {
               controller.data['DROPDOWN$index']!.value = value!;
               log('OnChanged: $value ${controller.data['DROPDOWN$index']!.value}');
             },
+            enabled: isEditable,
           ),
         );
-      case InputType.AUTO_FILLED:
-        return InputField(
-          controller: controller.data['AUTOFILLED$index']!.value,
-          label: item.inputLabel,
-          placeHolder: 'Tap to Enter Text',
-          validator: item.mandatory ?? true ? Validator.stringValidator : null,
-          readOnly: true,
-        );
-      case InputType.TEXTBOX:
+      case InputType.TEXT:
         return InputField(
           controller: controller.data['TEXTBOX$index']!.value,
           label: item.inputLabel,
           placeHolder: 'Tap to Enter Text',
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
+          readOnly: !isEditable,
         );
       case InputType.INTEGER:
         return InputField(
@@ -220,6 +229,7 @@ class FormScreen extends StatelessWidget {
           placeHolder: 'Tap to Enter Text',
           inputType: TextInputType.number,
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
+          readOnly: !isEditable,
         );
       case InputType.PHOTO:
         return Obx(
@@ -256,6 +266,107 @@ class FormScreen extends StatelessWidget {
           placeHolder: 'Tap to Enter Text',
           inputType: TextInputType.number,
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
+          readOnly: !isEditable,
+        );
+      case InputType.LOCATION:
+        List<TextEditingController> controllers =
+            controller.data['LOCATION$index']!.value;
+        log('DATA: ${controller.data['LOCATION$index']!.value} ${controllers.length}');
+        return Row(
+          children: [
+            Expanded(
+              child: InputField(
+                controller: controllers[0],
+                label: 'Latitude',
+                placeHolder: 'Tap to Enter Text',
+                validator:
+                    item.mandatory ?? true ? Validator.stringValidator : null,
+                readOnly: !isEditable,
+              ),
+            ),
+            UiUtils.spaceHzt20,
+            Expanded(
+              child: InputField(
+                controller: controllers[1],
+                label: 'Longitude',
+                placeHolder: 'Tap to Enter Text',
+                validator:
+                    item.mandatory ?? true ? Validator.stringValidator : null,
+                readOnly: !isEditable,
+              ),
+            ),
+          ],
+        );
+      case InputType.DATE_TIME:
+        final dateTime = controller.data['DATETIME$index']!.value;
+        return CustomDateTime(
+          controller: TextEditingController(text: dateTime.toString()),
+          type: DateTimePickerType.dateTime,
+          label: item.inputLabel,
+          dateMask: 'dd-M-yyyy hh:mm a',
+          suffixIcon: isEditable
+              ? const Icon(
+                  Icons.edit,
+                  color: Constants.primaryColor,
+                )
+              : null,
+          onSaved: (value) {
+            if (value != null) {
+              controller.data['DATETIME$index']!.value = value;
+            }
+          },
+          placeHolder: 'Tap to select date and time',
+          validator: item.mandatory ?? true ? Validator.stringValidator : null,
+          readOnly: !isEditable,
+        );
+      case InputType.DATE:
+        final dateTime = controller.data['DATE$index']!.value;
+        return CustomDateTime(
+          controller: TextEditingController(text: dateTime.toString()),
+          type: DateTimePickerType.dateTime,
+          label: item.inputLabel,
+          dateMask: 'dd-M-yyyy hh:mm a',
+          onSaved: (value) {
+            if (value != null) {
+              controller.data['DATETIME$index']!.value = value;
+            }
+          },
+          placeHolder: 'Tap to select date and time',
+          validator: item.mandatory ?? true ? Validator.stringValidator : null,
+          readOnly: !isEditable,
+        );
+      case InputType.TIME:
+        final dateTime = controller.data['TIME$index']!.value;
+        return CustomDateTime(
+          controller: TextEditingController(text: dateTime.toString()),
+          type: DateTimePickerType.dateTime,
+          label: item.inputLabel,
+          dateMask: 'hh:mm a',
+          onSaved: (value) {
+            if (value != null) {
+              controller.data['DATETIME$index']!.value = value;
+            }
+          },
+          placeHolder: 'Tap to select date and time',
+          validator: item.mandatory ?? true ? Validator.stringValidator : null,
+          readOnly: !isEditable,
+        );
+      case InputType.TEXT_AREA:
+        return InputField(
+          controller: controller.data['TEXTBOX$index']!.value,
+          label: item.inputLabel,
+          placeHolder: 'Tap to Enter Text',
+          lines: 3,
+          validator: item.mandatory ?? true ? Validator.stringValidator : null,
+          readOnly: !isEditable,
+        );
+      case InputType.TEXTBOX:
+        return InputField(
+          controller: controller.data['TEXTBOX$index']!.value,
+          label: item.inputLabel,
+          placeHolder: 'Tap to Enter Text',
+          validator: item.mandatory ?? true ? Validator.stringValidator : null,
+          readOnly: !isEditable,
         );
     }
   }

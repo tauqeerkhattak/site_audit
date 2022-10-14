@@ -24,10 +24,6 @@ class Validator {
     switch (type) {
       case InputType.DROPDOWN:
         return (fieldValue != null && fieldValue != '');
-      case InputType.AUTO_FILLED:
-        return true;
-      case InputType.TEXTBOX:
-        return true;
       case InputType.INTEGER:
         return true;
       case InputType.PHOTO:
@@ -41,6 +37,20 @@ class Validator {
       case InputType.RADIAL:
         return (fieldValue != null && fieldValue != '');
       case InputType.FLOAT:
+        return true;
+      case InputType.LOCATION:
+        return true;
+      case InputType.DATE_TIME:
+        return (fieldValue != null && fieldValue != '');
+      case InputType.DATE:
+        return (fieldValue != null && fieldValue != '');
+      case InputType.TIME:
+        return (fieldValue != null && fieldValue != '');
+      case InputType.TEXT:
+        return true;
+      case InputType.TEXT_AREA:
+        return true;
+      case InputType.TEXTBOX:
         return true;
     }
   }

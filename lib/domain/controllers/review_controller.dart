@@ -5,6 +5,8 @@ import 'package:site_audit/models/review_model.dart';
 import 'package:site_audit/models/static_drop_model.dart';
 import 'package:site_audit/services/local_storage_service.dart';
 
+import '../../models/static_values.dart';
+
 class ReviewController extends GetxController {
   RxBool loading = true.obs;
   final storageService = Get.find<LocalStorageService>();
