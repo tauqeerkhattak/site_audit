@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/home_controller.dart';
@@ -25,9 +24,28 @@ class HomeScreen extends StatelessWidget {
         return false;
       },
       child: DefaultLayout(
+        showBackButton: false,
+        titleWidget: Obx(
+          () => Text(
+            getTitle(),
+            style: const TextStyle(
+              color: Constants.primaryColor,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
         child: _bodyWidget(context),
       ),
     );
+  }
+
+  String getTitle() {
+    if (controller.currentPage.value == 0) {
+      return 'Site Audit Home Screen';
+    } else {
+      return '${controller.selectedModule.value?.moduleName} Sub Menu';
+    }
   }
 
   Widget _bodyWidget(BuildContext context) {
@@ -50,6 +68,9 @@ class HomeScreen extends StatelessWidget {
           return PageView(
             physics: const NeverScrollableScrollPhysics(),
             controller: controller.pageController,
+            onPageChanged: (int page) {
+              controller.currentPage.value = page;
+            },
             children: [
               getModulesUi(context),
               getSubModulesUi(
@@ -139,19 +160,6 @@ class HomeScreen extends StatelessWidget {
     List<Module> modules = controller.modules;
     return Column(
       children: [
-        const Expanded(
-          flex: 1,
-          child: Center(
-            child: Text(
-              'Site Audit Home Screen',
-              style: TextStyle(
-                color: Constants.primaryColor,
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
         Expanded(
           flex: 10,
           child: CustomGridView(
@@ -220,37 +228,6 @@ class HomeScreen extends StatelessWidget {
     List<SubModule> subModules = module.subModules!;
     return Column(
       children: [
-        Expanded(
-          flex: 1,
-          child: Row(
-            // mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(
-                flex: 1,
-                child: IconButton(
-                  onPressed: () => controller.animateBack(),
-                  icon: const Icon(
-                    CupertinoIcons.back,
-                    color: Constants.primaryColor,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 9,
-                child: Center(
-                  child: Text(
-                    '${module.moduleName} Sub Menu',
-                    style: const TextStyle(
-                      color: Constants.primaryColor,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
         Expanded(
           flex: 10,
           child: CustomGridView(

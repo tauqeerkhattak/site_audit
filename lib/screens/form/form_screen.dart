@@ -1,5 +1,4 @@
 import 'package:date_time_picker/date_time_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/form_controller.dart';
@@ -11,7 +10,6 @@ import 'package:site_audit/utils/enums/input_type.dart';
 import 'package:site_audit/utils/ui_utils.dart';
 import 'package:site_audit/utils/validator.dart';
 import 'package:site_audit/utils/widget_utils.dart';
-import 'package:site_audit/widgets/custom_app_bar.dart';
 import 'package:site_audit/widgets/custom_dropdown.dart';
 import 'package:site_audit/widgets/custom_radio_button.dart';
 import 'package:site_audit/widgets/default_layout.dart';
@@ -30,22 +28,7 @@ class FormScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      appBar: CustomAppBar(
-        titleText: getTitleText(),
-        backButton: GestureDetector(
-          onTap: () {
-            Get.back();
-          },
-          child: const Padding(
-            padding: EdgeInsets.all(10),
-            child: Icon(
-              CupertinoIcons.back,
-              color: Constants.primaryColor,
-              size: 30,
-            ),
-          ),
-        ),
-      ),
+      title: getTitleText(),
       backgroundImage: 'assets/images/hand-drawn-5g.jpg',
       child: Padding(
         padding: UiUtils.allInsets10,
@@ -69,7 +52,7 @@ class FormScreen extends StatelessWidget {
     return Obx(
       () {
         if (controller.loading.value) {
-          return Center(
+          return const Center(
             child: UiUtils.loadingIndicator,
           );
         } else {
@@ -299,7 +282,7 @@ class FormScreen extends StatelessWidget {
           dateMask: 'dd-M-yyyy hh:mm a',
           suffixIcon: isEditable
               ? const Icon(
-                  Icons.edit,
+                  Icons.calendar_month,
                   color: Constants.primaryColor,
                 )
               : null,
@@ -316,23 +299,31 @@ class FormScreen extends StatelessWidget {
         final dateTime = controller.data['DATE$index']!.value;
         return CustomDateTime(
           controller: TextEditingController(text: dateTime.toString()),
-          type: DateTimePickerType.dateTime,
+          type: DateTimePickerType.date,
           label: item.inputLabel,
-          dateMask: 'dd-M-yyyy hh:mm a',
+          dateMask: 'dd-M-yyyy',
           onSaved: (value) {
             if (value != null) {
               controller.data['DATETIME$index']!.value = value;
             }
           },
+          suffixIcon: isEditable
+              ? const Icon(
+                  Icons.calendar_month,
+                  color: Constants.primaryColor,
+                )
+              : null,
           placeHolder: item.inputHint ?? 'Tap to select date and time',
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
           readOnly: !isEditable,
         );
       case InputType.TIME:
-        final dateTime = controller.data['TIME$index']!.value;
+        final timeOfDay = controller.data['TIME$index']!.value;
         return CustomDateTime(
-          controller: TextEditingController(text: dateTime.toString()),
-          type: DateTimePickerType.dateTime,
+          controller: TextEditingController(
+            text: timeOfDay.format(context),
+          ),
+          type: DateTimePickerType.time,
           label: item.inputLabel,
           dateMask: 'hh:mm a',
           onSaved: (value) {
@@ -340,6 +331,12 @@ class FormScreen extends StatelessWidget {
               controller.data['DATETIME$index']!.value = value;
             }
           },
+          suffixIcon: isEditable
+              ? const Icon(
+                  Icons.calendar_month,
+                  color: Constants.primaryColor,
+                )
+              : null,
           placeHolder: item.inputHint ?? 'Tap to select date and time',
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
           readOnly: !isEditable,

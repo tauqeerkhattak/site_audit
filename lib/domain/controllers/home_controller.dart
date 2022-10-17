@@ -19,6 +19,7 @@ import '../../models/form_model.dart';
 class HomeController extends GetxController {
   RxBool loading = false.obs;
   bool isLocallySaved = false;
+  RxInt currentPage = 0.obs;
   final pageController = PageController(initialPage: 0);
   Rxn<User> user = Rxn();
   final storageService = Get.find<LocalStorageService>();

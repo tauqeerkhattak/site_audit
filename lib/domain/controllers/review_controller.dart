@@ -15,7 +15,7 @@ class ReviewController extends GetxController {
   Module? module;
   SubModule? subModule;
   int subModuleId = 0;
-  List<dynamic>? formItems = [];
+  Rxn<List<dynamic>> formItems = Rxn(<dynamic>[]);
 
   List<Datum> operators = <Datum>[].obs;
   List<Region> regions = <Region>[].obs;
@@ -43,7 +43,13 @@ class ReviewController extends GetxController {
     subModule = arguments['subModule'];
     formName.value = '${module!.moduleName} >> ${subModule!.subModuleName}';
     subModuleId = subModule!.subModuleId!;
-    formItems = storageService.get(key: formName.value);
+    formItems.value = storageService.get(key: formName.value);
+    storageService.listen(
+      key: formName.value,
+      listener: (data) {
+        formItems.value = data;
+      },
+    );
     StaticValues? value = formItem?.staticValues!;
 
     //Set Dropdowns

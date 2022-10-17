@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../utils/constants.dart';
 import '../utils/size_config.dart';
@@ -12,6 +15,7 @@ class CustomDateTime extends StatelessWidget {
     this.onTap,
     this.placeHolder,
     this.readOnly,
+    this.timeOfDay,
     this.icon,
     this.suffixIcon,
     this.initialDate,
@@ -34,6 +38,7 @@ class CustomDateTime extends StatelessWidget {
   final Widget? icon;
   final Widget? suffixIcon;
   final bool? readOnly;
+  final TimeOfDay? timeOfDay;
   final double? vertical, horizontal;
   final VoidCallback? onTap;
   final int? lines;
@@ -64,8 +69,10 @@ class CustomDateTime extends StatelessWidget {
           if (label != null) UiUtils.spaceVrt10,
           DateTimePicker(
             type: type,
+            initialTime: timeOfDay,
             controller: controller,
             dateMask: dateMask,
+            use24HourFormat: false,
             onSaved: onSaved,
             validator: validator,
             initialDate: initialDate,
@@ -74,14 +81,16 @@ class CustomDateTime extends StatelessWidget {
             readOnly: readOnly ?? false,
             maxLines: lines ?? 1,
             style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.4),
+            onChanged: (data) {
+              log('ONCHANGED: $data');
+            },
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.white,
               hintText: placeHolder.toString(),
               prefixIcon: icon,
-              suffix: suffixIcon,
-              hintStyle: TextStyle(
-                fontFamily: 'Ubuntu',
+              suffixIcon: suffixIcon,
+              hintStyle: GoogleFonts.roboto(
                 color: Colors.grey.withOpacity(0.8),
                 fontWeight: FontWeight.w500,
               ),

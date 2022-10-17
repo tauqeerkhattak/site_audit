@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:site_audit/services/image_picker_service.dart';
 import 'package:site_audit/services/local_storage_service.dart';
 import 'package:site_audit/utils/constants.dart';
@@ -32,17 +33,15 @@ class MyApp extends StatelessWidget {
           title: 'Site Audit',
           theme: ThemeData(
             primarySwatch: Colors.blue,
-            fontFamily: 'Ubuntu',
+            fontFamily: 'Roboto',
             textTheme: TextTheme(
-              headline3: TextStyle(
+              headline3: GoogleFonts.roboto(
                 fontWeight: FontWeight.w800,
-                fontFamily: 'NanumMyeongjo',
                 fontSize: SizeConfig.textMultiplier * 6,
                 color: Constants.primaryColor,
               ),
-              headline4: TextStyle(
+              headline4: GoogleFonts.roboto(
                 fontWeight: FontWeight.w700,
-                fontFamily: 'NanumMyeongjo',
                 fontSize: SizeConfig.textMultiplier * 4.5,
                 color: Constants.primaryColor.withOpacity(0.8),
                 height: 1.5,

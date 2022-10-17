@@ -165,7 +165,7 @@ class FormController extends GetxController {
           data['DATE$i'] = now.toString().obs;
           break;
         case InputType.TIME:
-          data['TIME$i'] = now.toString().obs;
+          data['TIME$i'] = TimeOfDay.now().obs;
           break;
         case InputType.TEXT:
           data['TEXT$i'] = TextEditingController().obs;
@@ -267,8 +267,11 @@ class FormController extends GetxController {
             answer += '${controller.text} ';
           }
           items[i].answer = answer;
+        } else if (type == InputType.TIME) {
+          final timeOfDay = data[keys[i]]!.value as TimeOfDay;
+          items[i].answer = timeOfDay.format(Get.context!);
         } else {
-          items[i].answer = data[keys[i]]!.value;
+          items[i].answer = data[keys[i]]!.value.toString();
         }
       }
       Map<String, dynamic> staticValues = {
@@ -301,7 +304,12 @@ class FormController extends GetxController {
         message: 'All data is validated!',
       );
       await saveDataToLocalStorage();
-      Get.offNamedUntil(AppRoutes.home, (route) => false);
+      // Get.offNamedUntil(
+      //   AppRoutes.home,
+      //   (route) => false,
+      // );
+      Navigator.pop(Get.context!);
+      // Get.offNamedUntil(AppRoutes.home, (route) => false);
     } else {
       log('NOT VALIDATED');
       UiUtils.showSnackBar(message: 'Please fill all the fields');
@@ -342,7 +350,7 @@ class FormController extends GetxController {
     final ext = imagePath.split('.').last;
     final filename = getImageName(DateTime.now());
     String base64 =
-        'data:image/$ext/filename:$filename;base64,${base64Encode(bytes)}';
+        'data:image/filename:$filename.$ext;base64,${base64Encode(bytes)}';
     return base64;
   }
 
@@ -503,7 +511,12 @@ class FormController extends GetxController {
             data['DATE$i']!.value = model.items?[i].answer;
             break;
           case InputType.TIME:
-            data['TIME$i']!.value = model.items?[i].answer;
+            final time = model.items?[i].answer;
+            final list = time!.split(':');
+            data['TIME$i']!.value = TimeOfDay(
+              hour: int.tryParse(list[0]) ?? 0,
+              minute: int.tryParse(list[1]) ?? 0,
+            );
             break;
           case InputType.TEXTBOX:
             data['TEXTBOX$i']?.value = TextEditingController(

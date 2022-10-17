@@ -16,6 +16,8 @@ class LoadData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
+      title: '',
+      showBackButton: false,
       child: SizedBox(
         width: SizeConfig.screenWidth,
         child: Column(
