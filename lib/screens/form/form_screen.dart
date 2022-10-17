@@ -200,6 +200,7 @@ class FormScreen extends StatelessWidget {
           () => CustomDropdown<String>(
             items: options,
             label: item.inputLabel,
+            hint: item.inputHint ?? 'Select Option',
             value: controller.data['DROPDOWN$index']!.value,
             validator:
                 item.mandatory ?? true ? Validator.stringValidator : null,
@@ -213,7 +214,7 @@ class FormScreen extends StatelessWidget {
         return InputField(
           controller: controller.data['TEXTBOX$index']!.value,
           label: item.inputLabel,
-          placeHolder: 'Tap to Enter Text',
+          placeHolder: item.inputHint ?? 'Tap to Enter Text',
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
           readOnly: !isEditable,
         );
@@ -221,7 +222,7 @@ class FormScreen extends StatelessWidget {
         return InputField(
           controller: controller.data['INTEGER$index']!.value,
           label: item.inputLabel,
-          placeHolder: 'Tap to Enter Text',
+          placeHolder: item.inputHint ?? 'Tap to Enter Text',
           inputType: TextInputType.number,
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
           readOnly: !isEditable,
@@ -236,7 +237,7 @@ class FormScreen extends StatelessWidget {
             isMandatory: item.mandatory ?? false,
             imagePath: controller.data['PHOTO$index']!.value,
             label: item.inputLabel,
-            hint: 'Upload a picture',
+            hint: item.inputHint ?? 'Upload a picture',
           ),
         );
       case InputType.RADIAL:
@@ -256,7 +257,7 @@ class FormScreen extends StatelessWidget {
         return InputField(
           controller: controller.data['FLOAT$index']!.value,
           label: item.inputLabel,
-          placeHolder: 'Tap to Enter Text',
+          placeHolder: item.inputHint ?? 'Tap to Enter Text',
           inputType: TextInputType.number,
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
           readOnly: !isEditable,
@@ -270,7 +271,7 @@ class FormScreen extends StatelessWidget {
               child: InputField(
                 controller: controllers[0],
                 label: 'Latitude',
-                placeHolder: 'Tap to Enter Text',
+                placeHolder: item.inputHint ?? 'Tap to Enter Text',
                 validator:
                     item.mandatory ?? true ? Validator.stringValidator : null,
                 readOnly: !isEditable,
@@ -281,7 +282,7 @@ class FormScreen extends StatelessWidget {
               child: InputField(
                 controller: controllers[1],
                 label: 'Longitude',
-                placeHolder: 'Tap to Enter Text',
+                placeHolder: item.inputHint ?? 'Tap to Enter Text',
                 validator:
                     item.mandatory ?? true ? Validator.stringValidator : null,
                 readOnly: !isEditable,
@@ -307,7 +308,7 @@ class FormScreen extends StatelessWidget {
               controller.data['DATETIME$index']!.value = value;
             }
           },
-          placeHolder: 'Tap to select date and time',
+          placeHolder: item.inputHint ?? 'Tap to select date and time',
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
           readOnly: !isEditable,
         );
@@ -323,7 +324,7 @@ class FormScreen extends StatelessWidget {
               controller.data['DATETIME$index']!.value = value;
             }
           },
-          placeHolder: 'Tap to select date and time',
+          placeHolder: item.inputHint ?? 'Tap to select date and time',
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
           readOnly: !isEditable,
         );
@@ -339,7 +340,7 @@ class FormScreen extends StatelessWidget {
               controller.data['DATETIME$index']!.value = value;
             }
           },
-          placeHolder: 'Tap to select date and time',
+          placeHolder: item.inputHint ?? 'Tap to select date and time',
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
           readOnly: !isEditable,
         );
@@ -356,7 +357,7 @@ class FormScreen extends StatelessWidget {
         return InputField(
           controller: controller.data['TEXTBOX$index']!.value,
           label: item.inputLabel,
-          placeHolder: 'Tap to Enter Text',
+          placeHolder: item.inputHint ?? 'Tap to Enter Text',
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
           readOnly: !isEditable,
         );

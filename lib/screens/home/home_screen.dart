@@ -5,6 +5,7 @@ import 'package:site_audit/domain/controllers/home_controller.dart';
 import 'package:site_audit/models/module_model.dart';
 import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/utils/constants.dart';
+import 'package:site_audit/utils/network.dart';
 import 'package:site_audit/utils/size_config.dart';
 import 'package:site_audit/utils/ui_utils.dart';
 import 'package:site_audit/widgets/custom_grid_view.dart';
@@ -24,12 +25,12 @@ class HomeScreen extends StatelessWidget {
         return false;
       },
       child: DefaultLayout(
-        child: _bodyWidget(),
+        child: _bodyWidget(context),
       ),
     );
   }
 
-  Widget _bodyWidget() {
+  Widget _bodyWidget(BuildContext context) {
     return Obx(
       () {
         if (controller.loading.value) {
@@ -50,7 +51,7 @@ class HomeScreen extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             controller: controller.pageController,
             children: [
-              getModulesUi(),
+              getModulesUi(context),
               getSubModulesUi(
                 controller.selectedModule.value,
               ),
@@ -134,7 +135,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget getModulesUi() {
+  Widget getModulesUi(BuildContext context) {
     List<Module> modules = controller.modules;
     return Column(
       children: [
@@ -193,8 +194,9 @@ class HomeScreen extends StatelessWidget {
                 color: Constants.successColor,
                 width: 0.7,
                 fontScaleFactor: 15,
+                disabled: !Network.isNetworkAvailable.value,
                 loading: controller.loading.value,
-                onPressed: controller.submitAudits,
+                onPressed: () => controller.submitAudits(context),
               ),
             ],
           ),
@@ -220,15 +222,33 @@ class HomeScreen extends StatelessWidget {
       children: [
         Expanded(
           flex: 1,
-          child: Center(
-            child: Text(
-              '${module.moduleName} Sub Menu',
-              style: const TextStyle(
-                color: Constants.primaryColor,
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
+          child: Row(
+            // mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Expanded(
+                flex: 1,
+                child: IconButton(
+                  onPressed: () => controller.animateBack(),
+                  icon: const Icon(
+                    CupertinoIcons.back,
+                    color: Constants.primaryColor,
+                  ),
+                ),
               ),
-            ),
+              Expanded(
+                flex: 9,
+                child: Center(
+                  child: Text(
+                    '${module.moduleName} Sub Menu',
+                    style: const TextStyle(
+                      color: Constants.primaryColor,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         Expanded(

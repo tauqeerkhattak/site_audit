@@ -48,6 +48,7 @@ class Items {
   String? inputType;
   String? inputParameter;
   String? answer;
+  String? inputHint;
   int? inputLength;
   String? inputLabel;
   int? status;
@@ -73,6 +74,7 @@ class Items {
     designRef = json['design_ref'];
     mandatory = json['mandatory'] == 1 ? true : false;
     answer = json['answer'];
+    inputHint = json['input_hint'];
     inputDescription = json['input_description'];
     inputType = json['input_type'];
     inputParameter = json['input_parameter'];
@@ -96,6 +98,7 @@ class Items {
     data['input_parameter'] = inputParameter;
     data['input_length'] = inputLength;
     data['answer'] = answer;
+    data['input_hint'] = inputHint;
     data['input_label'] = inputLabel;
     data['status'] = status;
     if (modules != null) {

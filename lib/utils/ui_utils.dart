@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/utils/constants.dart';
@@ -21,7 +22,7 @@ class UiUtils {
     width: 20,
   );
 
-  static final loadingIndicator = CircularProgressIndicator(
+  static const loadingIndicator = CircularProgressIndicator(
     valueColor: AlwaysStoppedAnimation(
       Constants.primaryColor,
     ),
@@ -44,6 +45,72 @@ class UiUtils {
         color: Colors.white,
       ),
       snackPosition: SnackPosition.TOP,
+    );
+  }
+
+  static void showSimpleDialog(
+      {required context, required String title, required String content}) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text(
+            title,
+            style: const TextStyle(
+              color: Constants.primaryColor,
+            ),
+          ),
+          content: Text(
+            content,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text(
+                'Okay',
+                style: TextStyle(
+                  color: Constants.primaryColor,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static void showErrorDialog(
+      {required context, required String title, required String content}) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text(
+            title,
+            style: const TextStyle(
+              color: Colors.red,
+            ),
+          ),
+          content: Text(
+            content,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text(
+                'Okay',
+                style: TextStyle(
+                  color: Constants.primaryColor,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

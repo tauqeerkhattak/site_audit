@@ -340,7 +340,9 @@ class FormController extends GetxController {
     File imageFile = File(imagePath);
     List<int> bytes = imageFile.readAsBytesSync();
     final ext = imagePath.split('.').last;
-    String base64 = 'data:image/$ext;base64,${base64Encode(bytes)}';
+    final filename = getImageName(DateTime.now());
+    String base64 =
+        'data:image/$ext/filename:$filename;base64,${base64Encode(bytes)}';
     return base64;
   }
 
@@ -397,32 +399,33 @@ class FormController extends GetxController {
   }
 
   Future<void> saveImageToGallery(File image) async {
-    final time = DateTime.now();
+    try {
+      final time = DateTime.now();
 
-    Uint8List imageData = await controller.captureFromWidget(
-      WidgetUtils.imageWidget(
-        image: image,
-        lat: locationData!.latitude!,
-        long: locationData!.longitude!,
-        dateTime: time,
-      ),
-      context: Get.context,
-      delay: const Duration(
-        seconds: 3,
-      ),
-    );
-    final directory = await getTemporaryDirectory();
-    final ext = image.path.split('.').last;
-    File file = await File(
-      '${directory.path}/${getImageName(time)}.$ext',
-    ).create();
-    file.writeAsBytesSync(imageData);
+      Uint8List imageData = await controller.captureFromWidget(
+        WidgetUtils.imageWidget(
+          image: image,
+          lat: locationData!.latitude!,
+          long: locationData!.longitude!,
+          dateTime: time,
+        ),
+        context: Get.context,
+        delay: const Duration(
+          seconds: 3,
+        ),
+      );
+      final directory = await getTemporaryDirectory();
+      final ext = image.path.split('.').last;
+      File file = await File(
+        '${directory.path}/${getImageName(time)}.$ext',
+      ).create();
+      file.writeAsBytesSync(imageData);
 
-    await GallerySaver.saveImage(
-      file.path,
-      albumName: 'SiteAudit',
-    );
-    try {} catch (e) {
+      await GallerySaver.saveImage(
+        file.path,
+        albumName: 'SiteAudit',
+      );
+    } catch (e) {
       UiUtils.showSnackBar(message: 'EXCEPTION IN SAVING IMAGE: $e');
     }
   }

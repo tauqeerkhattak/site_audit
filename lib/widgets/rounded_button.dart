@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/utils/constants.dart';
+import 'package:site_audit/utils/ui_utils.dart';
 
 class RoundedButton extends StatelessWidget {
   final String text;
@@ -25,11 +26,19 @@ class RoundedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: InkWell(
-        onTap: disabled ? null : onPressed,
+        onTap: disabled
+            ? () {
+                UiUtils.showErrorDialog(
+                  context: context,
+                  title: 'No connections',
+                  content: 'Please connect to a mobile network or wifi!',
+                );
+              }
+            : onPressed,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 500),
           decoration: BoxDecoration(
-            color: disabled ? Colors.grey : (color ?? Constants.primaryColor),
+            color: disabled ? Colors.red : (color ?? Constants.primaryColor),
             borderRadius: loading!
                 ? BorderRadius.circular(100.0)
                 : BorderRadius.circular(18.0),
