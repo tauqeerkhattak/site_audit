@@ -41,7 +41,6 @@ class AuthController extends GetxController {
   Future<void> handleLogin() async {
     if (loginFormKey.currentState!.validate()) {
       try {
-        log('Login pressed!');
         FocusManager.instance.primaryFocus?.unfocus();
         loading.value = true;
         var payload = {

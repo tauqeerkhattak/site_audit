@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +34,6 @@ class FormScreen extends StatelessWidget {
         titleText: getTitleText(),
         backButton: GestureDetector(
           onTap: () {
-            log('Go back');
             Get.back();
           },
           child: const Padding(
@@ -72,7 +69,6 @@ class FormScreen extends StatelessWidget {
     return Obx(
       () {
         if (controller.loading.value) {
-          controller.loading.value = false;
           return Center(
             child: UiUtils.loadingIndicator,
           );
@@ -209,7 +205,6 @@ class FormScreen extends StatelessWidget {
                 item.mandatory ?? true ? Validator.stringValidator : null,
             onChanged: (String? value) {
               controller.data['DROPDOWN$index']!.value = value!;
-              log('OnChanged: $value ${controller.data['DROPDOWN$index']!.value}');
             },
             enabled: isEditable,
           ),
@@ -236,9 +231,7 @@ class FormScreen extends StatelessWidget {
           () => ImageInput(
             onTap: () async {
               final path = await controller.imagePickerService.pickImage();
-              log('PHOTO AT INDEX: $index');
               controller.data['PHOTO$index']!.value = path;
-              log('Photo upload tapped!');
             },
             isMandatory: item.mandatory ?? false,
             imagePath: controller.data['PHOTO$index']!.value,
@@ -271,7 +264,6 @@ class FormScreen extends StatelessWidget {
       case InputType.LOCATION:
         List<TextEditingController> controllers =
             controller.data['LOCATION$index']!.value;
-        log('DATA: ${controller.data['LOCATION$index']!.value} ${controllers.length}');
         return Row(
           children: [
             Expanded(
@@ -412,7 +404,6 @@ class FormScreen extends StatelessWidget {
         controller.siteIDs.clear();
         controller.currentSite.value = null;
         controller.siteName.text = '';
-        log('VALUE: ${value.subRegion} LIST: ${controller.subRegions}');
       },
     );
   }

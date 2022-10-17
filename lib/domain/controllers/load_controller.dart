@@ -38,7 +38,6 @@ class LoadController extends GetxController {
         for (Module module in modules!) {
           totalForms = totalForms + (module.subModules?.length ?? 0);
         }
-        log('Totla: ${totalForms.value}');
         await getForms();
       }
       Get.offAndToNamed(

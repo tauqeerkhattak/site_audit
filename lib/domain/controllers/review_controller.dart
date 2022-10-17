@@ -1,17 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:site_audit/models/module_model.dart';
-import 'package:site_audit/models/review_model.dart';
+import 'package:site_audit/models/form_model.dart';
 import 'package:site_audit/models/static_drop_model.dart';
 import 'package:site_audit/services/local_storage_service.dart';
 
+import '../../models/module_model.dart';
 import '../../models/static_values.dart';
 
 class ReviewController extends GetxController {
   RxBool loading = true.obs;
   final storageService = Get.find<LocalStorageService>();
   RxString formName = RxString('');
-  ReviewModel? formItem;
+  FormModel? formItem;
   Module? module;
   SubModule? subModule;
   int subModuleId = 0;

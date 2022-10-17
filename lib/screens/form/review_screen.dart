@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/review_controller.dart';
-import 'package:site_audit/models/review_model.dart';
 import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/ui_utils.dart';
@@ -10,6 +9,8 @@ import 'package:site_audit/widgets/custom_card.dart';
 import 'package:site_audit/widgets/default_layout.dart';
 import 'package:site_audit/widgets/error_widget.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
+
+import '../../models/form_model.dart';
 
 class ReviewScreen extends StatelessWidget {
   final controller = Get.find<ReviewController>();
@@ -24,7 +25,7 @@ class ReviewScreen extends StatelessWidget {
       // ),
       child: Obx(() {
         if (controller.loading.value) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation(
                 Constants.primaryColor,
@@ -45,8 +46,8 @@ class ReviewScreen extends StatelessWidget {
                         onTap: () {
                           Get.back();
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
+                        child: const Padding(
+                          padding: EdgeInsets.all(10),
                           child: Icon(
                             CupertinoIcons.back,
                             color: Constants.primaryColor,
@@ -60,7 +61,7 @@ class ReviewScreen extends StatelessWidget {
                       child: Center(
                         child: Text(
                           controller.formName.value,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Constants.primaryColor,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -99,11 +100,12 @@ class ReviewScreen extends StatelessWidget {
               title:
                   '${controller.module?.moduleName} >> ${controller.subModule?.subModuleName} ${index + 1}',
               onTap: () {
-                // final data = controller.formItems![index];
-                // log('DATA: $data');
-                controller.formItem = ReviewModel.fromJson(
+                controller.formItem = FormModel.fromJson(
                   controller.formItems![index],
                 );
+                // for (final item in controller.formItem!.items!) {
+                //   log('ITEM: ${item.inputType} ${item.answer}');
+                // }
                 controller.setData();
                 Get.toNamed(
                   AppRoutes.form,

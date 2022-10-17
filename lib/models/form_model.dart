@@ -72,6 +72,7 @@ class Items {
     projectId = json['project_id'];
     designRef = json['design_ref'];
     mandatory = json['mandatory'] == 1 ? true : false;
+    answer = json['answer'];
     inputDescription = json['input_description'];
     inputType = json['input_type'];
     inputParameter = json['input_parameter'];
@@ -94,6 +95,7 @@ class Items {
     data['input_type'] = inputType;
     data['input_parameter'] = inputParameter;
     data['input_length'] = inputLength;
+    data['answer'] = answer;
     data['input_label'] = inputLabel;
     data['status'] = status;
     if (modules != null) {

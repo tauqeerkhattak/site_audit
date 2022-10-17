@@ -13,7 +13,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:site_audit/models/form_model.dart';
 import 'package:site_audit/models/module_model.dart';
-import 'package:site_audit/models/review_model.dart' as rm;
 import 'package:site_audit/models/static_drop_model.dart';
 import 'package:site_audit/models/user_model.dart';
 import 'package:site_audit/routes/routes.dart';
@@ -83,7 +82,6 @@ class FormController extends GetxController {
       subModule = arguments['subModule'];
       module = arguments['module'];
       final key0 = '$formKey$projectId${subModule?.subModuleId}';
-      log('Key: $key0 $projectId ${subModule?.subModuleId}');
       final storedData = storageService.get(key: key0);
       final forms = jsonDecode(storedData);
       final temp = FormModel.fromJson(forms[0]);
@@ -242,23 +240,13 @@ class FormController extends GetxController {
     }
     if (validate) {
       log('Validated!');
-      final items = form.value!.items!;
+      List<Items> items = form.value!.items!;
       final keys = data.keys.toList();
       for (int i = 0; i < items.length; i++) {
-        final runtimeType = data[keys[i]]!.value.runtimeType;
         final type = EnumHelper.inputTypeFromString(items[i].inputType);
         if (isTextController(type)) {
           final controller = data[keys[i]]!.value;
-          if (runtimeType == TextEditingController) {
-            log('IS TEXTCONTROLLER');
-            items[i].answer = controller.text;
-          } else {
-            String data = '';
-            for (final textController in controller) {
-              data += '${textController.text} ';
-            }
-            items[i].answer = data;
-          }
+          items[i].answer = controller.text;
         } else if (type == InputType.PHOTO) {
           final imagePath = data[keys[i]]!.value;
           if (imagePath != null && imagePath != '') {
@@ -275,12 +263,9 @@ class FormController extends GetxController {
         } else if (type == InputType.LOCATION) {
           String answer = '';
           final controllers = data[keys[i]]!.value;
-          log('LENGTH: ${controllers.length} HEHE');
           for (final controller in controllers) {
-            log('LOCATION: ${controller.text}');
             answer += '${controller.text} ';
           }
-          log('CORRECT ANSWER: $answer');
           items[i].answer = answer;
         } else {
           items[i].answer = data[keys[i]]!.value;
@@ -332,7 +317,6 @@ class FormController extends GetxController {
     final fieldId = form.value?.items?.first.designRef;
     final date = format.format(now);
     final name = '${projectId}_${siteId}_${engineerId}_${fieldId}_$date';
-    log('Date: $name');
     return name;
   }
 
@@ -446,7 +430,7 @@ class FormController extends GetxController {
   Future<void> fillForm() async {
     final arguments = Get.arguments;
     if (arguments['reviewForm'] != null) {
-      final rm.ReviewModel model = arguments['reviewForm'];
+      final FormModel model = arguments['reviewForm'];
 
       // Static Dropdowns
       currentOperator.value = model.staticValues?.operator?.value;
@@ -461,13 +445,13 @@ class FormController extends GetxController {
       siteName.text = currentSite.value?.name ?? '';
 
       //Dynamic Data
-      List<Items> items = form.value!.items!;
+      List<Items> items = model.items!;
       for (int i = 0; i < items.length; i++) {
         Items item = items[i];
         final type = EnumHelper.inputTypeFromString(item.inputType!);
         switch (type) {
           case InputType.DROPDOWN:
-            data['DROPDOWN$i']!.value = model.items?[i].answer;
+            data['DROPDOWN$i']!.value = item.answer;
             break;
           case InputType.TEXT:
             data['TEXT$i']!.value = TextEditingController(
@@ -502,11 +486,10 @@ class FormController extends GetxController {
             break;
           case InputType.LOCATION:
             final answer = model.items?[i].answer?.split(' ');
-            log('ANSWER: ${model.items?[i].answer}');
             data['LOCATION$i']!.value = List.generate(
-              answer!.length,
+              answer?.length ?? 0,
               (index) {
-                return TextEditingController(text: 'Hello');
+                return TextEditingController(text: answer?[index]);
               },
             );
             break;
@@ -520,7 +503,6 @@ class FormController extends GetxController {
             data['TIME$i']!.value = model.items?[i].answer;
             break;
           case InputType.TEXTBOX:
-            log('le TEXTBOX');
             data['TEXTBOX$i']?.value = TextEditingController(
               text: model.items?[i].answer,
             );

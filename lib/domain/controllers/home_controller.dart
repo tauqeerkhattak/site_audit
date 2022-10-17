@@ -6,13 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:site_audit/models/module_model.dart';
-import 'package:site_audit/models/review_model.dart';
 import 'package:site_audit/models/user_model.dart';
 import 'package:site_audit/services/local_storage_keys.dart';
 import 'package:site_audit/services/local_storage_service.dart';
 import 'package:site_audit/services/services.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/network.dart';
+
+import '../../models/form_model.dart';
 
 class HomeController extends GetxController {
   RxBool loading = false.obs;
@@ -103,7 +104,7 @@ class HomeController extends GetxController {
 
   Future<int> sendJsonFile(dynamic data) async {
     try {
-      ReviewModel model = ReviewModel.fromJson(data);
+      FormModel model = FormModel.fromJson(data);
 
       final jsonData = model.toJson();
       final staticValues = model.staticValues;
