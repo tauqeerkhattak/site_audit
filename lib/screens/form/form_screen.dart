@@ -38,12 +38,8 @@ class FormScreen extends StatelessWidget {
   }
 
   String getTitleText() {
-    String? title = controller.form.value?.items?.first.modules?.description;
-    if (title != null) {
-      return 'ADD $title';
-    }
     final args = Get.arguments;
-    title =
+    final title =
         '${args['module'].moduleName} >> ${args['subModule'].subModuleName}';
     return 'ADD $title';
   }
@@ -122,6 +118,8 @@ class FormScreen extends StatelessWidget {
                                 child: InputField(
                                   label: 'Site Name',
                                   placeHolder: 'Site Name',
+                                  mandatory: true,
+                                  mandatoryText: '*',
                                   validator: Validator.stringValidator,
                                   controller: controller.siteName,
                                 ),
@@ -178,12 +176,13 @@ class FormScreen extends StatelessWidget {
     final isEditable = parameter == InputParameter.EDITABLE;
     switch (type) {
       case InputType.DROPDOWN:
-        List<String> options = item.inputOption?.inputOptions ?? [];
+        List<String> options = item.inputOption?.first.inputOptions ?? [];
         return Obx(
           () => CustomDropdown<String>(
             items: options,
             label: item.inputLabel,
             hint: item.inputHint ?? 'Select Option',
+            mandatory: item.mandatory ?? false,
             value: controller.data['DROPDOWN$index']!.value,
             validator:
                 item.mandatory ?? true ? Validator.stringValidator : null,
@@ -197,6 +196,7 @@ class FormScreen extends StatelessWidget {
         return InputField(
           controller: controller.data['TEXTBOX$index']!.value,
           label: item.inputLabel,
+          mandatory: item.mandatory ?? false,
           placeHolder: item.inputHint ?? 'Tap to Enter Text',
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
           readOnly: !isEditable,
@@ -205,6 +205,7 @@ class FormScreen extends StatelessWidget {
         return InputField(
           controller: controller.data['INTEGER$index']!.value,
           label: item.inputLabel,
+          mandatory: item.mandatory ?? false,
           placeHolder: item.inputHint ?? 'Tap to Enter Text',
           inputType: TextInputType.number,
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
@@ -225,11 +226,12 @@ class FormScreen extends StatelessWidget {
         );
       case InputType.RADIAL:
         String? label = item.inputLabel;
-        List<String> options = item.inputOption!.inputOptions!;
+        List<String> options = item.inputOption!.first.inputOptions!;
         return Obx(
           () => CustomRadioButton(
             label: label,
             options: options,
+            mandatory: item.mandatory ?? false,
             value: controller.data['RADIAL$index']!.value,
             onChanged: (value) {
               controller.data['RADIAL$index']!.value = value;
@@ -240,6 +242,7 @@ class FormScreen extends StatelessWidget {
         return InputField(
           controller: controller.data['FLOAT$index']!.value,
           label: item.inputLabel,
+          mandatory: item.mandatory ?? false,
           placeHolder: item.inputHint ?? 'Tap to Enter Text',
           inputType: TextInputType.number,
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
@@ -254,6 +257,7 @@ class FormScreen extends StatelessWidget {
               child: InputField(
                 controller: controllers[0],
                 label: 'Latitude',
+                mandatory: item.mandatory ?? false,
                 placeHolder: item.inputHint ?? 'Tap to Enter Text',
                 validator:
                     item.mandatory ?? true ? Validator.stringValidator : null,
@@ -265,6 +269,7 @@ class FormScreen extends StatelessWidget {
               child: InputField(
                 controller: controllers[1],
                 label: 'Longitude',
+                mandatory: item.mandatory ?? false,
                 placeHolder: item.inputHint ?? 'Tap to Enter Text',
                 validator:
                     item.mandatory ?? true ? Validator.stringValidator : null,
@@ -279,6 +284,7 @@ class FormScreen extends StatelessWidget {
           controller: TextEditingController(text: dateTime.toString()),
           type: DateTimePickerType.dateTime,
           label: item.inputLabel,
+          mandatory: item.mandatory ?? false,
           dateMask: 'dd-M-yyyy hh:mm a',
           suffixIcon: isEditable
               ? const Icon(
@@ -300,6 +306,7 @@ class FormScreen extends StatelessWidget {
         return CustomDateTime(
           controller: TextEditingController(text: dateTime.toString()),
           type: DateTimePickerType.date,
+          mandatory: item.mandatory ?? false,
           label: item.inputLabel,
           dateMask: 'dd-M-yyyy',
           onSaved: (value) {
@@ -324,6 +331,7 @@ class FormScreen extends StatelessWidget {
             text: timeOfDay.format(context),
           ),
           type: DateTimePickerType.time,
+          mandatory: item.mandatory ?? false,
           label: item.inputLabel,
           dateMask: 'hh:mm a',
           onSaved: (value) {
@@ -367,6 +375,8 @@ class FormScreen extends StatelessWidget {
       items: items,
       hint: 'Select',
       label: 'Site Operator',
+      mandatory: true,
+      mandatoryText: '*',
       validator: Validator.dynamicValidator,
       value: controller.currentOperator.value,
       onChanged: (value) {
@@ -393,6 +403,8 @@ class FormScreen extends StatelessWidget {
       hint: 'Select',
       validator: Validator.dynamicValidator,
       value: controller.currentRegion.value,
+      mandatory: true,
+      mandatoryText: '*',
       onChanged: (value) {
         controller.currentRegion.value = value!;
         controller.subRegions.assignAll(value.subRegion!);
@@ -413,6 +425,8 @@ class FormScreen extends StatelessWidget {
       hint: 'Select',
       validator: Validator.dynamicValidator,
       value: controller.currentSubRegion.value,
+      mandatory: true,
+      mandatoryText: '*',
       items: items,
       onChanged: (value) {
         controller.currentSubRegion.value = value!;
@@ -433,6 +447,8 @@ class FormScreen extends StatelessWidget {
       hint: 'Select',
       value: controller.currentCluster.value,
       validator: Validator.dynamicValidator,
+      mandatory: true,
+      mandatoryText: '*',
       items: items,
       onChanged: (value) {
         controller.currentCluster.value = value!;
@@ -451,6 +467,8 @@ class FormScreen extends StatelessWidget {
       label: 'Site ID',
       hint: 'Select',
       value: controller.currentSite.value,
+      mandatory: true,
+      mandatoryText: '*',
       validator: Validator.dynamicValidator,
       onChanged: (value) {
         controller.currentSite.value = value;

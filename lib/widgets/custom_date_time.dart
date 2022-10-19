@@ -28,16 +28,19 @@ class CustomDateTime extends StatelessWidget {
     this.label,
     this.dateMask,
     this.onSaved,
+    this.mandatoryText,
+    this.mandatory = false,
   }) : super(key: key);
 
   final DateTimePickerType type;
   final String? placeHolder;
   final DateTime? initialDate;
-  final String? label;
+  final String? label, mandatoryText;
   final String? dateMask;
   final Widget? icon;
   final Widget? suffixIcon;
   final bool? readOnly;
+  final bool mandatory;
   final TimeOfDay? timeOfDay;
   final double? vertical, horizontal;
   final VoidCallback? onTap;
@@ -58,13 +61,29 @@ class CustomDateTime extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (label != null)
-            Text(
-              '$label',
-              style: const TextStyle(
-                color: Constants.primaryColor,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              mainAxisAlignment: mandatoryText != null
+                  ? MainAxisAlignment.start
+                  : MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '$label',
+                  style: const TextStyle(
+                    color: Constants.primaryColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (mandatory)
+                  Text(
+                    mandatoryText ?? '* Required',
+                    style: TextStyle(
+                      color: Theme.of(context).errorColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+              ],
             ),
           if (label != null) UiUtils.spaceVrt10,
           DateTimePicker(

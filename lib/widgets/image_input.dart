@@ -11,12 +11,14 @@ class ImageInput extends StatelessWidget {
   final String? imagePath, label, hint;
   final double? horizontal, vertical;
   final bool isMandatory;
+  final String? mandatoryText;
   const ImageInput({
     Key? key,
     required this.imagePath,
     required this.onTap,
     required this.isMandatory,
     this.label,
+    this.mandatoryText,
     this.hint,
     this.horizontal,
     this.vertical,
@@ -35,13 +37,29 @@ class ImageInput extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (label != null)
-              Text(
-                label!,
-                style: TextStyle(
-                  color: Constants.primaryColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                mainAxisAlignment: mandatoryText != null
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '$label',
+                    style: const TextStyle(
+                      color: Constants.primaryColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (isMandatory)
+                    Text(
+                      mandatoryText ?? '* Required',
+                      style: TextStyle(
+                        color: Theme.of(context).errorColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                ],
               ),
             if (label != null) UiUtils.spaceVrt10,
             Container(
@@ -54,14 +72,6 @@ class ImageInput extends StatelessWidget {
               alignment: Alignment.center,
               child: getImage(),
             ),
-            if (isMandatory) UiUtils.spaceVrt10,
-            if (isMandatory)
-              const Text(
-                '* required',
-                style: TextStyle(
-                  color: Colors.red,
-                ),
-              ),
           ],
         ),
       ),

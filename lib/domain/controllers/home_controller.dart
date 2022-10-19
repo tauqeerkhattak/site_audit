@@ -89,7 +89,7 @@ class HomeController extends GetxController {
     for (String key in keysToSend) {
       List<dynamic> listOfItems = storageService.get(key: key);
       for (var item in listOfItems) {
-        int code = await sendJsonFile(item);
+        int code = await sendJsonFile(item, key);
         if (code == 200) {
           storageService.remove(key: key);
         }
@@ -113,11 +113,10 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<int> sendJsonFile(dynamic data) async {
+  Future<int> sendJsonFile(dynamic data, String key) async {
     // try {
     FormModel model = FormModel.fromJson(data);
-    final moduleName =
-        model.items!.first.modules!.description!.split(' >> ').first;
+    final moduleName = key.split(' >> ').first;
 
     final jsonData = model.toJson();
     final staticValues = model.staticValues;

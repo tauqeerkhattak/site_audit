@@ -109,19 +109,6 @@ class FormController extends GetxController {
   ///
   /// Assigns controllers to each type of fields.
   ///
-  ///
-  /// *  If any of the following types, then assigns a TextEditingController() to them:
-  ///    [AUTO_FILLED,TEXTBOX,INTEGER,FLOAT].
-  ///
-  ///
-  /// *  If it is a dropdown, then a null value assigned so that the dropdown will be
-  ///    empty when form is loaded.
-  ///
-  ///
-  /// *  If it is a radial, then the first inputOption is assigned.
-  ///
-  /// *  If it is a photo, then an empty path is assigned.
-  ///
   Future<void> assignControllersToFields() async {
     final fields = form.value!.items!;
     final now = DateTime.now();
@@ -139,7 +126,7 @@ class FormController extends GetxController {
           data['PHOTO$i'] = ''.obs;
           break;
         case InputType.RADIAL:
-          data['RADIAL$i'] = item.inputOption!.inputOptions!.first.obs;
+          data['RADIAL$i'] = item.inputOption!.first.inputOptions!.first.obs;
           break;
         case InputType.FLOAT:
           data['FLOAT$i'] = TextEditingController().obs;
@@ -274,36 +261,59 @@ class FormController extends GetxController {
           items[i].answer = data[keys[i]]!.value.toString();
         }
       }
-      Map<String, dynamic> staticValues = {
-        'operator': {
-          'value': currentOperator.value,
-          'items': operators,
-        },
-        'region': {
-          'value': currentRegion.value,
-          'items': regions,
-        },
-        'sub_region': {
-          'value': currentSubRegion.value,
-          'items': subRegions,
-        },
-        'cluster': {
-          'value': currentCluster.value,
-          'items': clusters,
-        },
-        'site_id': {
-          'value': currentSite.value,
-          'items': siteIDs,
-        },
-        'site_name': siteName.text,
-      };
+      StaticValues staticValues = StaticValues();
+      staticValues.operator = OperatorData.fromJson({
+        'value': currentOperator.value,
+        'items': operators,
+      });
+      staticValues.region = RegionData.fromJson({
+        'value': currentRegion.value,
+        'items': regions,
+      });
+      staticValues.subRegion = SubRegionData.fromJson({
+        'value': currentSubRegion.value,
+        'items': subRegions,
+      });
+      staticValues.cluster = ClusterData.fromJson({
+        'value': currentCluster.value,
+        'items': clusters,
+      });
+      staticValues.siteId = SiteData.fromJson({
+        'value': currentSite.value,
+        'items': siteIDs,
+      });
+      staticValues.siteName = currentSite.value?.name;
+      // Map<String, dynamic> staticValues = {
+      //   'operator': {
+      //     'value': currentOperator.value,
+      //     'items': operators,
+      //   },
+      //   'region': {
+      //     'value': currentRegion.value,
+      //     'items': regions,
+      //   },
+      //   'sub_region': {
+      //     'value': currentSubRegion.value,
+      //     'items': subRegions,
+      //   },
+      //   'cluster': {
+      //     'value': currentCluster.value,
+      //     'items': clusters,
+      //   },
+      //   'site_id': {
+      //     'value': currentSite.value,
+      //     'items': siteIDs,
+      //   },
+      //   'site_name': siteName.text,
+      // };
       form.value!.items = items;
-      form.value!.staticValues = StaticValues.fromJson(staticValues);
+      form.value!.staticValues = staticValues;
       // saveJsonFileLocally();
-      UiUtils.showSnackBar(
-        message: 'All data is validated!',
-      );
-      await saveDataToLocalStorage();
+      await saveDataToLocalStorage().then((value) {
+        UiUtils.showSnackBar(
+          message: 'Data is submitted successfully!',
+        );
+      });
       // Get.offNamedUntil(
       //   AppRoutes.home,
       //   (route) => false,
@@ -312,7 +322,10 @@ class FormController extends GetxController {
       // Get.offNamedUntil(AppRoutes.home, (route) => false);
     } else {
       log('NOT VALIDATED');
-      UiUtils.showSnackBar(message: 'Please fill all the fields');
+      UiUtils.showSnackBar(
+        message: 'Please fill all the fields',
+        color: Theme.of(Get.context!).errorColor,
+      );
     }
     loading.value = false;
   }
@@ -322,7 +335,7 @@ class FormController extends GetxController {
     final projectId = user?.data?.projectId;
     final siteId = currentSite.value?.id;
     final engineerId = user?.data?.auditTeamId;
-    final fieldId = form.value?.items?.first.designRef;
+    final fieldId = form.value?.items?.first.id;
     final date = format.format(now);
     final name = '${projectId}_${siteId}_${engineerId}_${fieldId}_$date';
     return name;
@@ -360,10 +373,12 @@ class FormController extends GetxController {
         seconds: 2,
       ),
       () {
+        final moduleName = module!.moduleName!;
+        final subModuleName = subModule!.subModuleName!;
         Get.toNamed(
           AppRoutes.review,
           arguments: {
-            'form_name': form.value!.items!.first.modules!.description,
+            'form_name': '$moduleName >> $subModuleName',
             'form': form.value!.toJson(),
           },
         );

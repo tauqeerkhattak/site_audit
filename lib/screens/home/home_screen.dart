@@ -108,7 +108,7 @@ class HomeScreen extends StatelessWidget {
             child: IgnorePointer(
               child: GridView.count(
                 shrinkWrap: true,
-                crossAxisCount: 3,
+                crossAxisCount: 5,
                 physics: const NeverScrollableScrollPhysics(),
                 children: List.generate(
                   length,
@@ -135,81 +135,82 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget customCard({required Widget child, double? height, String? image}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            blurRadius: 10.0,
-            spreadRadius: 0.4,
-            offset: const Offset(0, 0.0),
-          ),
-        ],
+    return PhysicalModel(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18.0),
+      elevation: 8.0,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18.0),
+        ),
+        clipBehavior: Clip.antiAlias,
+        height: height,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(10.0),
+        child: child,
       ),
-      clipBehavior: Clip.antiAlias,
-      height: height,
-      alignment: Alignment.center,
-      padding: const EdgeInsets.all(10.0),
-      child: child,
     );
   }
 
   Widget getModulesUi(BuildContext context) {
     List<Module> modules = controller.modules;
-    return Column(
-      children: [
-        Expanded(
-          flex: 10,
-          child: CustomGridView(
-            length: modules.length,
-            itemBuilder: (context, index) {
-              Module module = modules[index];
-              int? moduleCount = controller.storageService.get(
-                key: module.moduleName!,
-              );
-              return InkWell(
-                onTap: () async {
-                  controller.animateForward(module);
-                },
-                child: tileCard(
-                  '${module.moduleName}',
-                  moduleCount ?? 0,
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        children: [
+          Expanded(
+            flex: 10,
+            child: CustomGridView(
+              length: modules.length,
+              itemBuilder: (context, index) {
+                Module module = modules[index];
+                int? moduleCount = controller.storageService.get(
+                  key: module.moduleName!,
+                );
+                return InkWell(
+                  onTap: () async {
+                    controller.animateForward(module);
+                  },
+                  child: tileCard(
+                    '${module.moduleName}',
+                    moduleCount ?? 0,
+                    // index == 1 ? 6 : 12,
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 8,
+              bottom: 8,
+              right: 8,
+            ),
+            child: Row(
+              children: [
+                RoundedButton(
+                  text: 'Help',
+                  color: Constants.primaryColor,
+                  width: 0.2,
+                  fontScaleFactor: 15,
+                  onPressed: () {},
                 ),
-              );
-            },
+                const Spacer(),
+                RoundedButton(
+                  text: 'Audit Completed Send Data',
+                  color: Constants.successColor,
+                  width: 0.63,
+                  fontScaleFactor: 15,
+                  disabled: !Network.isNetworkAvailable.value,
+                  loading: controller.loading.value,
+                  onPressed: () => controller.submitAudits(context),
+                ),
+              ],
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 8,
-            bottom: 8,
-            right: 8,
-          ),
-          child: Row(
-            children: [
-              RoundedButton(
-                text: 'Help',
-                color: Constants.primaryColor,
-                width: 0.2,
-                fontScaleFactor: 15,
-                onPressed: () {},
-              ),
-              const Spacer(),
-              RoundedButton(
-                text: 'Audit Completed Send Data',
-                color: Constants.successColor,
-                width: 0.7,
-                fontScaleFactor: 15,
-                disabled: !Network.isNetworkAvailable.value,
-                loading: controller.loading.value,
-                onPressed: () => controller.submitAudits(context),
-              ),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -226,64 +227,67 @@ class HomeScreen extends StatelessWidget {
       );
     }
     List<SubModule> subModules = module.subModules!;
-    return Column(
-      children: [
-        Expanded(
-          flex: 10,
-          child: CustomGridView(
-            length: subModules.length,
-            itemBuilder: (context, index) {
-              SubModule subModule = subModules[index];
-              int? subModuleCount = controller.storageService.get(
-                key: subModule.subModuleName!,
-              );
-              return InkWell(
-                onTap: () {
-                  Get.toNamed(
-                    AppRoutes.review,
-                    arguments: {
-                      'module': module,
-                      'subModule': subModule,
-                    },
-                  );
-                },
-                child: tileCard(
-                  '${module.moduleName} >> ${subModule.subModuleName}',
-                  subModuleCount ?? 0,
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        children: [
+          Expanded(
+            flex: 10,
+            child: CustomGridView(
+              length: subModules.length,
+              itemBuilder: (context, index) {
+                SubModule subModule = subModules[index];
+                int? subModuleCount = controller.storageService.get(
+                  key: subModule.subModuleName!,
+                );
+                return InkWell(
+                  onTap: () {
+                    Get.toNamed(
+                      AppRoutes.review,
+                      arguments: {
+                        'module': module,
+                        'subModule': subModule,
+                      },
+                    );
+                  },
+                  child: tileCard(
+                    '${module.moduleName} >> ${subModule.subModuleName}',
+                    subModuleCount ?? 0,
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 8,
+              bottom: 8,
+              right: 8,
+            ),
+            child: Row(
+              children: [
+                RoundedButton(
+                  text: 'Help',
+                  color: Constants.primaryColor,
+                  width: 0.2,
+                  fontScaleFactor: 16,
+                  onPressed: () {},
                 ),
-              );
-            },
+                const Spacer(),
+                RoundedButton(
+                  text: 'Back',
+                  color: Constants.primaryColor,
+                  width: 0.2,
+                  fontScaleFactor: 16,
+                  onPressed: () {
+                    controller.animateBack();
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 8,
-            bottom: 8,
-            right: 8,
-          ),
-          child: Row(
-            children: [
-              RoundedButton(
-                text: 'Help',
-                color: Constants.primaryColor,
-                width: 0.2,
-                fontScaleFactor: 16,
-                onPressed: () {},
-              ),
-              const Spacer(),
-              RoundedButton(
-                text: 'Back',
-                color: Constants.primaryColor,
-                width: 0.2,
-                fontScaleFactor: 16,
-                onPressed: () {
-                  controller.animateBack();
-                },
-              ),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

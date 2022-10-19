@@ -6,15 +6,18 @@ import 'package:site_audit/widgets/custom_grid_view.dart';
 class CustomRadioButton extends StatelessWidget {
   final List<String> options;
   final String value;
-  final String? label;
+  final String? label, mandatoryText;
+  final bool mandatory;
   final Function(dynamic value) onChanged;
 
   const CustomRadioButton({
     Key? key,
     required this.options,
-    this.label,
     required this.onChanged,
     required this.value,
+    this.label,
+    this.mandatoryText,
+    this.mandatory = false,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -22,13 +25,29 @@ class CustomRadioButton extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (label != null)
-          Text(
-            label!,
-            style: const TextStyle(
-              color: Constants.primaryColor,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            mainAxisAlignment: mandatoryText != null
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '$label',
+                style: const TextStyle(
+                  color: Constants.primaryColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (mandatory)
+                Text(
+                  mandatoryText ?? '* Required',
+                  style: TextStyle(
+                    color: Theme.of(context).errorColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+            ],
           ),
         if (label != null) UiUtils.spaceVrt10,
         CustomGridView(

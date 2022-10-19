@@ -3,23 +3,23 @@ import 'package:site_audit/models/static_values.dart';
 class FormModel {
   int? subModuleId;
   String? subModuleName;
-  List<Items>? items;
-  StaticValues? staticValues;
   String? moduleName;
+  String? projectId;
+  StaticValues? staticValues;
+  List<Items>? items;
 
-  FormModel({
-    this.subModuleId,
-    this.subModuleName,
-    this.moduleName,
-    this.items,
-    this.staticValues,
-  });
+  FormModel({this.subModuleId, this.subModuleName, this.staticValues, this.moduleName, this.projectId, this.items,});
 
   FormModel.fromJson(Map<String, dynamic> json) {
     subModuleId = json['sub_module_id'];
     subModuleName = json['sub_module_name'];
     moduleName = json['module_name'];
-    staticValues = json['static_values'];
+    projectId = json['project_id'];
+    staticValues = json['static_values'] != null
+        ? StaticValues.fromJson(
+            json['static_values'],
+          )
+        : null;
     if (json['items'] != null) {
       items = <Items>[];
       json['items'].forEach((v) {
@@ -32,7 +32,9 @@ class FormModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['sub_module_id'] = subModuleId;
     data['sub_module_name'] = subModuleName;
-    data['static_values'] = staticValues;
+    data['module_name'] = moduleName;
+    data['static_values'] = staticValues?.toJson();
+    data['project_id'] = projectId;
     if (items != null) {
       data['items'] = items!.map((v) => v.toJson()).toList();
     }
@@ -41,143 +43,87 @@ class FormModel {
 }
 
 class Items {
-  int? projectId;
-  String? designRef;
+  int? id;
   bool? mandatory;
   String? inputDescription;
+  String? answer;
   String? inputType;
   String? inputParameter;
-  String? answer;
-  String? inputHint;
   int? inputLength;
+  String? inputHint;
+  int? parentInputId;
   String? inputLabel;
-  int? status;
-  Modules? modules;
-  InputOption? inputOption;
+  List<InputOption>? inputOption;
 
   Items(
-      {this.projectId,
-      this.designRef,
+      {this.id,
       this.mandatory,
       this.inputDescription,
+        this.answer,
       this.inputType,
       this.inputParameter,
-      this.answer,
       this.inputLength,
+      this.inputHint,
+      this.parentInputId,
       this.inputLabel,
-      this.status,
-      this.modules,
       this.inputOption});
 
   Items.fromJson(Map<String, dynamic> json) {
-    projectId = json['project_id'];
-    designRef = json['design_ref'];
-    mandatory = json['mandatory'] == 1 ? true : false;
-    answer = json['answer'];
-    inputHint = json['input_hint'];
+    id = json['id'];
+    mandatory = json['mandatory'] == 1;
     inputDescription = json['input_description'];
+    answer = json['answer'];
     inputType = json['input_type'];
     inputParameter = json['input_parameter'];
     inputLength = json['input_length'];
+    inputHint = json['input_hint'];
+    parentInputId = json['parent_input_id'];
     inputLabel = json['input_label'];
-    status = json['status'];
-    modules =
-        json['modules'] != null ? Modules.fromJson(json['modules']) : null;
-    inputOption = json['input_option'] != null
-        ? InputOption.fromJson(json['input_option'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['project_id'] = projectId;
-    data['design_ref'] = designRef;
-    data['mandatory'] = mandatory;
-    data['input_description'] = inputDescription;
-    data['input_type'] = inputType;
-    data['input_parameter'] = inputParameter;
-    data['input_length'] = inputLength;
-    data['answer'] = answer;
-    data['input_hint'] = inputHint;
-    data['input_label'] = inputLabel;
-    data['status'] = status;
-    if (modules != null) {
-      data['modules'] = modules!.toJson();
+    if (json['input_option'] != null) {
+      inputOption = <InputOption>[];
+      json['input_option'].forEach((v) {
+        inputOption!.add(InputOption.fromJson(v));
+      });
     }
-    if (inputOption != null) {
-      data['input_option'] = inputOption!.toJson();
-    }
-    return data;
-  }
-}
-
-class Modules {
-  int? id;
-  int? projectId;
-  int? moduleId;
-  int? status;
-  int? parentId;
-  int? menuLevel;
-  String? description;
-  String? designRef;
-  String? createdAt;
-  String? updatedAt;
-
-  Modules(
-      {this.id,
-      this.projectId,
-      this.moduleId,
-      this.status,
-      this.parentId,
-      this.menuLevel,
-      this.description,
-      this.designRef,
-      this.createdAt,
-      this.updatedAt});
-
-  Modules.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    projectId = json['project_id'];
-    moduleId = json['module_id'];
-    status = json['status'];
-    parentId = json['parent_id'];
-    menuLevel = json['menu_level'];
-    description = json['description'];
-    designRef = json['design_ref'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['project_id'] = projectId;
-    data['module_id'] = moduleId;
-    data['status'] = status;
-    data['parent_id'] = parentId;
-    data['menu_level'] = menuLevel;
-    data['description'] = description;
-    data['design_ref'] = designRef;
-    data['created_at'] = createdAt;
-    data['updated_at'] = updatedAt;
+    data['mandatory'] = mandatory;
+    data['input_description'] = inputDescription;
+    data['answer'] = answer;
+    data['input_type'] = inputType;
+    data['input_parameter'] = inputParameter;
+    data['input_length'] = inputLength;
+    data['input_hint'] = inputHint;
+    data['parent_input_id'] = parentInputId;
+    data['input_label'] = inputLabel;
+    if (inputOption != null) {
+      data['input_option'] = inputOption!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }
 
 class InputOption {
-  int? status;
+  int? inputItemParentId;
+  int? inputParentLevel;
   List<String>? inputOptions;
 
-  InputOption({this.status, this.inputOptions});
+  InputOption(
+      {this.inputItemParentId, this.inputParentLevel, this.inputOptions});
 
   InputOption.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
+    inputItemParentId = json['input_item_parent_id'];
+    inputParentLevel = json['input_parent_level'];
     inputOptions = json['input_options'].cast<String>();
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = status;
+    data['input_item_parent_id'] = inputItemParentId;
+    data['input_parent_level'] = inputParentLevel;
     data['input_options'] = inputOptions;
     return data;
   }

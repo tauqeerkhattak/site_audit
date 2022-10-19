@@ -7,19 +7,22 @@ import '../models/static_drop_model.dart';
 class CustomDropdown<T> extends StatelessWidget {
   final List<T> items;
   final T? value;
-  final String? label, hint;
+  final String? label, hint, mandatoryText;
   final String? Function(T?)? validator;
   final Function(T?) onChanged;
   final bool enabled;
+  final bool mandatory;
   const CustomDropdown({
     Key? key,
     required this.items,
     this.label,
     this.hint,
+    this.mandatoryText,
     required this.onChanged,
     this.value,
     this.validator,
     this.enabled = true,
+    this.mandatory = false,
   }) : super(key: key);
 
   @override
@@ -28,13 +31,29 @@ class CustomDropdown<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (label != null)
-          Text(
-            '$label',
-            style: TextStyle(
-              color: Constants.primaryColor,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            mainAxisAlignment: mandatoryText == null
+                ? MainAxisAlignment.spaceBetween
+                : MainAxisAlignment.start,
+            children: [
+              Text(
+                '$label',
+                style: const TextStyle(
+                  color: Constants.primaryColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (mandatory)
+                Text(
+                  mandatoryText ?? '* Required',
+                  style: TextStyle(
+                    color: Theme.of(context).errorColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+            ],
           ),
         if (label != null) UiUtils.spaceVrt10,
         Center(
@@ -58,7 +77,7 @@ class CustomDropdown<T> extends StatelessWidget {
 
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18.0),
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color: Constants.primaryColor,
                   width: 2.0,
                 ),

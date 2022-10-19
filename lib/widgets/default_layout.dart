@@ -101,6 +101,7 @@ class DefaultLayout extends StatelessWidget {
                   child: Image.asset(
                     backgroundImage ?? 'assets/images/round_tower.png',
                     fit: BoxFit.cover,
+                    opacity: const AlwaysStoppedAnimation(0.2),
                   ),
                 ),
               ),
