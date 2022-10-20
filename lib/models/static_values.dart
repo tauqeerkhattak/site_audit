@@ -34,11 +34,11 @@ class StaticValues {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['operator'] = operator?.toJson();
-    data['region'] = region?.toJson();
-    data['sub_region'] = subRegion?.toJson();
-    data['cluster'] = cluster?.toJson();
-    data['site_id'] = siteId?.toJson();
+    data['operator'] = operator;
+    data['region'] = region;
+    data['sub_region'] = subRegion;
+    data['cluster'] = cluster;
+    data['site_id'] = siteId;
     data['site_name'] = siteName;
     return data;
   }
