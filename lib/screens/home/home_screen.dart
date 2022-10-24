@@ -12,8 +12,14 @@ import 'package:site_audit/widgets/default_layout.dart';
 import 'package:site_audit/widgets/error_widget.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final HomeController controller = Get.put(HomeController());
 
   @override
@@ -248,7 +254,9 @@ class HomeScreen extends StatelessWidget {
                         'module': module,
                         'subModule': subModule,
                       },
-                    );
+                    )?.whenComplete(() {
+                      setState(() {});
+                    });
                   },
                   child: tileCard(
                     '${module.moduleName} >> ${subModule.subModuleName}',

@@ -11,9 +11,15 @@ import 'package:site_audit/widgets/rounded_button.dart';
 
 import '../../models/form_model.dart';
 
-class ReviewScreen extends StatelessWidget {
+class ReviewScreen extends StatefulWidget {
+  const ReviewScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ReviewScreen> createState() => _ReviewScreenState();
+}
+
+class _ReviewScreenState extends State<ReviewScreen> {
   final controller = Get.find<ReviewController>();
-  ReviewScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +65,12 @@ class ReviewScreen extends StatelessWidget {
       return Expanded(
         child: Obx(
           () => ListView.separated(
+            padding: const EdgeInsets.all(10),
             itemBuilder: (context, index) {
               return CustomCard(
                 title:
                     '${controller.module?.moduleName} >> ${controller.subModule?.subModuleName} ${index + 1}',
-                onTap: () {
+                onTap: () async {
                   controller.formItem = FormModel.fromJson(
                     controller.formItems.value![index],
                   );
@@ -76,9 +83,12 @@ class ReviewScreen extends StatelessWidget {
                     arguments: {
                       'module': controller.module,
                       'subModule': controller.subModule,
+                      'reviewFormIndex': index,
                       'reviewForm': controller.formItem,
                     },
                   );
+                  //   controller.refreshPage();
+                  // });
                 },
                 buttonText: 'Review Audit',
               );
@@ -133,6 +143,10 @@ class ReviewScreen extends StatelessWidget {
               Get.toNamed(AppRoutes.form, arguments: {
                 'module': controller.module,
                 'subModule': controller.subModule,
+                'formName': controller.formName.value,
+              })?.whenComplete(() {
+                controller.refreshPage();
+                setState(() {});
               });
             },
           ),

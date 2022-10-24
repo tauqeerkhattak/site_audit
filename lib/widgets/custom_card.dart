@@ -15,8 +15,8 @@ class CustomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PhysicalModel(
-      elevation: 8.0,
-      color: Colors.white,
+      elevation: 10.0,
+      color: Colors.white.withRed(250),
       borderRadius: BorderRadius.circular(10),
       child: Padding(
         padding: UiUtils.allInsets10,

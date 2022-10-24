@@ -1,14 +1,13 @@
-import 'dart:developer';
-
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import '../utils/constants.dart';
 import '../utils/size_config.dart';
 import '../utils/ui_utils.dart';
 
-class CustomDateTime extends StatelessWidget {
+class CustomDateTime extends StatefulWidget {
   const CustomDateTime({
     Key? key,
     required this.type,
@@ -51,32 +50,43 @@ class CustomDateTime extends StatelessWidget {
   final Function(String?)? onSaved;
 
   @override
+  State<CustomDateTime> createState() => _CustomDateTimeState();
+}
+
+class _CustomDateTimeState extends State<CustomDateTime> {
+  @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(
-        vertical: vertical ?? 1.0,
-        horizontal: horizontal ?? 1.0,
+        vertical: widget.vertical ?? 1.0,
+        horizontal: widget.horizontal ?? 1.0,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (label != null)
+          if (widget.label != null)
             Row(
-              mainAxisAlignment: mandatoryText != null
+              mainAxisAlignment: widget.mandatoryText != null
                   ? MainAxisAlignment.start
                   : MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '$label',
+                  '${widget.label}',
                   style: const TextStyle(
                     color: Constants.primaryColor,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                if (mandatory)
+                if (widget.mandatory)
                   Text(
-                    mandatoryText ?? '* Required',
+                    widget.mandatoryText ?? '* Required',
                     style: TextStyle(
                       color: Theme.of(context).errorColor,
                       fontSize: 16,
@@ -85,30 +95,30 @@ class CustomDateTime extends StatelessWidget {
                   ),
               ],
             ),
-          if (label != null) UiUtils.spaceVrt10,
+          if (widget.label != null) UiUtils.spaceVrt10,
           DateTimePicker(
-            type: type,
-            initialTime: timeOfDay,
-            controller: controller,
-            dateMask: dateMask,
+            type: widget.type,
+            initialTime: widget.timeOfDay,
+            controller: widget.controller,
+            dateMask: widget.dateMask,
             use24HourFormat: false,
-            onSaved: onSaved,
-            validator: validator,
-            initialDate: initialDate,
+            locale: Localizations.localeOf(context),
+            // onSaved:,
+            initialValue: widget.timeOfDay?.format(context),
+            validator: widget.validator,
+            initialDate: widget.initialDate,
             firstDate: DateTime(1800),
             lastDate: DateTime(3000),
-            readOnly: readOnly ?? false,
-            maxLines: lines ?? 1,
+            readOnly: widget.readOnly ?? false,
+            maxLines: widget.lines ?? 1,
             style: TextStyle(fontSize: SizeConfig.textMultiplier * 2.4),
-            onChanged: (data) {
-              log('ONCHANGED: $data');
-            },
+            onChanged: widget.onSaved,
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.white,
-              hintText: placeHolder.toString(),
-              prefixIcon: icon,
-              suffixIcon: suffixIcon,
+              hintText: widget.placeHolder.toString(),
+              prefixIcon: widget.icon,
+              suffixIcon: widget.suffixIcon,
               hintStyle: GoogleFonts.roboto(
                 color: Colors.grey.withOpacity(0.8),
                 fontWeight: FontWeight.w500,

@@ -33,6 +33,7 @@ class FormController extends GetxController {
   final imagePickerService = Get.find<ImagePickerService>();
   final formDataKey = GlobalKey<FormState>();
   final location = Location();
+  Rxn<String> formName = Rxn<String>();
   LocationData? locationData;
   String? projectId;
   Rxn<FormModel> form = Rxn();
@@ -81,6 +82,7 @@ class FormController extends GetxController {
       final arguments = Get.arguments;
       subModule = arguments['subModule'];
       module = arguments['module'];
+      formName.value = arguments['formName'];
       final key0 = '$formKey$projectId${subModule?.subModuleId}';
       final storedData = storageService.get(key: key0);
       final forms = jsonDecode(storedData);
@@ -207,7 +209,7 @@ class FormController extends GetxController {
   //   }
   // }
 
-  Future<void> submit() async {
+  Future<void> submit(BuildContext context) async {
     loading.value = true;
     bool validate = formDataKey.currentState!.validate();
     List<Items> items = form.value!.items!;
@@ -313,12 +315,13 @@ class FormController extends GetxController {
         UiUtils.showSnackBar(
           message: 'Data is submitted successfully!',
         );
+        Navigator.pop(context, 'popped');
       });
       // Get.offNamedUntil(
       //   AppRoutes.home,
       //   (route) => false,
       // );
-      Navigator.pop(Get.context!);
+      // Get.back(closeOverlays: true);
       // Get.offNamedUntil(AppRoutes.home, (route) => false);
     } else {
       log('NOT VALIDATED');
@@ -396,12 +399,17 @@ class FormController extends GetxController {
       final moduleCount = storageService.get(key: moduleName);
       final subModuleCount = storageService.get(key: subModuleName);
       if (Get.arguments['reviewForm'] != null) {
-        formData = [form.value!.toJson()];
-        await storageService.save(key: moduleName, value: moduleCount);
-        await storageService.save(key: subModuleName, value: subModuleCount);
+        final deleteIndex = Get.arguments['reviewFormIndex'];
+        formData.removeAt(deleteIndex);
+        formData.add(form.value!.toJson());
+        // await storageService.save(key: moduleName, value: moduleCount);
+        // await storageService.save(key: subModuleName, value: subModuleCount);
       } else {
         formData.add(form.value!.toJson());
-        await storageService.save(key: moduleName, value: moduleCount + 1);
+        await storageService.save(
+          key: moduleName,
+          value: moduleCount + 1,
+        );
         await storageService.save(
           key: subModuleName,
           value: subModuleCount + 1,

@@ -17,19 +17,67 @@ class StaticValues {
       this.siteName});
 
   StaticValues.fromJson(Map<String, dynamic> json) {
-    operator = json['operator'] != null
-        ? OperatorData.fromJson(json['operator'])
-        : null;
-    region =
-        json['region'] != null ? RegionData.fromJson(json['region']) : null;
-    subRegion = json['sub_region'] != null
-        ? SubRegionData.fromJson(json['sub_region'])
-        : null;
-    cluster =
-        json['cluster'] != null ? ClusterData.fromJson(json['cluster']) : null;
-    siteId =
-        json['site_id'] != null ? SiteData.fromJson(json['site_id']) : null;
+    operator = getOperator(json['operator']);
+    region = getRegionData(json['region']);
+    subRegion = getSubRegionData(json['sub_region']);
+    cluster = getClusterData(json['cluster']);
+    siteId = getSiteData(json['site_id']);
     siteName = json['site_name'];
+  }
+
+  OperatorData? getOperator(dynamic data) {
+    if (data != null) {
+      if (data.runtimeType == OperatorData) {
+        return data;
+      } else {
+        return OperatorData.fromJson(data['operator']);
+      }
+    }
+    return null;
+  }
+
+  RegionData? getRegionData(dynamic data) {
+    if (data != null) {
+      if (data.runtimeType == RegionData) {
+        return data;
+      } else {
+        return RegionData.fromJson(data['region']);
+      }
+    }
+    return null;
+  }
+
+  SubRegionData? getSubRegionData(dynamic data) {
+    if (data != null) {
+      if (data.runtimeType == SubRegionData) {
+        return data;
+      } else {
+        return SubRegionData.fromJson(data['sub_region']);
+      }
+    }
+    return null;
+  }
+
+  ClusterData? getClusterData(dynamic data) {
+    if (data != null) {
+      if (data.runtimeType == ClusterData) {
+        return data;
+      } else {
+        return ClusterData.fromJson(data['cluster']);
+      }
+    }
+    return null;
+  }
+
+  SiteData? getSiteData(dynamic data) {
+    if (data != null) {
+      if (data.runtimeType == SiteData) {
+        return data;
+      } else {
+        return SiteData.fromJson(data['site_id']);
+      }
+    }
+    return null;
   }
 
   Map<String, dynamic> toJson() {

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -28,7 +30,8 @@ class FormScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      title: getTitleText(),
+      // title: getTitleText(),
+      titleWidget: Obx(() => getTitleText()),
       backgroundImage: 'assets/images/hand-drawn-5g.jpg',
       child: Padding(
         padding: UiUtils.allInsets10,
@@ -37,11 +40,18 @@ class FormScreen extends StatelessWidget {
     );
   }
 
-  String getTitleText() {
-    final args = Get.arguments;
-    final title =
-        '${args['module'].moduleName} >> ${args['subModule'].subModuleName}';
-    return 'ADD $title';
+  Widget getTitleText() {
+    return Text(
+      controller.formName.value != null
+          ? controller.formName.value!
+          : 'ADD FORM DATA',
+      overflow: TextOverflow.visible,
+      style: const TextStyle(
+        color: Constants.primaryColor,
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    );
   }
 
   Widget _bodyWidget(BuildContext context) {
@@ -157,7 +167,9 @@ class FormScreen extends StatelessWidget {
               ),
               RoundedButton(
                 text: 'Submit',
-                onPressed: controller.submit,
+                onPressed: () async {
+                  await controller.submit(context);
+                },
               ),
             ],
           );
@@ -311,7 +323,7 @@ class FormScreen extends StatelessWidget {
           dateMask: 'dd-M-yyyy',
           onSaved: (value) {
             if (value != null) {
-              controller.data['DATETIME$index']!.value = value;
+              controller.data['DATE$index']!.value = value;
             }
           },
           suffixIcon: isEditable
@@ -325,18 +337,29 @@ class FormScreen extends StatelessWidget {
           readOnly: !isEditable,
         );
       case InputType.TIME:
-        final timeOfDay = controller.data['TIME$index']!.value;
+        TimeOfDay timeOfDay = controller.data['TIME$index']!.value;
+        // timeOfDay = timeOfDay.get12HoursTime();
         return CustomDateTime(
-          controller: TextEditingController(
-            text: timeOfDay.format(context),
-          ),
+          // controller: TextEditingController(
+          //   text: timeOfDay.format(context),
+          // ),
+          timeOfDay: timeOfDay,
           type: DateTimePickerType.time,
           mandatory: item.mandatory ?? false,
           label: item.inputLabel,
           dateMask: 'hh:mm a',
           onSaved: (value) {
+            log('CHANGED: $value');
             if (value != null) {
-              controller.data['DATETIME$index']!.value = value;
+              final list = value.split(':');
+              final hour = int.tryParse(list[0]);
+              final minutes = int.tryParse(list[1]);
+              if (hour != null && minutes != null) {
+                controller.data['TIME$index']!.value = TimeOfDay(
+                  hour: hour,
+                  minute: minutes,
+                );
+              }
             }
           },
           suffixIcon: isEditable
@@ -351,7 +374,7 @@ class FormScreen extends StatelessWidget {
         );
       case InputType.TEXT_AREA:
         return InputField(
-          controller: controller.data['TEXTBOX$index']!.value,
+          controller: controller.data['TEXTAREA$index']!.value,
           label: item.inputLabel,
           placeHolder: 'Tap to Enter Text',
           lines: 3,

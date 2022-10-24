@@ -37,6 +37,16 @@ class ReviewController extends GetxController {
     setData();
   }
 
+  void refreshPage() {
+    final arguments = Get.arguments;
+    module = arguments['module'];
+    subModule = arguments['subModule'];
+    formItems.value = storageService.get(
+      key: '${module!.moduleName} >> ${subModule!.subModuleName}',
+    );
+    refresh();
+  }
+
   void setData() {
     final arguments = Get.arguments;
     module = arguments['module'];
@@ -44,12 +54,7 @@ class ReviewController extends GetxController {
     formName.value = '${module!.moduleName} >> ${subModule!.subModuleName}';
     subModuleId = subModule!.subModuleId!;
     formItems.value = storageService.get(key: formName.value);
-    storageService.listen(
-      key: formName.value,
-      listener: (data) {
-        formItems.value = data;
-      },
-    );
+    // controller.formItems = storageService.get(key: formName.value);
     StaticValues? value = formItem?.staticValues!;
 
     //Set Dropdowns

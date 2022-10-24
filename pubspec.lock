@@ -123,9 +123,11 @@ packages:
   date_time_picker:
     dependency: "direct main"
     description:
-      name: date_time_picker
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: "sxtfv/hotfix/incosistent_time_format"
+      resolved-ref: "4f4bc3548d3f41e56b4e85da6a876ec368eb27d4"
+      url: "https://github.com/sxtfv/date_time_picker.git"
+    source: git
     version: "2.1.0"
   dbus:
     dependency: transitive
