@@ -85,6 +85,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       'subModule': controller.subModule,
                       'reviewFormIndex': index,
                       'reviewForm': controller.formItem,
+                      'formName': controller.formName.value,
                     },
                   );
                   //   controller.refreshPage();

@@ -136,29 +136,33 @@ class FormScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          ...List.generate(form.items!.length, (index) {
-                            Items item = form.items![index];
-                            InputType type = EnumHelper.inputTypeFromString(
-                              item.inputType,
-                            );
-                            InputParameter parameter =
-                                EnumHelper.inputParameterFromString(
-                              item.inputParameter,
-                            );
-                            return Column(
-                              children: [
-                                UiUtils.spaceVrt10,
-                                _inputWidget(
-                                  context: context,
-                                  type: type,
-                                  item: item,
-                                  index: index,
-                                  parameter: parameter,
-                                ),
-                                UiUtils.spaceVrt10,
-                              ],
-                            );
-                          }),
+                          _getMultiLevels(),
+                          ...List.generate(
+                            form.items!.length,
+                            (index) {
+                              Items item = form.items![index];
+                              InputType type = EnumHelper.inputTypeFromString(
+                                item.inputType,
+                              );
+                              InputParameter parameter =
+                                  EnumHelper.inputParameterFromString(
+                                item.inputParameter,
+                              );
+                              return Column(
+                                children: [
+                                  UiUtils.spaceVrt10,
+                                  _inputWidget(
+                                    context: context,
+                                    type: type,
+                                    item: item,
+                                    index: index,
+                                    parameter: parameter,
+                                  ),
+                                  UiUtils.spaceVrt10,
+                                ],
+                              );
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -389,6 +393,82 @@ class FormScreen extends StatelessWidget {
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
           readOnly: !isEditable,
         );
+      case InputType.MULTILEVEL:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Widget _getMultiLevels() {
+    int length = controller.multiLevels.length;
+    List<Rxn<int>> optionIndex = List.generate(length, (index) {
+      return Rxn(index == 0 ? 0 : null);
+    });
+    List<Rxn<String>> selectedValues = List.generate(length, (index) {
+      return Rxn();
+    });
+    return Column(
+      children: List.generate(
+        length,
+        (index) {
+          final item = controller.multiLevels[index];
+          return Obx(
+            () {
+              final currentIndex = optionIndex[index].value;
+              return CustomDropdown<String?>(
+                label: item.inputLabel,
+                mandatory: item.mandatory ?? false,
+                value: selectedValues[index].value,
+                items: getItems(
+                  item,
+                  optionIndex[index].value,
+                ),
+                onChanged: (newValue) {
+                  if (currentIndex != null) {
+                    int valueIndex = item
+                        .inputOption![currentIndex].inputOptions!
+                        .indexOf(newValue!);
+                    int thisID = item.id!;
+                    Items? childItem =
+                        controller.multiLevels.firstWhereOrNull((element) {
+                      return element.parentInputId == thisID;
+                    });
+                    if (childItem != null) {
+                      selectedValues[index].value = newValue;
+                      for (int i = 0; i < length; i++) {
+                        if (i == 0) {
+                          optionIndex[i].value = 0;
+                        } else {
+                          optionIndex[i].value = null;
+                        }
+                      }
+                      for (int i = 0; i < length; i++) {
+                        if (i != index) {
+                          selectedValues[i].value = null;
+                        }
+                      }
+                      int childIndex =
+                          controller.multiLevels.indexOf(childItem);
+                      optionIndex[childIndex].value = valueIndex;
+                    } else {
+                      selectedValues[index].value = newValue;
+                    }
+                  }
+                },
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  List<String> getItems(Items item, int? index) {
+    if (index != null) {
+      final options = item.inputOption?[index].inputOptions;
+      log('OPTION LENGTH: ${options?.length}');
+      return options ?? [];
+    } else {
+      return [];
     }
   }
 
@@ -418,11 +498,11 @@ class FormScreen extends StatelessWidget {
     );
   }
 
-  Widget regionDrop(label, List<Region> items) {
+  Widget regionDrop(String label, List<Region> items) {
     items = items.toSet().toList();
     return CustomDropdown<Region>(
       items: items,
-      label: 'Site Region',
+      label: label,
       hint: 'Select',
       validator: Validator.dynamicValidator,
       value: controller.currentRegion.value,

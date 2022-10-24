@@ -52,6 +52,8 @@ class Validator {
         return true;
       case InputType.TEXTBOX:
         return true;
+      case InputType.MULTILEVEL:
+        return (fieldValue != null && fieldValue != '');
     }
   }
 }

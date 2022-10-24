@@ -45,6 +45,8 @@ class FormController extends GetxController {
   TextEditingController siteName = TextEditingController();
   ScreenshotController controller = ScreenshotController();
 
+  List<Items> multiLevels = [];
+
   //STATIC DROPDOWNS
   List<Datum> operators = <Datum>[].obs;
   List<Region> regions = <Region>[].obs;
@@ -87,12 +89,25 @@ class FormController extends GetxController {
       final storedData = storageService.get(key: key0);
       final forms = jsonDecode(storedData);
       final temp = FormModel.fromJson(forms[0]);
+      processMultiLevel(temp);
+      temp.items?.removeWhere((element) {
+        return element.inputType == 'MULTILEVEL';
+      });
       form.value = temp;
       await assignControllersToFields();
       fillForm();
     } catch (e) {
       log('Error in Forms: $e');
       return;
+    }
+  }
+
+  void processMultiLevel(FormModel model) {
+    for (final item in model.items!) {
+      InputType type = InputType.values.byName(item.inputType!);
+      if (type == InputType.MULTILEVEL) {
+        multiLevels.add(item);
+      }
     }
   }
 
@@ -164,6 +179,9 @@ class FormController extends GetxController {
           break;
         case InputType.TEXT_AREA:
           data['TEXTAREA$i'] = TextEditingController().obs;
+          break;
+        case InputType.MULTILEVEL:
+          data['MULTILEVEL$i'] = Rxn<dynamic>();
           break;
       }
     }

@@ -9,6 +9,7 @@ enum InputType {
   TEXT,
   TEXT_AREA,
   PHOTO,
+  MULTILEVEL,
   DROPDOWN,
   RADIAL,
 }
