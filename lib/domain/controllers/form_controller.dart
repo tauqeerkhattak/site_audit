@@ -263,53 +263,54 @@ class FormController extends GetxController {
           items[i].answer = data[keys[i]]!.value.toString();
         }
       }
-      StaticValues staticValues = StaticValues();
-      staticValues.operator = OperatorData.fromJson({
-        'value': currentOperator.value,
-        'items': operators,
-      });
-      staticValues.region = RegionData.fromJson({
-        'value': currentRegion.value,
-        'items': regions,
-      });
-      staticValues.subRegion = SubRegionData.fromJson({
-        'value': currentSubRegion.value,
-        'items': subRegions,
-      });
-      staticValues.cluster = ClusterData.fromJson({
-        'value': currentCluster.value,
-        'items': clusters,
-      });
-      staticValues.siteId = SiteData.fromJson({
-        'value': currentSite.value,
-        'items': siteIDs,
-      });
-      staticValues.siteName = currentSite.value?.name;
-      // Map<String, dynamic> staticValues = {
-      //   'operator': {
-      //     'value': currentOperator.value,
-      //     'items': operators,
-      //   },
-      //   'region': {
-      //     'value': currentRegion.value,
-      //     'items': regions,
-      //   },
-      //   'sub_region': {
-      //     'value': currentSubRegion.value,
-      //     'items': subRegions,
-      //   },
-      //   'cluster': {
-      //     'value': currentCluster.value,
-      //     'items': clusters,
-      //   },
-      //   'site_id': {
-      //     'value': currentSite.value,
-      //     'items': siteIDs,
-      //   },
-      //   'site_name': siteName.text,
-      // };
+      // StaticValues staticValues = StaticValues();
+      // staticValues.operator = OperatorData.fromJson({
+      //   'value': currentOperator.value,
+      //   'items': operators,
+      // });
+      // staticValues.region = RegionData.fromJson({
+      //   'value': currentRegion.value,
+      //   'items': regions,
+      // });
+      // staticValues.subRegion = SubRegionData.fromJson({
+      //   'value': currentSubRegion.value,
+      //   'items': subRegions,
+      // });
+      // staticValues.cluster = ClusterData.fromJson({
+      //   'value': currentCluster.value,
+      //   'items': clusters,
+      // });
+      // staticValues.siteId = SiteData.fromJson({
+      //   'value': currentSite.value,
+      //   'items': siteIDs,
+      // });
+      // staticValues.siteName = currentSite.value?.name;
+      Map<String, dynamic> staticValues = {
+        'operator': {
+          'value': currentOperator.value?.toJson(),
+          'items': operators.map((e) => e.toJson()).toList(),
+        },
+        'region': {
+          'value': currentRegion.value?.toJson(),
+          'items': regions.map((e) => e.toJson()).toList(),
+        },
+        'sub_region': {
+          'value': currentSubRegion.value?.toJson(),
+          'items': subRegions.map((e) => e.toJson()).toList(),
+        },
+        'cluster': {
+          'value': currentCluster.value?.toJson(),
+          'items': clusters.map((e) => e.toJson()).toList(),
+        },
+        'site_id': {
+          'value': currentSite.value?.toJson(),
+          'items': siteIDs.map((e) => e.toJson()).toList(),
+        },
+        'site_name': siteName.text,
+      };
       form.value!.items = items;
       form.value!.staticValues = staticValues;
+      log("SATANIC: ${staticValues}");
       // saveJsonFileLocally();
       await saveDataToLocalStorage().then((value) {
         UiUtils.showSnackBar(
@@ -466,16 +467,18 @@ class FormController extends GetxController {
     if (arguments['reviewForm'] != null) {
       final FormModel model = arguments['reviewForm'];
 
+      StaticValues staticValues = StaticValues.fromJson(model.staticValues!);
+
       // Static Dropdowns
-      currentOperator.value = model.staticValues?.operator?.value;
-      currentRegion.value = model.staticValues?.region?.value;
-      regions = model.staticValues?.region?.items ?? [];
-      currentSubRegion.value = model.staticValues?.subRegion?.value;
-      subRegions = model.staticValues?.subRegion?.items ?? [];
-      currentCluster.value = model.staticValues?.cluster?.value;
-      clusters = model.staticValues?.cluster?.items ?? [];
-      currentSite.value = model.staticValues?.siteId?.value;
-      siteIDs = model.staticValues?.siteId?.items ?? [];
+      currentOperator.value = staticValues.operator?.value;
+      currentRegion.value = staticValues.region?.value;
+      regions = staticValues.region?.items ?? [];
+      currentSubRegion.value = staticValues.subRegion?.value;
+      subRegions = staticValues.subRegion?.items ?? [];
+      currentCluster.value = staticValues.cluster?.value;
+      clusters = staticValues.cluster?.items ?? [];
+      currentSite.value = staticValues.siteId?.value;
+      siteIDs = staticValues.siteId?.items ?? [];
       siteName.text = currentSite.value?.name ?? '';
 
       //Dynamic Data

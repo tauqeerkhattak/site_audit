@@ -1,25 +1,26 @@
-import 'package:site_audit/models/static_values.dart';
-
 class FormModel {
   int? subModuleId;
   String? subModuleName;
   String? moduleName;
   String? projectId;
-  StaticValues? staticValues;
+  Map<String, dynamic>? staticValues;
   List<Items>? items;
 
-  FormModel({this.subModuleId, this.subModuleName, this.staticValues, this.moduleName, this.projectId, this.items,});
+  FormModel({
+    this.subModuleId,
+    this.subModuleName,
+    this.staticValues,
+    this.moduleName,
+    this.projectId,
+    this.items,
+  });
 
   FormModel.fromJson(Map<String, dynamic> json) {
     subModuleId = json['sub_module_id'];
     subModuleName = json['sub_module_name'];
     moduleName = json['module_name'];
     projectId = json['project_id'];
-    staticValues = json['static_values'] != null
-        ? StaticValues.fromJson(
-            json['static_values'],
-          )
-        : null;
+    staticValues = json['static_values'];
     if (json['items'] != null) {
       items = <Items>[];
       json['items'].forEach((v) {
@@ -33,7 +34,7 @@ class FormModel {
     data['sub_module_id'] = subModuleId;
     data['sub_module_name'] = subModuleName;
     data['module_name'] = moduleName;
-    data['static_values'] = staticValues?.toJson();
+    data['static_values'] = staticValues;
     data['project_id'] = projectId;
     if (items != null) {
       data['items'] = items!.map((v) => v.toJson()).toList();
@@ -59,7 +60,7 @@ class Items {
       {this.id,
       this.mandatory,
       this.inputDescription,
-        this.answer,
+      this.answer,
       this.inputType,
       this.inputParameter,
       this.inputLength,

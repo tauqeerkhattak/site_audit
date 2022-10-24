@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:site_audit/models/module_model.dart';
+import 'package:site_audit/models/static_values.dart';
 import 'package:site_audit/models/user_model.dart';
 import 'package:site_audit/services/local_storage_keys.dart';
 import 'package:site_audit/services/local_storage_service.dart';
@@ -119,25 +120,26 @@ class HomeController extends GetxController {
     final moduleName = key.split(' >> ').first;
 
     final jsonData = model.toJson();
-    final staticValues = model.staticValues;
+    final jsonStaticValues = model.staticValues;
+    final staticValues = StaticValues.fromJson(jsonStaticValues!);
     jsonData['static_values'] = {
       'operator': {
-        'value': staticValues?.operator?.value?.operator,
+        'value': staticValues.operator?.value?.operator,
       },
       'region': {
-        'value': staticValues?.region?.value?.name,
+        'value': staticValues.region?.value?.name,
       },
       'sub_region': {
-        'value': staticValues?.subRegion?.value?.name,
+        'value': staticValues.subRegion?.value?.name,
       },
       'cluster': {
-        'value': staticValues?.cluster?.value?.id,
+        'value': staticValues.cluster?.value?.id,
       },
       'site_id': {
-        'value': staticValues?.siteId?.value?.id,
+        'value': staticValues.siteId?.value?.id,
       },
       'site_name': {
-        'value': staticValues?.siteId?.value?.name,
+        'value': staticValues.siteId?.value?.name,
       }
     };
     File file = await saveJsonFileLocally(jsonData);

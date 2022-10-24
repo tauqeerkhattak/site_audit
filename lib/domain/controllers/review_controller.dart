@@ -54,24 +54,25 @@ class ReviewController extends GetxController {
     formName.value = '${module!.moduleName} >> ${subModule!.subModuleName}';
     subModuleId = subModule!.subModuleId!;
     formItems.value = storageService.get(key: formName.value);
-    // controller.formItems = storageService.get(key: formName.value);
-    StaticValues? value = formItem?.staticValues!;
+    StaticValues? value = formItem?.staticValues != null
+        ? StaticValues.fromJson(formItem!.staticValues!)
+        : null;
 
     //Set Dropdowns
     currentOperator.value = value?.operator?.value;
-    operators = value?.operator!.items! ?? [];
+    operators = value?.operator?.items ?? [];
 
     currentRegion.value = value?.region?.value;
-    regions = value?.region!.items! ?? [];
+    regions = value?.region?.items ?? [];
 
     currentSubRegion.value = value?.subRegion?.value;
-    subRegions = value?.subRegion!.items! ?? [];
+    subRegions = value?.subRegion?.items ?? [];
 
     currentCluster.value = value?.cluster?.value;
-    clusters = value?.cluster!.items! ?? [];
+    clusters = value?.cluster?.items ?? [];
 
-    currentSite.value = value?.siteId!.value;
-    siteIDs = value?.siteId!.items! ?? [];
+    currentSite.value = value?.siteId?.value;
+    siteIDs = value?.siteId?.items ?? [];
 
     siteNameController = TextEditingController(text: currentSite.value?.name);
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:site_audit/models/static_drop_model.dart';
 
 class StaticValues {
@@ -30,7 +32,8 @@ class StaticValues {
       if (data.runtimeType == OperatorData) {
         return data;
       } else {
-        return OperatorData.fromJson(data['operator']);
+        log("OPERATOR: ${data['operator']}");
+        return OperatorData.fromJson(data);
       }
     }
     return null;
@@ -41,7 +44,7 @@ class StaticValues {
       if (data.runtimeType == RegionData) {
         return data;
       } else {
-        return RegionData.fromJson(data['region']);
+        return RegionData.fromJson(data);
       }
     }
     return null;
@@ -52,7 +55,7 @@ class StaticValues {
       if (data.runtimeType == SubRegionData) {
         return data;
       } else {
-        return SubRegionData.fromJson(data['sub_region']);
+        return SubRegionData.fromJson(data);
       }
     }
     return null;
@@ -63,7 +66,7 @@ class StaticValues {
       if (data.runtimeType == ClusterData) {
         return data;
       } else {
-        return ClusterData.fromJson(data['cluster']);
+        return ClusterData.fromJson(data);
       }
     }
     return null;
@@ -74,7 +77,7 @@ class StaticValues {
       if (data.runtimeType == SiteData) {
         return data;
       } else {
-        return SiteData.fromJson(data['site_id']);
+        return SiteData.fromJson(data);
       }
     }
     return null;
@@ -104,11 +107,11 @@ class OperatorData {
   }
 
   OperatorData.fromJson(Map<String, dynamic> data) {
-    value = data['value'];
+    value = data['value'] != null ? Datum.fromJson(data['value']) : null;
     if (data['items'] != null) {
       items = <Datum>[];
       data['items'].forEach((value) {
-        items!.add(value);
+        items!.add(Datum.fromJson(value));
       });
     }
   }
@@ -126,11 +129,11 @@ class RegionData {
   }
 
   RegionData.fromJson(Map<String, dynamic> data) {
-    value = data['value'];
+    value = data['value'] != null ? Region.fromJson(data['value']) : null;
     if (data['items'] != null) {
       items = <Region>[];
       data['items'].forEach((value) {
-        items!.add(value);
+        items!.add(Region.fromJson(value));
       });
     }
   }
@@ -148,11 +151,11 @@ class SubRegionData {
   }
 
   SubRegionData.fromJson(Map<String, dynamic> data) {
-    value = data['value'];
+    value = data['value'] != null ? SubRegion.fromJson(data['value']) : null;
     if (data['items'] != null) {
       items = <SubRegion>[];
       data['items'].forEach((value) {
-        items!.add(value);
+        items!.add(SubRegion.fromJson(value));
       });
     }
   }
@@ -170,11 +173,11 @@ class ClusterData {
   }
 
   ClusterData.fromJson(Map<String, dynamic> data) {
-    value = data['value'];
+    value = data['value'] != null ? ClusterId.fromJson(data['value']) : null;
     if (data['items'] != null) {
       items = <ClusterId>[];
       data['items'].forEach((value) {
-        items!.add(value);
+        items!.add(ClusterId.fromJson(value));
       });
     }
   }
@@ -192,11 +195,12 @@ class SiteData {
   }
 
   SiteData.fromJson(Map<String, dynamic> data) {
-    value = data['value'];
+    value =
+        data['value'] != null ? SiteReference.fromJson(data['value']) : null;
     if (data['items'] != null) {
       items = <SiteReference>[];
       data['items'].forEach((value) {
-        items!.add(value);
+        items!.add(SiteReference.fromJson(value));
       });
     }
   }
