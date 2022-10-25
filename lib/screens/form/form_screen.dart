@@ -400,12 +400,18 @@ class FormScreen extends StatelessWidget {
 
   Widget _getMultiLevels() {
     int length = controller.multiLevels.length;
-    List<Rxn<int>> optionIndex = List.generate(length, (index) {
-      return Rxn(index == 0 ? 0 : null);
-    });
-    List<Rxn<String>> selectedValues = List.generate(length, (index) {
-      return Rxn();
-    });
+    List<Rxn<int>> optionIndex = List.generate(
+      length,
+      (index) {
+        return Rxn(index == 0 ? 0 : null);
+      },
+    );
+    List<Rxn<String>> selectedValues = List.generate(
+      length,
+      (index) {
+        return Rxn();
+      },
+    );
     return Column(
       children: List.generate(
         length,
