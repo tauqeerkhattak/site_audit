@@ -41,11 +41,12 @@ class FormController extends GetxController {
   SubModule? subModule;
   Rxn<StaticDropModel> staticDrops = Rxn<StaticDropModel>();
   User? user;
-  Map<String, Rx<dynamic>> data = <String, Rx<dynamic>>{};
+  Map<String, dynamic> data = <String, dynamic>{};
   TextEditingController siteName = TextEditingController();
   ScreenshotController controller = ScreenshotController();
 
   List<Items> multiLevels = [];
+  List<Rxn<int>> optionIndex = [];
 
   //STATIC DROPDOWNS
   List<Datum> operators = <Datum>[].obs;
@@ -88,7 +89,7 @@ class FormController extends GetxController {
       final key0 = '$formKey$projectId${subModule?.subModuleId}';
       final storedData = storageService.get(key: key0);
       final forms = jsonDecode(storedData);
-      final temp = FormModel.fromJson(forms[0]);
+      FormModel temp = FormModel.fromJson(forms[0]);
       processMultiLevel(temp);
       temp.items?.removeWhere((element) {
         return element.inputType == 'MULTILEVEL';
@@ -109,6 +110,15 @@ class FormController extends GetxController {
         multiLevels.add(item);
       }
     }
+    data['MULTILEVEL'] = List.generate(
+      multiLevels.length,
+      (index) {
+        return Rxn<String>();
+      },
+    );
+    optionIndex = List.generate(multiLevels.length, (index) {
+      return Rxn(index == 0 ? 0 : null);
+    });
   }
 
   Future<void> getStaticDropdowns(String projectId) async {
@@ -181,7 +191,6 @@ class FormController extends GetxController {
           data['TEXTAREA$i'] = TextEditingController().obs;
           break;
         case InputType.MULTILEVEL:
-          data['MULTILEVEL$i'] = Rxn<dynamic>();
           break;
       }
     }
@@ -233,7 +242,7 @@ class FormController extends GetxController {
     List<Items> items = form.value!.items!;
     if (validate) {
       final keys = data.keys.toList();
-      for (int i = 0; i < keys.length; i++) {
+      for (int i = 0; i < items.length; i++) {
         if (items[i].mandatory ?? false) {
           validate = Validator.validateField(
             data[keys[i]]!.value,
@@ -281,28 +290,6 @@ class FormController extends GetxController {
           items[i].answer = data[keys[i]]!.value.toString();
         }
       }
-      // StaticValues staticValues = StaticValues();
-      // staticValues.operator = OperatorData.fromJson({
-      //   'value': currentOperator.value,
-      //   'items': operators,
-      // });
-      // staticValues.region = RegionData.fromJson({
-      //   'value': currentRegion.value,
-      //   'items': regions,
-      // });
-      // staticValues.subRegion = SubRegionData.fromJson({
-      //   'value': currentSubRegion.value,
-      //   'items': subRegions,
-      // });
-      // staticValues.cluster = ClusterData.fromJson({
-      //   'value': currentCluster.value,
-      //   'items': clusters,
-      // });
-      // staticValues.siteId = SiteData.fromJson({
-      //   'value': currentSite.value,
-      //   'items': siteIDs,
-      // });
-      // staticValues.siteName = currentSite.value?.name;
       Map<String, dynamic> staticValues = {
         'operator': {
           'value': currentOperator.value?.toJson(),
@@ -326,9 +313,13 @@ class FormController extends GetxController {
         },
         'site_name': siteName.text,
       };
+      for (int i = 0; i < multiLevels.length; i++) {
+        multiLevels[i].answer = data['MULTILEVEL'][i];
+        form.value!.items!.add(multiLevels[i]);
+      }
       form.value!.items = items;
       form.value!.staticValues = staticValues;
-      log("SATANIC: ${staticValues}");
+      log("SATANIC: $staticValues");
       // saveJsonFileLocally();
       await saveDataToLocalStorage().then((value) {
         UiUtils.showSnackBar(
