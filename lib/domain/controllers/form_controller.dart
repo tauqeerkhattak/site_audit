@@ -144,7 +144,7 @@ class FormController extends GetxController {
       InputType type = EnumHelper.inputTypeFromString(item.inputType);
       switch (type) {
         case InputType.DROPDOWN:
-          data['DROPDOWN$i'] = Rxn<dynamic>();
+          data['DROPDOWN$i'] = Rxn<String?>();
           break;
         case InputType.INTEGER:
           data['INTEGER$i'] = TextEditingController().obs;
@@ -240,8 +240,10 @@ class FormController extends GetxController {
     loading.value = true;
     bool validate = formDataKey.currentState!.validate();
     List<Items> items = form.value!.items!;
+    final keys = data.keys.where((element) {
+      return element != 'MULTILEVEL';
+    }).toList();
     if (validate) {
-      final keys = data.keys.toList();
       for (int i = 0; i < items.length; i++) {
         if (items[i].mandatory ?? false) {
           validate = Validator.validateField(
@@ -256,8 +258,6 @@ class FormController extends GetxController {
     }
     if (validate) {
       log('Validated!');
-      List<Items> items = form.value!.items!;
-      final keys = data.keys.toList();
       for (int i = 0; i < items.length; i++) {
         final type = EnumHelper.inputTypeFromString(items[i].inputType);
         if (isTextController(type)) {
@@ -287,7 +287,9 @@ class FormController extends GetxController {
           final timeOfDay = data[keys[i]]!.value as TimeOfDay;
           items[i].answer = timeOfDay.format(Get.context!);
         } else {
-          items[i].answer = data[keys[i]]!.value.toString();
+          if (keys[i] != InputType.MULTILEVEL.name) {
+            items[i].answer = data[keys[i]]!.value.toString();
+          }
         }
       }
       Map<String, dynamic> staticValues = {
@@ -314,12 +316,11 @@ class FormController extends GetxController {
         'site_name': siteName.text,
       };
       for (int i = 0; i < multiLevels.length; i++) {
-        multiLevels[i].answer = data['MULTILEVEL'][i];
+        multiLevels[i].answer = data['MULTILEVEL'][i].value;
         form.value!.items!.add(multiLevels[i]);
       }
       form.value!.items = items;
       form.value!.staticValues = staticValues;
-      log("SATANIC: $staticValues");
       // saveJsonFileLocally();
       await saveDataToLocalStorage().then((value) {
         UiUtils.showSnackBar(
@@ -475,6 +476,7 @@ class FormController extends GetxController {
     final arguments = Get.arguments;
     if (arguments['reviewForm'] != null) {
       final FormModel model = arguments['reviewForm'];
+      List<Items> temp = [];
 
       StaticValues staticValues = StaticValues.fromJson(model.staticValues!);
 
@@ -558,7 +560,34 @@ class FormController extends GetxController {
               text: model.items?[i].answer,
             );
             break;
+          case InputType.MULTILEVEL:
+            temp.add(item);
+            break;
         }
+      }
+
+      multiLevels.assignAll(temp);
+      log('LENGTH OF MULTILEVELS: ${temp.length}');
+      for (int i = 0; i < temp.length; i++) {
+        // final multiLevelItem = multiLevels[i];
+        final answer = temp[i].answer;
+        // multiLevels[i].answer = answer;
+        data['MULTILEVEL'][i].value = answer;
+        for (int j = 0; j < multiLevels[i].inputOption!.length; j++) {
+          InputOption ip = multiLevels[i].inputOption![j];
+          if (ip.inputOptions!.contains(answer)) {
+            final answerIndex = ip.inputOptions!.indexOf(answer!);
+            log('YES ANSWER EXIST $answerIndex');
+            optionIndex[i + 1].value = answerIndex;
+            break;
+          }
+        }
+        // for (int i = 0; i < multiLevels[i].inputOption!.length; i++) {
+        //   final ipOption = multiLevels[i].inputOption![i];
+        //   if (ipOption.inputOptions!.contains(answer!)) {
+        //     optionIndex[i].value = ipOption.inputOptions!.indexOf(answer);
+        //   }
+        // }
       }
     } else {
       log('No form to review');

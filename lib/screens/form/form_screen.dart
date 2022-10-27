@@ -59,6 +59,7 @@ class FormScreen extends StatelessWidget {
     return Obx(
       () {
         if (controller.loading.value) {
+          // controller.loading.value = false;
           return const Center(
             child: UiUtils.loadingIndicator,
           );
@@ -174,6 +175,9 @@ class FormScreen extends StatelessWidget {
                 text: 'Submit',
                 onPressed: () async {
                   await controller.submit(context);
+                  for (final i in controller.optionIndex) {
+                    log('INDEX: ${i.value}');
+                  }
                 },
               ),
             ],
@@ -194,20 +198,20 @@ class FormScreen extends StatelessWidget {
     switch (type) {
       case InputType.DROPDOWN:
         List<String> options = item.inputOption?.first.inputOptions ?? [];
-        return Obx(
-          () => CustomDropdown<String>(
-            items: options,
-            label: item.inputLabel,
-            hint: item.inputHint ?? 'Select Option',
-            mandatory: item.mandatory ?? false,
-            value: controller.data['DROPDOWN$index']!.value,
-            validator:
-                item.mandatory ?? true ? Validator.stringValidator : null,
-            onChanged: (String? value) {
-              controller.data['DROPDOWN$index']!.value = value!;
-            },
-            enabled: isEditable,
-          ),
+        String? value = controller.data['DROPDOWN$index']!.value;
+        value = value == 'null' ? null : value;
+        log('VALUE IS $value $options ${value.runtimeType}');
+        return CustomDropdown<String?>(
+          items: options,
+          label: item.inputLabel,
+          hint: item.inputHint ?? 'Select Option',
+          mandatory: item.mandatory ?? false,
+          value: value,
+          validator: item.mandatory ?? true ? Validator.stringValidator : null,
+          onChanged: (String? value) {
+            controller.data['DROPDOWN$index']!.value = value!;
+          },
+          enabled: isEditable,
         );
       case InputType.TEXT:
         return InputField(
@@ -447,9 +451,7 @@ class FormScreen extends StatelessWidget {
                       }
                     }
                     int childIndex = controller.multiLevels.indexOf(childItem);
-                    if (childIndex >= 0) {
-                      controller.optionIndex[childIndex].value = valueIndex;
-                    }
+                    controller.optionIndex[childIndex].value = valueIndex;
                   } else {
                     controller.data['MULTILEVEL'][index].value = newValue;
                   }
@@ -464,7 +466,7 @@ class FormScreen extends StatelessWidget {
 
   List<String> getItems(Items item, int? index) {
     if (index != null) {
-      final options = item.inputOption?[index].inputOptions;
+      final options = item.inputOption![index].inputOptions;
       log('OPTION LENGTH: ${options?.length}');
       return options ?? [];
     } else {
