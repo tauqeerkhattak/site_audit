@@ -6,4 +6,5 @@ class AppRoutes {
   static const String form = '/form';
   static const String review = '/review';
   static const String formReview = '/formReview';
+  static const String addSiteData = '/addSiteData';
 }

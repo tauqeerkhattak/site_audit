@@ -4,28 +4,25 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:site_audit/models/form_model.dart';
-import 'package:site_audit/models/module_model.dart';
-import 'package:site_audit/models/static_drop_model.dart';
-import 'package:site_audit/models/user_model.dart';
-import 'package:site_audit/routes/routes.dart';
-import 'package:site_audit/services/image_picker_service.dart';
-import 'package:site_audit/services/local_storage_keys.dart';
-import 'package:site_audit/services/local_storage_service.dart';
-import 'package:site_audit/utils/enums/enum_helper.dart';
-import 'package:site_audit/utils/enums/input_type.dart';
-import 'package:site_audit/utils/ui_utils.dart';
-import 'package:site_audit/utils/validator.dart';
-import 'package:site_audit/utils/widget_utils.dart';
 
-import '../../models/static_values.dart';
+import '../../models/form_model.dart';
+import '../../models/module_model.dart';
+import '../../models/user_model.dart';
+import '../../routes/routes.dart';
+import '../../services/image_picker_service.dart';
+import '../../services/local_storage_keys.dart';
+import '../../services/local_storage_service.dart';
+import '../../utils/enums/enum_helper.dart';
+import '../../utils/enums/input_type.dart';
+import '../../utils/ui_utils.dart';
+import '../../utils/validator.dart';
+import '../../utils/widget_utils.dart';
 
 class FormController extends GetxController {
   final loading = RxBool(false);
@@ -39,28 +36,12 @@ class FormController extends GetxController {
   Rxn<FormModel> form = Rxn();
   Module? module;
   SubModule? subModule;
-  Rxn<StaticDropModel> staticDrops = Rxn<StaticDropModel>();
   User? user;
   Map<String, dynamic> data = <String, dynamic>{};
-  TextEditingController siteName = TextEditingController();
   ScreenshotController controller = ScreenshotController();
 
   List<Items> multiLevels = [];
   List<Rxn<int>> optionIndex = [];
-
-  //STATIC DROPDOWNS
-  List<Datum> operators = <Datum>[].obs;
-  List<Region> regions = <Region>[].obs;
-  List<SubRegion> subRegions = <SubRegion>[].obs;
-  List<ClusterId> clusters = <ClusterId>[].obs;
-  List<SiteReference> siteIDs = <SiteReference>[].obs;
-
-  //STATIC DROPDOWNS CURRENT VALUES
-  Rxn<Datum?> currentOperator = Rxn<Datum?>();
-  Rxn<Region?> currentRegion = Rxn<Region?>();
-  Rxn<SubRegion?> currentSubRegion = Rxn<SubRegion?>();
-  Rxn<ClusterId?> currentCluster = Rxn<ClusterId?>();
-  Rxn<SiteReference?> currentSite = Rxn<SiteReference?>();
 
   @override
   void onInit() {
@@ -75,8 +56,6 @@ class FormController extends GetxController {
     projectId = '${user!.data!.projectId}';
     locationData = await location.getLocation();
     await getForms();
-    await getStaticDropdowns(projectId!);
-
     loading.value = false;
   }
 
@@ -119,18 +98,6 @@ class FormController extends GetxController {
     optionIndex = List.generate(multiLevels.length, (index) {
       return Rxn(index == 0 ? 0 : null);
     });
-  }
-
-  Future<void> getStaticDropdowns(String projectId) async {
-    try {
-      final data = storageService.get(key: staticValueKey);
-      final temp = StaticDropModel.fromJson(jsonDecode(data));
-      staticDrops.value = temp;
-      operators = staticDrops.value!.data!;
-      loading.value = false;
-    } catch (e) {
-      log('Error in Static Dropdown: $e');
-    }
   }
 
   ///
@@ -269,9 +236,14 @@ class FormController extends GetxController {
             if (imagePath.contains('base64')) {
               items[i].answer = imagePath;
             } else {
-              // saveImageToGallery(File(imagePath));
-              String base64 = covertToBase64(imagePath);
-              items[i].answer = base64;
+              File? file = await saveImageToGallery(imagePath);
+              if (file != null) {
+                String base64 = covertToBase64(file.path);
+                items[i].answer = base64;
+              } else {
+                String base64 = covertToBase64(imagePath);
+                items[i].answer = base64;
+              }
             }
           } else {
             items[i].answer = data[keys[i]]!.value;
@@ -292,29 +264,9 @@ class FormController extends GetxController {
           }
         }
       }
-      Map<String, dynamic> staticValues = {
-        'operator': {
-          'value': currentOperator.value?.toJson(),
-          'items': operators.map((e) => e.toJson()).toList(),
-        },
-        'region': {
-          'value': currentRegion.value?.toJson(),
-          'items': regions.map((e) => e.toJson()).toList(),
-        },
-        'sub_region': {
-          'value': currentSubRegion.value?.toJson(),
-          'items': subRegions.map((e) => e.toJson()).toList(),
-        },
-        'cluster': {
-          'value': currentCluster.value?.toJson(),
-          'items': clusters.map((e) => e.toJson()).toList(),
-        },
-        'site_id': {
-          'value': currentSite.value?.toJson(),
-          'items': siteIDs.map((e) => e.toJson()).toList(),
-        },
-        'site_name': siteName.text,
-      };
+      Map<String, dynamic> staticValues = storageService.get(
+        key: siteDataStorageKey,
+      );
       for (int i = 0; i < multiLevels.length; i++) {
         multiLevels[i].answer = data['MULTILEVEL'][i].value;
         form.value!.items!.add(multiLevels[i]);
@@ -328,12 +280,6 @@ class FormController extends GetxController {
         );
         Navigator.pop(context, 'popped');
       });
-      // Get.offNamedUntil(
-      //   AppRoutes.home,
-      //   (route) => false,
-      // );
-      // Get.back(closeOverlays: true);
-      // Get.offNamedUntil(AppRoutes.home, (route) => false);
     } else {
       log('NOT VALIDATED');
       UiUtils.showSnackBar(
@@ -347,7 +293,7 @@ class FormController extends GetxController {
   String getImageName(DateTime now) {
     DateFormat format = DateFormat('yyyy-MM-dd_hh-mm-ss');
     final projectId = user?.data?.projectId;
-    final siteId = currentSite.value?.id;
+    const siteId = 01;
     final engineerId = user?.data?.auditTeamId;
     final fieldId = form.value?.items?.first.id;
     final date = format.format(now);
@@ -440,10 +386,10 @@ class FormController extends GetxController {
     }
   }
 
-  Future<void> saveImageToGallery(File image) async {
+  Future<File?> saveImageToGallery(String imagePath) async {
     try {
       final time = DateTime.now();
-
+      File image = File(imagePath);
       Uint8List imageData = await controller.captureFromWidget(
         WidgetUtils.imageWidget(
           image: image,
@@ -467,8 +413,10 @@ class FormController extends GetxController {
         file.path,
         albumName: 'SiteAudit',
       );
+      return file;
     } catch (e) {
       UiUtils.showSnackBar(message: 'EXCEPTION IN SAVING IMAGE: $e');
+      return null;
     }
   }
 
@@ -477,20 +425,6 @@ class FormController extends GetxController {
     if (arguments['reviewForm'] != null) {
       final FormModel model = arguments['reviewForm'];
       List<Items> temp = [];
-
-      StaticValues staticValues = StaticValues.fromJson(model.staticValues!);
-
-      // Static Dropdowns
-      currentOperator.value = staticValues.operator?.value;
-      currentRegion.value = staticValues.region?.value;
-      regions = staticValues.region?.items ?? [];
-      currentSubRegion.value = staticValues.subRegion?.value;
-      subRegions = staticValues.subRegion?.items ?? [];
-      currentCluster.value = staticValues.cluster?.value;
-      clusters = staticValues.cluster?.items ?? [];
-      currentSite.value = staticValues.siteId?.value;
-      siteIDs = staticValues.siteId?.items ?? [];
-      siteName.text = currentSite.value?.name ?? '';
 
       //Dynamic Data
       List<Items> items = model.items!;

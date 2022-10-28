@@ -4,3 +4,4 @@ const String staticValueKey = 'static_value';
 const String tokenKey = 'token';
 const String modulesKey = 'modules';
 const String offlineSavedDataKey = 'OfflineSavedData';
+const String siteDataStorageKey = 'site_data_module';

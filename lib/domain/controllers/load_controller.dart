@@ -40,9 +40,15 @@ class LoadController extends GetxController {
         }
         await getForms();
       }
-      Get.offAndToNamed(
-        AppRoutes.home,
-      );
+      if (storageService.hasKey(key: siteDataStorageKey)) {
+        Get.offAllNamed(
+          AppRoutes.home,
+        );
+      } else {
+        Get.toNamed(
+          AppRoutes.addSiteData,
+        );
+      }
     } catch (e) {
       log('Exception in load_controller.dart: ${e.toString()}');
     } finally {
@@ -64,6 +70,5 @@ class LoadController extends GetxController {
         currentForm++;
       }
     }
-    AppService.getStaticDropdowns('$projectId');
   }
 }

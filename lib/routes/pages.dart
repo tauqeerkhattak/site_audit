@@ -12,6 +12,7 @@ import 'package:site_audit/screens/home/home_screen.dart';
 import 'package:site_audit/screens/splash/splash.dart';
 
 import '../domain/bindings/load_bindings.dart';
+import '../screens/auth/add_site_data.dart';
 import '../screens/load_data/load_data.dart';
 
 class AppPages {
@@ -34,7 +35,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.home,
       binding: HomeBindings(),
-      page: () => HomeScreen(),
+      page: () => const HomeScreen(),
     ),
     GetPage(
       name: AppRoutes.form,
@@ -44,7 +45,11 @@ class AppPages {
     GetPage(
       name: AppRoutes.review,
       binding: ReviewBindings(),
-      page: () => ReviewScreen(),
+      page: () => const ReviewScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.addSiteData,
+      page: () => AddSiteData(),
     ),
   ];
 }

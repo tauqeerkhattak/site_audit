@@ -31,7 +31,7 @@ class CustomErrorWidget extends StatelessWidget {
           UiUtils.spaceVrt20,
           Text(
             errorText,
-            style: TextStyle(
+            style: const TextStyle(
               color: Constants.primaryColor,
               fontWeight: FontWeight.bold,
               fontSize: 18,

@@ -12,12 +12,14 @@ class DefaultLayout extends StatelessWidget {
   final String? title;
   final Widget? titleWidget;
   final bool? showBackButton;
+  final double? padding;
   const DefaultLayout({
     Key? key,
     required this.child,
     this.title,
     this.titleWidget,
     this.backgroundImage,
+    this.padding,
     this.showBackButton = true,
   })  : assert(title != null || titleWidget != null),
         super(key: key);
@@ -105,7 +107,10 @@ class DefaultLayout extends StatelessWidget {
                   ),
                 ),
               ),
-              child,
+              Padding(
+                padding: EdgeInsets.all(padding ?? 0),
+                child: child,
+              ),
             ],
           ),
         ),
