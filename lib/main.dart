@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:site_audit/services/image_picker_service.dart';
-import 'package:site_audit/services/local_storage_service.dart';
-import 'package:site_audit/utils/constants.dart';
-import 'package:site_audit/utils/permssion_util.dart';
 
 import 'routes/pages.dart';
 import 'routes/routes.dart';
+import 'services/image_picker_service.dart';
+import 'services/local_storage_service.dart';
+import 'utils/constants.dart';
+import 'utils/permssion_util.dart';
 import 'utils/size_config.dart';
 
 void main() async {

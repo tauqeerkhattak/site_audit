@@ -40,7 +40,8 @@ class FormController extends GetxController {
   Map<String, dynamic> data = <String, dynamic>{};
   ScreenshotController controller = ScreenshotController();
 
-  List<Items> multiLevels = [];
+  // List<Items> multiLevels = [];
+  Map<String, List<Items>> multiLevels = <String, List<Items>>{};
   List<Rxn<int>> optionIndex = [];
 
   @override
@@ -83,21 +84,37 @@ class FormController extends GetxController {
   }
 
   void processMultiLevel(FormModel model) {
-    for (final item in model.items!) {
+    final temp = model.items!.where((element) {
+      return element.inputType == 'MULTILEVEL';
+    }).toList();
+    for (int i = 0; i < temp.length; i++) {
+      List<Items> items = [];
+      final item = temp[i];
       InputType type = InputType.values.byName(item.inputType!);
       if (type == InputType.MULTILEVEL) {
-        multiLevels.add(item);
+        do {
+          Items nextItem = temp[i + 1];
+          if (item.id == nextItem.parentInputId) {
+            items.add(nextItem);
+          }
+        } while (i + 1 < temp.length);
       }
     }
-    data['MULTILEVEL'] = List.generate(
-      multiLevels.length,
-      (index) {
-        return Rxn<String>();
-      },
-    );
-    optionIndex = List.generate(multiLevels.length, (index) {
-      return Rxn(index == 0 ? 0 : null);
-    });
+    // for (final item in model.items!) {
+    //   InputType type = InputType.values.byName(item.inputType!);
+    //   if (type == InputType.MULTILEVEL) {
+    //     multiLevels.add(item);
+    //   }
+    // }
+    // data['MULTILEVEL'] = List.generate(
+    //   multiLevels.length,
+    //   (index) {
+    //     return Rxn<String>();
+    //   },
+    // );
+    // optionIndex = List.generate(multiLevels.length, (index) {
+    //   return Rxn(index == 0 ? 0 : null);
+    // });
   }
 
   ///
@@ -516,12 +533,6 @@ class FormController extends GetxController {
             break;
           }
         }
-        // for (int i = 0; i < multiLevels[i].inputOption!.length; i++) {
-        //   final ipOption = multiLevels[i].inputOption![i];
-        //   if (ipOption.inputOptions!.contains(answer!)) {
-        //     optionIndex[i].value = ipOption.inputOptions!.indexOf(answer);
-        //   }
-        // }
       }
     } else {
       log('No form to review');
