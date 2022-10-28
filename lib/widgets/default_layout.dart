@@ -13,6 +13,7 @@ class DefaultLayout extends StatelessWidget {
   final Widget? titleWidget;
   final bool? showBackButton;
   final double? padding;
+  final Widget? backButton;
   const DefaultLayout({
     Key? key,
     required this.child,
@@ -21,6 +22,7 @@ class DefaultLayout extends StatelessWidget {
     this.backgroundImage,
     this.padding,
     this.showBackButton = true,
+    this.backButton,
   })  : assert(title != null || titleWidget != null),
         super(key: key);
 
@@ -43,14 +45,15 @@ class DefaultLayout extends StatelessWidget {
         elevation: 0.0,
         centerTitle: true,
         leading: showBackButton!
-            ? IconButton(
-                icon: const Icon(
-                  CupertinoIcons.back,
-                  color: Constants.primaryColor,
-                ),
-                onPressed: () => Get.back(),
-              )
-            : null,
+            ? backButton ??
+                IconButton(
+                  icon: const Icon(
+                    CupertinoIcons.back,
+                    color: Constants.primaryColor,
+                  ),
+                  onPressed: () => Get.back(),
+                )
+            : const SizedBox.shrink(),
         actions: [
           Padding(
             padding: const EdgeInsets.only(

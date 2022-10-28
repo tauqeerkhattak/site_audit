@@ -24,80 +24,16 @@ class AddSiteData extends StatelessWidget {
       },
       child: DefaultLayout(
         padding: 10,
+        showBackButton: false,
         title: 'Add Site Data',
         child: Obx(
           () {
-            if (controller.staticDrops.value != null) {
-              return Form(
-                key: controller.siteDataKey,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: operatorDrop(
-                            'Site Operator',
-                            controller.operators,
-                          ),
-                        ),
-                        UiUtils.spaceHzt20,
-                        Expanded(
-                          child: regionDrop(
-                            'Site Region',
-                            controller.regions,
-                          ),
-                        ),
-                      ],
-                    ),
-                    WidgetUtils.spaceVrt10,
-                    Row(
-                      children: [
-                        Expanded(
-                          child: subRegionDrop(
-                            'Site Sub-Region',
-                            controller.subRegions,
-                          ),
-                        ),
-                        UiUtils.spaceHzt20,
-                        Expanded(
-                          child: clusterDrop(
-                            'Site Cluster',
-                            controller.clusters,
-                          ),
-                        ),
-                      ],
-                    ),
-                    WidgetUtils.spaceVrt10,
-                    Row(
-                      children: [
-                        Expanded(
-                          child: siteIdDrop(
-                            'Site ID',
-                            controller.siteIDs,
-                          ),
-                        ),
-                        UiUtils.spaceHzt20,
-                        Expanded(
-                          child: InputField(
-                            label: 'Site Name',
-                            readOnly: true,
-                            placeHolder: 'Site Name',
-                            mandatory: true,
-                            mandatoryText: '*',
-                            validator: Validator.stringValidator,
-                            controller: controller.siteName,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Spacer(),
-                    RoundedButton(
-                      text: 'Submit',
-                      onPressed: controller.onSubmit,
-                    ),
-                  ],
-                ),
+            if (controller.loading.value) {
+              return const Center(
+                child: UiUtils.loadingIndicator,
               );
+            } else if (controller.staticDrops.value != null) {
+              return _body();
             } else {
               return const CustomErrorWidget(
                 errorText: 'Something went wrong, please restart the app!',
@@ -106,6 +42,79 @@ class AddSiteData extends StatelessWidget {
             }
           },
         ),
+      ),
+    );
+  }
+
+  Widget _body() {
+    return Form(
+      key: controller.siteDataKey,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: operatorDrop(
+                  'Site Operator',
+                  controller.operators,
+                ),
+              ),
+              UiUtils.spaceHzt20,
+              Expanded(
+                child: regionDrop(
+                  'Site Region',
+                  controller.regions,
+                ),
+              ),
+            ],
+          ),
+          WidgetUtils.spaceVrt10,
+          Row(
+            children: [
+              Expanded(
+                child: subRegionDrop(
+                  'Site Sub-Region',
+                  controller.subRegions,
+                ),
+              ),
+              UiUtils.spaceHzt20,
+              Expanded(
+                child: clusterDrop(
+                  'Site Cluster',
+                  controller.clusters,
+                ),
+              ),
+            ],
+          ),
+          WidgetUtils.spaceVrt10,
+          Row(
+            children: [
+              Expanded(
+                child: siteIdDrop(
+                  'Site ID',
+                  controller.siteIDs,
+                ),
+              ),
+              UiUtils.spaceHzt20,
+              Expanded(
+                child: InputField(
+                  label: 'Site Name',
+                  readOnly: true,
+                  placeHolder: 'Site Name',
+                  mandatory: true,
+                  mandatoryText: '*',
+                  validator: Validator.stringValidator,
+                  controller: controller.siteName,
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          RoundedButton(
+            text: 'Submit',
+            onPressed: controller.onSubmit,
+          ),
+        ],
       ),
     );
   }

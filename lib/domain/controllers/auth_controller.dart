@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -56,11 +57,27 @@ class AuthController extends GetxController {
     // TODO Uncomment this
     loginId.text = "NEXJAV001";
     password.text = "PASS001NEXJAV";
+    getData();
   }
 
   Future<void> getData() async {
-    final projectId = user?.data?.projectId;
-    await getStaticDropdowns(projectId!.toString());
+    try {
+      loading.value = true;
+      String? userData = storageService.get(key: userKey);
+      if (userData != null) {
+        final user = User.fromJson(jsonDecode(userData));
+        final projectId = user.data?.projectId;
+        await getStaticDropdowns(projectId!.toString());
+        loading.value = false;
+      } else {
+        loading.value = false;
+      }
+    } catch (e) {
+      log('Exception in authcontroller: $e');
+      loading.value = false;
+    } finally {
+      loading.value = false;
+    }
   }
 
   Future<void> handleLogin() async {

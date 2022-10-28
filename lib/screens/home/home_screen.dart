@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/home_controller.dart';
@@ -30,7 +31,23 @@ class _HomeScreenState extends State<HomeScreen> {
         return false;
       },
       child: DefaultLayout(
-        showBackButton: false,
+        showBackButton: true,
+        backButton: Obx(
+          () {
+            if (controller.currentPage.value > 0) {
+              return IconButton(
+                icon: const Icon(
+                  CupertinoIcons.back,
+                  color: Constants.primaryColor,
+                ),
+                onPressed: () {
+                  controller.animateBack();
+                },
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
         titleWidget: Obx(
           () => Text(
             getTitle(),

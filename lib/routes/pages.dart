@@ -49,6 +49,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.addSiteData,
+      binding: AuthBindings(),
       page: () => AddSiteData(),
     ),
   ];
