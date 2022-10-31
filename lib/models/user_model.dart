@@ -60,8 +60,8 @@ class Data {
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    auditCompanyId = json['audit_company_id'];
-    projectId = json['project_id'];
+    auditCompanyId = int.tryParse(json['audit_company_id']);
+    projectId = int.tryParse(json['project_id']);
     status = json['status'];
     auditTeamId = json['audit_team_id'];
     password = json['password'];

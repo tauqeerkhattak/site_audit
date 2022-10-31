@@ -12,7 +12,7 @@ class Module {
   });
 
   Module.fromJson(Map<String, dynamic> json) {
-    moduleId = json['module_id'];
+    moduleId = int.tryParse(json['module_id']);
     moduleName = json['module_name'];
     if (json['sub_modules'] != null) {
       subModules = <SubModule>[];
@@ -41,7 +41,7 @@ class SubModule {
   });
 
   SubModule.fromJson(Map<String, dynamic> json) {
-    subModuleId = json['sub_module_id'];
+    subModuleId = int.tryParse(json['sub_module_id']);
     subModuleName = json['sub_module_name'];
   }
 }

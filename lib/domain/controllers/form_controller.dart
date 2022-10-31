@@ -41,7 +41,7 @@ class FormController extends GetxController {
   ScreenshotController controller = ScreenshotController();
 
   // List<Items> multiLevels = [];
-  Map<String, List<Items>> multiLevels = <String, List<Items>>{};
+  Map<int, List<Items>> multiLevels = <int, List<Items>>{};
   List<Rxn<int>> optionIndex = [];
 
   @override
@@ -84,20 +84,43 @@ class FormController extends GetxController {
   }
 
   void processMultiLevel(FormModel model) {
-    final temp = model.items!.where((element) {
+    List<Items> temp = model.items!.where((element) {
       return element.inputType == 'MULTILEVEL';
     }).toList();
     for (int i = 0; i < temp.length; i++) {
-      List<Items> items = [];
+      List<Items> items = <Items>[];
       final item = temp[i];
       InputType type = InputType.values.byName(item.inputType!);
       if (type == InputType.MULTILEVEL) {
-        do {
-          Items nextItem = temp[i + 1];
-          if (item.id == nextItem.parentInputId) {
-            items.add(nextItem);
+        if (item.parentInputId == 0) {
+          int thisID = item.id!;
+          int thisPID = item.parentInputId!;
+          items.add(item);
+          while (true) {
+            final nextItem = temp.firstWhereOrNull((element) {
+              return element.parentInputId == thisID;
+            });
+            if (nextItem != null) {
+              items.add(nextItem);
+              thisID = nextItem.id!;
+            } else {
+              break;
+            }
           }
-        } while (i + 1 < temp.length);
+        }
+        multiLevels[i] = items;
+        // do {
+        //   if (!items.contains(item)) {
+        //     items.add(item);
+        //   }
+        //   Items nextItem = temp[i + 1];
+        //   if (item.id == nextItem.parentInputId) {
+        //     if (!items.contains(nextItem)) {
+        //       items.add(nextItem);
+        //     }
+        //   }
+        //   multiLevels[i] = items;
+        // } while (i + 1 < temp.length);
       }
     }
     // for (final item in model.items!) {
@@ -285,8 +308,8 @@ class FormController extends GetxController {
         key: siteDataStorageKey,
       );
       for (int i = 0; i < multiLevels.length; i++) {
-        multiLevels[i].answer = data['MULTILEVEL'][i].value;
-        form.value!.items!.add(multiLevels[i]);
+        // multiLevels[i].answer = data['MULTILEVEL'][i].value;
+        // form.value!.items!.add(multiLevels[i]);
       }
       form.value!.items = items;
       form.value!.staticValues = staticValues;
@@ -517,22 +540,21 @@ class FormController extends GetxController {
         }
       }
 
-      multiLevels.assignAll(temp);
       log('LENGTH OF MULTILEVELS: ${temp.length}');
       for (int i = 0; i < temp.length; i++) {
         // final multiLevelItem = multiLevels[i];
         final answer = temp[i].answer;
         // multiLevels[i].answer = answer;
         data['MULTILEVEL'][i].value = answer;
-        for (int j = 0; j < multiLevels[i].inputOption!.length; j++) {
-          InputOption ip = multiLevels[i].inputOption![j];
-          if (ip.inputOptions!.contains(answer)) {
-            final answerIndex = ip.inputOptions!.indexOf(answer!);
-            log('YES ANSWER EXIST $answerIndex');
-            optionIndex[i + 1].value = answerIndex;
-            break;
-          }
-        }
+        // for (int j = 0; j < multiLevels[i].inputOption!.length; j++) {
+        //   InputOption ip = multiLevels[i].inputOption![j];
+        //   if (ip.inputOptions!.contains(answer)) {
+        //     final answerIndex = ip.inputOptions!.indexOf(answer!);
+        //     log('YES ANSWER EXIST $answerIndex');
+        //     optionIndex[i + 1].value = answerIndex;
+        //     break;
+        //   }
+        // }
       }
     } else {
       log('No form to review');

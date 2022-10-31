@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 class FormModel {
   int? subModuleId;
   String? subModuleName;
@@ -16,7 +18,7 @@ class FormModel {
   });
 
   FormModel.fromJson(Map<String, dynamic> json) {
-    subModuleId = json['sub_module_id'];
+    subModuleId = int.tryParse('${json['sub_module_id']}');
     subModuleName = json['sub_module_name'];
     moduleName = json['module_name'];
     projectId = json['project_id'];
@@ -43,7 +45,7 @@ class FormModel {
   }
 }
 
-class Items {
+class Items extends Equatable {
   int? id;
   bool? mandatory;
   String? inputDescription;
@@ -105,6 +107,9 @@ class Items {
     }
     return data;
   }
+
+  @override
+  List<Object?> get props => [id];
 }
 
 class InputOption {

@@ -346,61 +346,71 @@ class FormScreen extends StatelessWidget {
   Widget _getMultiLevels() {
     int length = controller.multiLevels.length;
     // List<Rxn<String>> selectedValues = controller.data['MULTILEVEL']!;
-    return CustomGridView(
-      length: length,
-      padding: const EdgeInsets.only(
-        top: 5,
-        bottom: 5,
+    final keys = controller.multiLevels.keys.toList();
+    return Column(
+      children: List.generate(
+        keys.length,
+        (index) {
+          List<Items> multiLevels = controller.multiLevels[index]!;
+          return CustomGridView(
+            length: length,
+            padding: const EdgeInsets.only(
+              top: 5,
+              bottom: 5,
+            ),
+            scrollPhysics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              final item = multiLevels[index];
+              return Obx(
+                () {
+                  final currentIndex = controller.optionIndex[index].value;
+                  return CustomDropdown<String?>(
+                    label: item.inputLabel,
+                    mandatory: item.mandatory ?? false,
+                    value: controller.data['MULTILEVEL'][index].value,
+                    hint: item.inputHint ?? 'Select a value',
+                    validator: Validator.stringValidator,
+                    mandatoryText: "*",
+                    items: getItems(
+                      item,
+                      controller.optionIndex[index].value,
+                    ),
+                    onChanged: (newValue) {
+                      if (currentIndex != null) {
+                        int valueIndex = item
+                            .inputOption![currentIndex].inputOptions!
+                            .indexOf(newValue!);
+                        int thisID = item.id!;
+                        Items? childItem =
+                            multiLevels.firstWhereOrNull((element) {
+                          return element.parentInputId == thisID;
+                        });
+                        if (childItem != null) {
+                          controller.data['MULTILEVEL'][index].value = newValue;
+                          for (int i = 0; i < length; i++) {
+                            if (i > index) {
+                              controller.optionIndex[i].value = null;
+                            }
+                          }
+                          for (int i = 0; i < length; i++) {
+                            if (i > index) {
+                              controller.data['MULTILEVEL'][i].value = null;
+                            }
+                          }
+                          int childIndex = multiLevels.indexOf(childItem);
+                          controller.optionIndex[childIndex].value = valueIndex;
+                        } else {
+                          controller.data['MULTILEVEL'][index].value = newValue;
+                        }
+                      }
+                    },
+                  );
+                },
+              );
+            },
+          );
+        },
       ),
-      scrollPhysics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        final item = controller.multiLevels[index];
-        return Obx(
-          () {
-            final currentIndex = controller.optionIndex[index].value;
-            return CustomDropdown<String?>(
-              label: item.inputLabel,
-              mandatory: item.mandatory ?? false,
-              value: controller.data['MULTILEVEL'][index].value,
-              hint: item.inputHint ?? 'Select a value',
-              validator: Validator.stringValidator,
-              mandatoryText: "*",
-              items: getItems(
-                item,
-                controller.optionIndex[index].value,
-              ),
-              onChanged: (newValue) {
-                if (currentIndex != null) {
-                  int valueIndex = item.inputOption![currentIndex].inputOptions!
-                      .indexOf(newValue!);
-                  int thisID = item.id!;
-                  Items? childItem =
-                      controller.multiLevels.firstWhereOrNull((element) {
-                    return element.parentInputId == thisID;
-                  });
-                  if (childItem != null) {
-                    controller.data['MULTILEVEL'][index].value = newValue;
-                    for (int i = 0; i < length; i++) {
-                      if (i > index) {
-                        controller.optionIndex[i].value = null;
-                      }
-                    }
-                    for (int i = 0; i < length; i++) {
-                      if (i > index) {
-                        controller.data['MULTILEVEL'][i].value = null;
-                      }
-                    }
-                    int childIndex = controller.multiLevels.indexOf(childItem);
-                    controller.optionIndex[childIndex].value = valueIndex;
-                  } else {
-                    controller.data['MULTILEVEL'][index].value = newValue;
-                  }
-                }
-              },
-            );
-          },
-        );
-      },
     );
   }
 
