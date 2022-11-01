@@ -12,20 +12,20 @@ class CustomDialog {
         backgroundColor: Constants.primaryColor,
         title: Text(
           title,
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         content: Text(
           content,
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(18.0),
           ),
         ),
         actions: [
           TextButton(
-            child: Text(
+            child: const Text(
               'Okay',
               style: TextStyle(
                 color: Colors.white,

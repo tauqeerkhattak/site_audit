@@ -361,6 +361,5 @@ class AppService {
       dev.log('Error in sending json file: $e');
       throw Exception(e);
     }
-    return null;
   }
 }

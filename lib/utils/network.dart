@@ -120,6 +120,7 @@ class Network {
       log("POST: $e");
       return throw Exception(e);
     }
+    return null;
   }
 
   static put({url, payload, headers, Map<String, dynamic>? params}) async {

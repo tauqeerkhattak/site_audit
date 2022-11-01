@@ -22,7 +22,7 @@ class CustomGridView extends StatelessWidget {
       padding: padding,
       shrinkWrap: true,
       physics: scrollPhysics,
-      crossAxisCount: crossAxisCount ?? 2,
+      crossAxisCount: crossAxisCount,
       mainAxisSpacing: 10,
       crossAxisSpacing: 10,
       itemCount: length,

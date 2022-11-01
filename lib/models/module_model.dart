@@ -23,7 +23,7 @@ class Module {
   }
 
   Map<String, dynamic> toJson(Module module) {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['module_id'] = module.moduleId;
     data['module_name'] = module.moduleName;
     data['sub_modules'] = jsonEncode(module.subModules);

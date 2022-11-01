@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 class SizeConfig {
   static late double _screenWidth;
   static late double _screenHeight;
-  static late double _blockSizeHorizontal = 0;
-  static late double _blockSizeVertical = 0;
+  static double _blockSizeHorizontal = 0;
+  static double _blockSizeVertical = 0;
 
   static late double textMultiplier;
   static late double imageSizeMultiplier;

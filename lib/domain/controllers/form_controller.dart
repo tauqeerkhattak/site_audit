@@ -94,12 +94,14 @@ class FormController extends GetxController {
       if (type == InputType.MULTILEVEL) {
         if (item.parentInputId == 0) {
           int thisID = item.id!;
-          int thisPID = item.parentInputId!;
+          // int thisPID = item.parentInputId!;
           items.add(item);
           while (true) {
-            final nextItem = temp.firstWhereOrNull((element) {
-              return element.parentInputId == thisID;
-            });
+            final nextItem = temp.firstWhereOrNull(
+              (element) {
+                return element.parentInputId == thisID;
+              },
+            );
             if (nextItem != null) {
               items.add(nextItem);
               thisID = nextItem.id!;

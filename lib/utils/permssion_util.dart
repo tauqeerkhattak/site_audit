@@ -1,4 +1,6 @@
 // import 'package:get_storage/get_storage.dart';
+import 'dart:developer';
+
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionUtil {
@@ -8,5 +10,6 @@ class PermissionUtil {
       Permission.camera,
       Permission.storage,
     ].request();
+    log('TOTAL PERMISSIONS: ${permissions.length}');
   }
 }
