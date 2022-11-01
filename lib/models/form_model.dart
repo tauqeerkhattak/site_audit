@@ -4,7 +4,7 @@ class FormModel {
   int? subModuleId;
   String? subModuleName;
   String? moduleName;
-  String? projectId;
+  int? projectId;
   Map<String, dynamic>? staticValues;
   List<Items>? items;
 
@@ -21,7 +21,7 @@ class FormModel {
     subModuleId = int.tryParse('${json['sub_module_id']}');
     subModuleName = json['sub_module_name'];
     moduleName = json['module_name'];
-    projectId = json['project_id'];
+    projectId = int.tryParse(json['project_id']);
     staticValues = json['static_values'];
     if (json['items'] != null) {
       items = <Items>[];
@@ -78,7 +78,7 @@ class Items extends Equatable {
     answer = json['answer'];
     inputType = json['input_type'];
     inputParameter = json['input_parameter'];
-    inputLength = json['input_length'];
+    inputLength = int.tryParse(json['input_length'].toString());
     inputHint = json['input_hint'];
     parentInputId = json['parent_input_id'];
     inputLabel = json['input_label'];
@@ -121,8 +121,8 @@ class InputOption {
       {this.inputItemParentId, this.inputParentLevel, this.inputOptions});
 
   InputOption.fromJson(Map<String, dynamic> json) {
-    inputItemParentId = json['input_item_parent_id'];
-    inputParentLevel = json['input_parent_level'];
+    inputItemParentId = int.tryParse(json['input_item_parent_id'].toString());
+    inputParentLevel = int.tryParse(json['input_parent_level'].toString());
     inputOptions = json['input_options'].cast<String>();
   }
 

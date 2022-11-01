@@ -1,7 +1,7 @@
 class Api {
   //https://securesiteauditbe01.com/site_audit/public/api/engineer/login
   // static String middleware = "/site_audit/api";
-  static String middleware = '/eusopht/site_audit/api';
+  static String middleware = '/eusopht.com/dev/site_audit/api';
   static String login = "$middleware/engineer/login";
   static String updateDetails = "$middleware/engineer/update/details";
   static String siteDetails = "$middleware/get/project/site/";

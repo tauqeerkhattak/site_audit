@@ -50,7 +50,7 @@ class LoadController extends GetxController {
         );
       }
     } catch (e) {
-      log('Exception in load_controller.dart: ${e.toString()}');
+      log('Exception in load_controller.dart: ');
     } finally {
       Future.delayed(const Duration(seconds: 2), () {
         loading.value = false;

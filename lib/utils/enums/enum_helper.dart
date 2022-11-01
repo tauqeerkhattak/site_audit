@@ -7,6 +7,6 @@ class EnumHelper {
   }
 
   static InputParameter inputParameterFromString(String? value) {
-    return InputParameter.values.byName(value!);
+    return InputParameter.values.byName(value ?? 'EDITABLE');
   }
 }

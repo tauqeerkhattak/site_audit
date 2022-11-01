@@ -344,7 +344,6 @@ class FormScreen extends StatelessWidget {
   }
 
   Widget _getMultiLevels() {
-    int length = controller.multiLevels.length;
     // List<Rxn<String>> selectedValues = controller.data['MULTILEVEL']!;
     final keys = controller.multiLevels.keys.toList();
     return Column(
@@ -353,7 +352,7 @@ class FormScreen extends StatelessWidget {
         (index) {
           List<Items> multiLevels = controller.multiLevels[index]!;
           return CustomGridView(
-            length: length,
+            length: multiLevels.length,
             padding: const EdgeInsets.only(
               top: 5,
               bottom: 5,
@@ -387,12 +386,12 @@ class FormScreen extends StatelessWidget {
                         });
                         if (childItem != null) {
                           controller.data['MULTILEVEL'][index].value = newValue;
-                          for (int i = 0; i < length; i++) {
+                          for (int i = 0; i < multiLevels.length; i++) {
                             if (i > index) {
                               controller.optionIndex[i].value = null;
                             }
                           }
-                          for (int i = 0; i < length; i++) {
+                          for (int i = 0; i < multiLevels.length; i++) {
                             if (i > index) {
                               controller.data['MULTILEVEL'][i].value = null;
                             }
