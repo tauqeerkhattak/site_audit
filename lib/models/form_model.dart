@@ -21,7 +21,7 @@ class FormModel {
     subModuleId = int.tryParse('${json['sub_module_id']}');
     subModuleName = json['sub_module_name'];
     moduleName = json['module_name'];
-    projectId = int.tryParse(json['project_id']);
+    projectId = int.tryParse(json['project_id'].toString());
     staticValues = json['static_values'];
     if (json['items'] != null) {
       items = <Items>[];

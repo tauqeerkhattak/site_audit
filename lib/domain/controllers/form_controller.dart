@@ -42,7 +42,7 @@ class FormController extends GetxController {
 
   // List<Items> multiLevels = [];
   Map<int, List<Items>> multiLevels = <int, List<Items>>{};
-  List<Rxn<int>> optionIndex = [];
+  Map<int, List<Rxn<int>>> optionIndex = <int, List<Rxn<int>>>{};
 
   @override
   void onInit() {
@@ -69,12 +69,8 @@ class FormController extends GetxController {
       final key0 = '$formKey$projectId${subModule?.subModuleId}';
       final storedData = storageService.get(key: key0);
       final forms = jsonDecode(storedData);
-      FormModel temp = FormModel.fromJson(forms[0]);
-      processMultiLevel(temp);
-      temp.items?.removeWhere((element) {
-        return element.inputType == 'MULTILEVEL';
-      });
-      form.value = temp;
+      form.value = FormModel.fromJson(forms[0]);
+      processMultiLevel(form.value!);
       await assignControllersToFields();
       fillForm();
     } catch (e) {
@@ -97,7 +93,7 @@ class FormController extends GetxController {
           // int thisPID = item.parentInputId!;
           items.add(item);
           while (true) {
-            final nextItem = temp.firstWhereOrNull(
+            final nextItem = model.items!.firstWhereOrNull(
               (element) {
                 return element.parentInputId == thisID;
               },
@@ -111,35 +107,32 @@ class FormController extends GetxController {
           }
         }
         multiLevels[i] = items;
-        // do {
-        //   if (!items.contains(item)) {
-        //     items.add(item);
-        //   }
-        //   Items nextItem = temp[i + 1];
-        //   if (item.id == nextItem.parentInputId) {
-        //     if (!items.contains(nextItem)) {
-        //       items.add(nextItem);
-        //     }
-        //   }
-        //   multiLevels[i] = items;
-        // } while (i + 1 < temp.length);
+        for (final item in items) {
+          form.value!.items!.remove(item);
+        }
       }
     }
-    // for (final item in model.items!) {
-    //   InputType type = InputType.values.byName(item.inputType!);
-    //   if (type == InputType.MULTILEVEL) {
-    //     multiLevels.add(item);
-    //   }
-    // }
-    // data['MULTILEVEL'] = List.generate(
-    //   multiLevels.length,
-    //   (index) {
-    //     return Rxn<String>();
-    //   },
-    // );
-    // optionIndex = List.generate(multiLevels.length, (index) {
-    //   return Rxn(index == 0 ? 0 : null);
-    // });
+    int length = multiLevels.keys.length;
+    Map<int, List<Rxn<String>>> values = <int, List<Rxn<String>>>{};
+    Map<int, List<Rxn<int>>> optionValues = <int, List<Rxn<int>>>{};
+    for (int i = 0; i < length; i++) {
+      values[i] = List.generate(
+        multiLevels[i]?.length ?? 0,
+        (index) {
+          return Rxn<String>();
+        },
+      );
+    }
+    for (int i = 0; i < length; i++) {
+      optionValues[i] = List.generate(
+        multiLevels[i]?.length ?? 0,
+        (index) {
+          return Rxn<int>(index == 0 ? 0 : null);
+        },
+      );
+    }
+    data['MULTILEVEL'] = values;
+    optionIndex = optionValues;
   }
 
   ///
@@ -205,46 +198,6 @@ class FormController extends GetxController {
     }
   }
 
-  ///
-  /// For testing use this method
-  ///
-  // Future<void> assignControllersToFields() async {
-  //   final fields = form.value!.items!;
-  //   for (int i = 0; i < fields.length; i++) {
-  //     final item = fields[i];
-  //     InputType type = EnumHelper.inputTypeFromString(item.inputType);
-  //     switch (type) {
-  //       case InputType.DROPDOWN:
-  //         data['DROPDOWN$i'] = Rxn<dynamic>();
-  //         break;
-  //       case InputType.AUTO_FILLED:
-  //         data['AUTOFILLED$i'] = TextEditingController(text: 'AUTO-FILLED').obs;
-  //         break;
-  //       case InputType.TEXTBOX:
-  //         data['TEXTBOX$i'] = TextEditingController(text: 'TEXTBOX').obs;
-  //         break;
-  //       case InputType.INTEGER:
-  //         data['INTEGER$i'] = TextEditingController(text: '123456').obs;
-  //         break;
-  //       case InputType.PHOTO:
-  //         final photo = await rootBundle
-  //             .load('assets/images/istockphoto-1184778656-612x612.jpg');
-  //         final byteData = photo.buffer.asUint8List();
-  //         final dir = await getApplicationDocumentsDirectory();
-  //         final file = await File('${dir.path}/image.jpg').create();
-  //         await file.writeAsBytes(byteData);
-  //         data['PHOTO$i'] = file.path.obs;
-  //         break;
-  //       case InputType.RADIAL:
-  //         data['RADIAL$i'] = item.inputOption!.inputOptions!.first.obs;
-  //         break;
-  //       case InputType.FLOAT:
-  //         data['FLOAT$i'] = TextEditingController(text: '1234.567').obs;
-  //         break;
-  //     }
-  //   }
-  // }
-
   Future<void> submit(BuildContext context) async {
     loading.value = true;
     bool validate = formDataKey.currentState!.validate();
@@ -309,10 +262,18 @@ class FormController extends GetxController {
       Map<String, dynamic> staticValues = storageService.get(
         key: siteDataStorageKey,
       );
-      for (int i = 0; i < multiLevels.length; i++) {
-        // multiLevels[i].answer = data['MULTILEVEL'][i].value;
-        // form.value!.items!.add(multiLevels[i]);
+      for (int cIndex = 0; cIndex < multiLevels.keys.length; cIndex++) {
+        final List<Items> multiLevelItems = multiLevels[cIndex] ?? [];
+        for (int gIndex = 0; gIndex < multiLevelItems.length; gIndex++) {
+          final Items item = multiLevelItems[gIndex];
+          item.answer = data['MULTILEVEL'][cIndex][gIndex].value;
+          form.value!.items!.add(item);
+        }
       }
+      // for (int i = 0; i < multiLevels.length; i++) {
+      // multiLevels[i].answer = data['MULTILEVEL'][i].value;
+      // form.value!.items!.add(multiLevels[i]);
+      // }
       form.value!.items = items;
       form.value!.staticValues = staticValues;
       // saveJsonFileLocally();
@@ -465,11 +426,13 @@ class FormController extends GetxController {
   Future<void> fillForm() async {
     final arguments = Get.arguments;
     if (arguments['reviewForm'] != null) {
-      final FormModel model = arguments['reviewForm'];
+      form.value = arguments['reviewForm'];
       List<Items> temp = [];
 
       //Dynamic Data
-      List<Items> items = model.items!;
+      List<Items> items = form.value!.items!;
+      processMultiLevel(form.value!);
+
       for (int i = 0; i < items.length; i++) {
         Items item = items[i];
         final type = EnumHelper.inputTypeFromString(item.inputType!);
@@ -479,21 +442,21 @@ class FormController extends GetxController {
             break;
           case InputType.TEXT:
             data['TEXT$i']!.value = TextEditingController(
-              text: model.items?[i].answer,
+              text: form.value!.items?[i].answer,
             );
             break;
           case InputType.TEXT_AREA:
             data['TEXTAREA$i']!.value = TextEditingController(
-              text: model.items?[i].answer,
+              text: form.value!.items?[i].answer,
             );
             break;
           case InputType.INTEGER:
             data['INTEGER$i']!.value = TextEditingController(
-              text: model.items?[i].answer,
+              text: form.value!.items?[i].answer,
             );
             break;
           case InputType.PHOTO:
-            String? answer = model.items?[i].answer;
+            String? answer = form.value!.items?[i].answer;
             if (answer != null) {
               data['PHOTO$i']!.value = answer;
               break;
@@ -501,15 +464,15 @@ class FormController extends GetxController {
               break;
             }
           case InputType.RADIAL:
-            data['RADIAL$i']!.value = model.items?[i].answer;
+            data['RADIAL$i']!.value = form.value!.items?[i].answer;
             break;
           case InputType.FLOAT:
             data['FLOAT$i']!.value = TextEditingController(
-              text: model.items?[i].answer,
+              text: form.value!.items?[i].answer,
             );
             break;
           case InputType.LOCATION:
-            final answer = model.items?[i].answer?.split(' ');
+            final answer = form.value!.items?[i].answer?.split(' ');
             data['LOCATION$i']!.value = List.generate(
               answer?.length ?? 0,
               (index) {
@@ -518,13 +481,13 @@ class FormController extends GetxController {
             );
             break;
           case InputType.DATE_TIME:
-            data['DATETIME$i']!.value = model.items?[i].answer ?? '';
+            data['DATETIME$i']!.value = form.value!.items?[i].answer ?? '';
             break;
           case InputType.DATE:
-            data['DATE$i']!.value = model.items?[i].answer;
+            data['DATE$i']!.value = form.value!.items?[i].answer;
             break;
           case InputType.TIME:
-            final time = model.items?[i].answer;
+            final time = form.value!.items?[i].answer;
             final list = time!.split(':');
             data['TIME$i']!.value = TimeOfDay(
               hour: int.tryParse(list[0]) ?? 0,
@@ -533,7 +496,7 @@ class FormController extends GetxController {
             break;
           case InputType.TEXTBOX:
             data['TEXTBOX$i']?.value = TextEditingController(
-              text: model.items?[i].answer,
+              text: form.value!.items?[i].answer,
             );
             break;
           case InputType.MULTILEVEL:
@@ -542,22 +505,41 @@ class FormController extends GetxController {
         }
       }
 
-      log('LENGTH OF MULTILEVELS: ${temp.length}');
-      for (int i = 0; i < temp.length; i++) {
-        // final multiLevelItem = multiLevels[i];
-        final answer = temp[i].answer;
-        // multiLevels[i].answer = answer;
-        data['MULTILEVEL'][i].value = answer;
-        // for (int j = 0; j < multiLevels[i].inputOption!.length; j++) {
-        //   InputOption ip = multiLevels[i].inputOption![j];
-        //   if (ip.inputOptions!.contains(answer)) {
-        //     final answerIndex = ip.inputOptions!.indexOf(answer!);
-        //     log('YES ANSWER EXIST $answerIndex');
-        //     optionIndex[i + 1].value = answerIndex;
-        //     break;
-        //   }
-        // }
+      for (int c = 0; c < multiLevels.keys.length; c++) {
+        List<Items> items = multiLevels[c]!;
+        log('LENGTH: ${items.length} ${multiLevels.keys.length}');
+        for (int g = 0; g < items.length; g++) {
+          final answer = items[g].answer;
+          data['MULTILEVEL'][c][g].value = answer;
+          for (int j = 0; j < items[g].inputOption!.length; j++) {
+            try {
+              InputOption ip = items[g].inputOption![j];
+              if (ip.inputOptions!.contains(answer)) {
+                final answerIndex = ip.inputOptions!.indexOf(answer!);
+                optionIndex[c]?[g + 1].value = answerIndex;
+                break;
+              }
+            } catch (e) {
+              log('Error: $e');
+            }
+          }
+        }
       }
+      // for (int i = 0; i < temp.length; i++) {
+      //   // final multiLevelItem = multiLevels[i];
+      //   final answer = temp[i].answer;
+      //   // multiLevels[i].answer = answer;
+      //   data['MULTILEVEL'][i].value = answer;
+      //   for (int j = 0; j < multiLevels[i].inputOption!.length; j++) {
+      //     InputOption ip = multiLevels[i].inputOption![j];
+      //     if (ip.inputOptions!.contains(answer)) {
+      //       final answerIndex = ip.inputOptions!.indexOf(answer!);
+      //       log('YES ANSWER EXIST $answerIndex');
+      //       optionIndex[i + 1].value = answerIndex;
+      //       break;
+      //     }
+      //   }
+      // }
     } else {
       log('No form to review');
     }

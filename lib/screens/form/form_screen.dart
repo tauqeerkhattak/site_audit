@@ -116,9 +116,6 @@ class FormScreen extends StatelessWidget {
                 text: 'Submit',
                 onPressed: () async {
                   await controller.submit(context);
-                  for (final i in controller.optionIndex) {
-                    log('INDEX: ${i.value}');
-                  }
                 },
               ),
             ],
@@ -139,7 +136,7 @@ class FormScreen extends StatelessWidget {
     switch (type) {
       case InputType.DROPDOWN:
         List<String> options = item.inputOption?.first.inputOptions ?? [];
-        String? value = controller.data['DROPDOWN$index']!.value;
+        String? value = controller.data['DROPDOWN$index']?.value;
         value = value == 'null' ? null : value;
         return CustomDropdown<String?>(
           items: options,
@@ -349,8 +346,9 @@ class FormScreen extends StatelessWidget {
     return Column(
       children: List.generate(
         keys.length,
-        (index) {
-          List<Items> multiLevels = controller.multiLevels[index]!;
+        (itemIndex) {
+          List<Items> multiLevels = controller.multiLevels[itemIndex]!;
+          List<Rxn<int>> optionList = controller.optionIndex[itemIndex]!;
           return CustomGridView(
             length: multiLevels.length,
             padding: const EdgeInsets.only(
@@ -358,51 +356,32 @@ class FormScreen extends StatelessWidget {
               bottom: 5,
             ),
             scrollPhysics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              final item = multiLevels[index];
+            itemBuilder: (context, gridIndex) {
+              final item = multiLevels[gridIndex];
               return Obx(
                 () {
-                  final currentIndex = controller.optionIndex[index].value;
+                  final currentIndex = optionList[gridIndex].value;
                   return CustomDropdown<String?>(
                     label: item.inputLabel,
                     mandatory: item.mandatory ?? false,
-                    value: controller.data['MULTILEVEL'][index].value,
+                    value: controller
+                        .data['MULTILEVEL'][itemIndex][gridIndex].value,
                     hint: item.inputHint ?? 'Select a value',
                     validator: Validator.stringValidator,
                     mandatoryText: "*",
                     items: getItems(
                       item,
-                      controller.optionIndex[index].value,
+                      optionList[gridIndex].value,
                     ),
-                    onChanged: (newValue) {
-                      if (currentIndex != null) {
-                        int valueIndex = item
-                            .inputOption![currentIndex].inputOptions!
-                            .indexOf(newValue!);
-                        int thisID = item.id!;
-                        Items? childItem =
-                            multiLevels.firstWhereOrNull((element) {
-                          return element.parentInputId == thisID;
-                        });
-                        if (childItem != null) {
-                          controller.data['MULTILEVEL'][index].value = newValue;
-                          for (int i = 0; i < multiLevels.length; i++) {
-                            if (i > index) {
-                              controller.optionIndex[i].value = null;
-                            }
-                          }
-                          for (int i = 0; i < multiLevels.length; i++) {
-                            if (i > index) {
-                              controller.data['MULTILEVEL'][i].value = null;
-                            }
-                          }
-                          int childIndex = multiLevels.indexOf(childItem);
-                          controller.optionIndex[childIndex].value = valueIndex;
-                        } else {
-                          controller.data['MULTILEVEL'][index].value = newValue;
-                        }
-                      }
-                    },
+                    onChanged: (newValue) => onMultilevelChanged(
+                      value: newValue,
+                      currentOptionIndex: currentIndex,
+                      columnIndex: itemIndex,
+                      gridIndex: gridIndex,
+                      currentItem: item,
+                      items: multiLevels,
+                      optionList: optionList,
+                    ),
                   );
                 },
               );
@@ -413,10 +392,47 @@ class FormScreen extends StatelessWidget {
     );
   }
 
+  void onMultilevelChanged({
+    required Items currentItem,
+    required List<Items> items,
+    required int columnIndex,
+    required int gridIndex,
+    required List<Rxn<int>> optionList,
+    String? value,
+    int? currentOptionIndex,
+  }) {
+    if (currentOptionIndex != null) {
+      int valueIndex = currentItem
+          .inputOption![currentOptionIndex].inputOptions!
+          .indexOf(value!);
+      int thisID = currentItem.id!;
+      Items? childItem = items.firstWhereOrNull((element) {
+        return element.parentInputId == thisID;
+      });
+      if (childItem != null) {
+        controller.data['MULTILEVEL'][columnIndex][gridIndex].value = value;
+        for (int i = 0; i < items.length; i++) {
+          if (i > gridIndex) {
+            optionList[i].value = null;
+          }
+        }
+        for (int i = 0; i < items.length; i++) {
+          if (i > gridIndex) {
+            controller.data['MULTILEVEL'][columnIndex][i].value = null;
+          }
+        }
+        int childIndex = items.indexOf(childItem);
+        optionList[childIndex].value = valueIndex;
+        // controller.optionIndex[childIndex].value = valueIndex;
+      } else {
+        controller.data['MULTILEVEL'][columnIndex][gridIndex].value = value;
+      }
+    }
+  }
+
   List<String> getItems(Items item, int? index) {
     if (index != null) {
       final options = item.inputOption![index].inputOptions;
-      log('OPTION LENGTH: ${options?.length}');
       return options ?? [];
     } else {
       return [];
