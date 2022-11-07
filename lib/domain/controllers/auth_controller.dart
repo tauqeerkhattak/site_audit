@@ -16,7 +16,7 @@ import '../../utils/constants.dart';
 
 class AuthController extends GetxController {
   RxBool loading = false.obs;
-  final Rx<User> _user = User().obs;
+  Rx<User> user = User().obs;
   PageController pageController = PageController(initialPage: 0);
   int index = 0;
   final storageService = Get.find<LocalStorageService>();
@@ -28,8 +28,6 @@ class AuthController extends GetxController {
   TextEditingController email = TextEditingController();
   TextEditingController phone = TextEditingController();
   TextEditingController siteName = TextEditingController();
-
-  User? get user => _user.value;
 
   final loginFormKey = GlobalKey<FormState>();
   final formKey = GlobalKey<FormState>();
@@ -57,6 +55,7 @@ class AuthController extends GetxController {
     // TODO Uncomment this
     loginId.text = "NEXJAV001";
     password.text = "PASS001NEXJAV";
+
     getData();
   }
 
@@ -65,8 +64,8 @@ class AuthController extends GetxController {
       loading.value = true;
       String? userData = storageService.get(key: userKey);
       if (userData != null) {
-        final user = User.fromJson(jsonDecode(userData));
-        final projectId = user.data?.projectId;
+        user.value = User.fromJson(jsonDecode(userData));
+        final projectId = user.value.data?.projectId;
         await getStaticDropdowns(projectId!.toString());
         loading.value = false;
       } else {
@@ -91,7 +90,8 @@ class AuthController extends GetxController {
         };
         var res = await AppService.login(payload: payload);
         if (res != null) {
-          _user.value = User.fromJson(res);
+          user.value = User.fromJson(res);
+
           setUpdateDetails();
           getData();
           loading.value = false;
@@ -112,9 +112,9 @@ class AuthController extends GetxController {
   }
 
   void setUpdateDetails() {
-    name.text = user!.data!.engineerNameFull!;
-    email.text = user!.data!.engineerEmailAddress!;
-    phone.text = user!.data!.engineerMobileNumber!;
+    name.text = user.value.data!.engineerNameFull!;
+    email.text = user.value.data!.engineerEmailAddress!;
+    phone.text = user.value.data!.engineerMobileNumber!;
   }
 
   Future<void> updateEngineerDetails() async {
@@ -128,9 +128,11 @@ class AuthController extends GetxController {
       };
       final res = await AppService.updateDetails(payload: payload);
       if (res != null) {
-        _user.value = User.fromJson(res);
+        user.value = User.fromJson(res);
         loading.value = false;
         Get.toNamed(AppRoutes.loadData);
+//
+        // Get.toNamed(AppRoutes.dashboard);
       }
     } catch (e) {
       log('Error: $e');
@@ -183,7 +185,7 @@ class AuthController extends GetxController {
       storageService
           .save(key: siteDataStorageKey, value: staticValues)
           .then((value) {
-        Get.offAllNamed(AppRoutes.home);
+        Get.toNamed(AppRoutes.home);
       }).catchError((error) {
         UiUtils.showSnackBar(
           message: 'Error: $error',

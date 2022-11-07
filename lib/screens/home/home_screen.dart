@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/home_controller.dart';
+import 'package:site_audit/domain/controllers/load_controller.dart';
 import 'package:site_audit/models/module_model.dart';
 import 'package:site_audit/routes/routes.dart';
+import 'package:site_audit/screens/dashboard/dashboard_screen.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/network.dart';
 import 'package:site_audit/utils/size_config.dart';
@@ -28,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return WillPopScope(
       onWillPop: () async {
         controller.animateBack();
-        return false;
+        return true;
       },
       child: DefaultLayout(
         showBackButton: true,
@@ -227,7 +229,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontScaleFactor: 15,
                   disabled: !Network.isNetworkAvailable.value,
                   loading: controller.loading.value,
-                  onPressed: () => controller.submitAudits(context),
+                  // onPressed: () => controller.submitAudits(context),
+                  onPressed: () => Get.offAndToNamed(AppRoutes.dashboard),
                 ),
               ],
             ),

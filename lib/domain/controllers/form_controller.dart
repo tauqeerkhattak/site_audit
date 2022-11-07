@@ -35,6 +35,7 @@ class FormController extends GetxController {
   String? projectId;
   Rxn<FormModel> form = Rxn();
   Module? module;
+
   SubModule? subModule;
   User? user;
   Map<String, dynamic> data = <String, dynamic>{};
@@ -353,6 +354,10 @@ class FormController extends GetxController {
     final moduleName = module!.moduleName!;
     final subModuleName = subModule!.subModuleName!;
     final key = '$moduleName >> $subModuleName';
+
+    //  TODO: remaining work
+    final siteNameKey = form.value!.staticValues!['site_name'];
+
     form.value!.moduleName = moduleName;
     if (storageService.hasKey(key: key)) {
       List<dynamic> formData = storageService.get(key: key);

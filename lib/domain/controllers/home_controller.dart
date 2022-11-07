@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:site_audit/models/module_model.dart';
 import 'package:site_audit/models/static_values.dart';
 import 'package:site_audit/models/user_model.dart';
+import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/services/local_storage_keys.dart';
 import 'package:site_audit/services/local_storage_service.dart';
 import 'package:site_audit/services/services.dart';
@@ -93,6 +94,12 @@ class HomeController extends GetxController {
         int code = await sendJsonFile(item, key);
         if (code == 200) {
           storageService.remove(key: key);
+          // Get.offAndToNamed(AppRoutes.dashboard);
+          Get.rawSnackbar(
+            title: "SYNCED",
+            message: "Forms synced successfully",
+            backgroundColor: Constants.primaryColor,
+          );
         }
       }
     }

@@ -27,7 +27,8 @@ class SplashController extends GetxController {
     initNetwork();
     Future.delayed(const Duration(seconds: 5), () async {
       if (storage.hasKey(key: userKey)) {
-        Get.offAndToNamed(AppRoutes.addSiteData);
+        // Get.offAndToNamed(AppRoutes.addSiteData);
+        Get.offAndToNamed(AppRoutes.dashboard);
       } else {
         Get.offAndToNamed(AppRoutes.auth);
       }

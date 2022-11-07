@@ -42,13 +42,19 @@ class LoadController extends GetxController {
       }
       if (storageService.hasKey(key: siteDataStorageKey)) {
         Get.offAllNamed(
-          AppRoutes.home,
-        );
-      } else {
-        Get.toNamed(
-          AppRoutes.addSiteData,
+          // AppRoutes.home,
+          AppRoutes.dashboard,
         );
       }
+      Get.offAllNamed(
+        // AppRoutes.home,
+        AppRoutes.dashboard,
+      );
+      //else {
+      //   Get.toNamed(
+      //     AppRoutes.addSiteData,
+      //   );
+      // }
     } catch (e) {
       log('Exception in load_controller.dart: ');
     } finally {

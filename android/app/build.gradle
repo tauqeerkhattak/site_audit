@@ -52,7 +52,9 @@ android {
         release {
 //            storeFile file('C:\\Users\\Fattani computers\\StudioProjects\\EuSopht\\cricketnfantasyupload-keystore.jks')
 //            C:\\Users\\rk\\Desktop\\\keystores
-            storeFile file('D:\\EUSOPHT\\Site Audit\\site_audit\\android\\tauqeer-keystore.jks')
+               storeFile file('E:\\keyStores\\tauqeer-keystore.jks')
+
+            // storeFile file('D:\\EUSOPHT\\Site Audit\\site_audit\\android\\tauqeer-keystore.jks')
             storePassword 'upload'
             keyAlias 'upload'
             keyPassword 'upload'

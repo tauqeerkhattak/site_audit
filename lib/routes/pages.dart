@@ -1,11 +1,13 @@
 import 'package:get/get.dart';
 import 'package:site_audit/domain/bindings/auth_bindings.dart';
+import 'package:site_audit/domain/bindings/dashboard_bindings.dart';
 import 'package:site_audit/domain/bindings/form_bindings.dart';
 import 'package:site_audit/domain/bindings/home_bindings.dart';
 import 'package:site_audit/domain/bindings/review_bindings.dart';
 import 'package:site_audit/domain/bindings/splash_bindings.dart';
 import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/screens/auth/auth_screen.dart';
+import 'package:site_audit/screens/dashboard/dashboard_screen.dart';
 import 'package:site_audit/screens/form/form_screen.dart';
 import 'package:site_audit/screens/form/review_screen.dart';
 import 'package:site_audit/screens/home/home_screen.dart';
@@ -31,6 +33,11 @@ class AppPages {
       name: AppRoutes.loadData,
       binding: LoadBindings(),
       page: () => LoadData(),
+    ),
+    GetPage(
+      name: AppRoutes.dashboard,
+      binding: DashboardBindings(),
+      page: () => DashboardScreen(),
     ),
     GetPage(
       name: AppRoutes.home,

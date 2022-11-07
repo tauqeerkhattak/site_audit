@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/auth_controller.dart';
+import 'package:site_audit/screens/dashboard/dashboard_screen.dart';
 import 'package:site_audit/widgets/default_layout.dart';
 
 import '../../models/static_drop_model.dart';
@@ -20,7 +21,7 @@ class AddSiteData extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return false;
+        return true;
       },
       child: DefaultLayout(
         padding: 10,

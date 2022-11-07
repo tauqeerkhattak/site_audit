@@ -10,6 +10,10 @@ class UiUtils {
     vertical: 8,
   );
 
+  static const spaceVrt5 = SizedBox(
+    height: 5,
+  );
+
   static const spaceVrt10 = SizedBox(
     height: 10,
   );

@@ -14,82 +14,91 @@ class DefaultLayout extends StatelessWidget {
   final bool? showBackButton;
   final double? padding;
   final Widget? backButton;
+  final bool? usePreferedSize;
+  final PreferredSize? preferedSize;
   const DefaultLayout({
     Key? key,
     required this.child,
     this.title,
     this.titleWidget,
+    this.preferedSize,
     this.backgroundImage,
     this.padding,
     this.showBackButton = true,
+    this.usePreferedSize = false,
     this.backButton,
-  })  : assert(title != null || titleWidget != null),
+  }) :
+        // })  : assert(title != null || titleWidget != null),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: title != null
-            ? Text(
-                title!,
-                overflow: TextOverflow.visible,
-                style: const TextStyle(
-                  color: Constants.primaryColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              )
-            : titleWidget,
-        elevation: 0.0,
-        centerTitle: true,
-        leading: showBackButton!
-            ? backButton ??
-                IconButton(
-                  icon: const Icon(
-                    CupertinoIcons.back,
-                    color: Constants.primaryColor,
+      appBar: usePreferedSize!
+          ? preferedSize
+          : AppBar(
+              backgroundColor: Colors.white,
+              title: title != null
+                  ? Text(
+                      title!,
+                      overflow: TextOverflow.visible,
+                      style: const TextStyle(
+                        color: Constants.primaryColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  : titleWidget,
+              elevation: 0.0,
+              centerTitle: true,
+              leading: showBackButton!
+                  ? backButton ??
+                      IconButton(
+                        icon: const Icon(
+                          CupertinoIcons.back,
+                          color: Constants.primaryColor,
+                        ),
+                        onPressed: () => Get.back(),
+                      )
+                  : const SizedBox.shrink(),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    right: 10,
                   ),
-                  onPressed: () => Get.back(),
-                )
-            : const SizedBox.shrink(),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(
-              right: 10,
-            ),
-            child: Obx(
-              () => Center(
-                child: PhysicalModel(
-                  color: Colors.white,
-                  elevation: 8.0,
-                  clipBehavior: Clip.antiAlias,
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    padding: const EdgeInsets.only(
-                      left: 5,
-                      right: 5,
-                    ),
-                    height: SizeConfig.screenWidth * 0.05,
-                    decoration: BoxDecoration(
-                      color: Network.isNetworkAvailable.value
-                          ? Constants.successColor
-                          : Colors.red,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        Network.isNetworkAvailable.value ? 'Online' : 'Offline',
+                  child: Obx(
+                    () => Center(
+                      child: PhysicalModel(
+                        color: Colors.white,
+                        elevation: 8.0,
+                        clipBehavior: Clip.antiAlias,
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          padding: const EdgeInsets.only(
+                            left: 5,
+                            right: 5,
+                          ),
+                          height: SizeConfig.screenWidth * 0.05,
+                          decoration: BoxDecoration(
+                            color: Network.isNetworkAvailable.value
+                                ? Constants.successColor
+                                : Colors.red,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Text(
+                              Network.isNetworkAvailable.value
+                                  ? 'Online'
+                                  : 'Offline',
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ),
-        ],
-      ),
       backgroundColor: Colors.white,
       body: SizedBox(
         width: SizeConfig.screenWidth,
