@@ -1,0 +1,15 @@
+enum InputType {
+  TEXTBOX,
+  LOCATION,
+  DATE_TIME,
+  DATE,
+  TIME,
+  INTEGER,
+  FLOAT,
+  TEXT,
+  TEXT_AREA,
+  PHOTO,
+  MULTILEVEL,
+  DROPDOWN,
+  RADIAL,
+}

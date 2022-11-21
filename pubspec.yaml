@@ -1,0 +1,81 @@
+name: site_audit
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  cupertino_icons: ^1.0.2
+  connectivity_plus: ^2.3.0
+  date_time_picker:
+    git:
+      url: https://github.com/sxtfv/date_time_picker.git
+      ref: sxtfv/hotfix/incosistent_time_format
+  encrypt: ^5.0.1
+  equatable: ^2.0.3
+  get_storage: ^2.0.3
+  get: ^4.5.0
+  http: ^0.13.3
+  intl: ^0.17.0
+  location: ^4.3.0
+  loading_overlay: ^0.3.0
+  provider: ^6.0.2
+  path_provider: ^2.0.9
+  permission_handler: ^9.2.0
+  percent_indicator: 4.0.1
+  screenshot: ^1.2.3
+  image_gallery_saver: ^1.7.1
+  gallery_saver: ^2.3.2
+  image_picker: ^0.8.5+3
+  flutter_staggered_grid_view: ^0.6.2
+  path: ^1.8.2
+  google_fonts: ^3.0.1
+  omni_datetime_picker: ^0.1.2
+
+dev_dependencies:
+  flutter_lints: ^2.0.1
+  flutter_test:
+    sdk: flutter
+
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+   - assets/images/
+  fonts:
+   - family: NanumGothic
+     fonts:
+       - asset: assets/fonts/Nanum_Gothic/NanumGothic-Regular.ttf
+         weight: 400
+       - asset: assets/fonts/Nanum_Gothic/NanumGothic-Bold.ttf
+         weight: 700
+       - asset: assets/fonts/Nanum_Gothic/NanumGothic-ExtraBold.ttf
+         weight: 800
+   - family: NanumMyeongjo
+     fonts:
+       - asset: assets/fonts/Nanum_Myeongjo/NanumMyeongjo-Regular.ttf
+         weight: 400
+       - asset: assets/fonts/Nanum_Myeongjo/NanumMyeongjo-Bold.ttf
+         weight: 700
+       - asset: assets/fonts/Nanum_Myeongjo/NanumMyeongjo-ExtraBold.ttf
+         weight: 800
+   - family: Ubuntu
+     fonts:
+       - asset: assets/fonts/Ubuntu/Ubuntu-Light.ttf
+         weight: 300
+       - asset: assets/fonts/Ubuntu/Ubuntu-Regular.ttf
+         weight: 400
+       - asset: assets/fonts/Ubuntu/Ubuntu-Medium.ttf
+         weight: 500
+       - asset: assets/fonts/Ubuntu/Ubuntu-Bold.ttf
+         weight: 700
