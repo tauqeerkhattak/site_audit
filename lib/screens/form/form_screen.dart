@@ -22,9 +22,22 @@ import 'package:site_audit/widgets/rounded_button.dart';
 import '../../utils/enums/input_parameter.dart';
 import '../../widgets/custom_date_time.dart';
 
-class FormScreen extends StatelessWidget {
-  final controller = Get.find<FormController>();
+class FormScreen extends StatefulWidget {
+
   FormScreen({Key? key}) : super(key: key);
+
+  @override
+  State<FormScreen> createState() => _FormScreenState();
+}
+
+class _FormScreenState extends State<FormScreen> {
+  final controller = Get.find<FormController>();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +81,9 @@ class FormScreen extends StatelessWidget {
             );
           }
           FormModel form = controller.form.value!;
-          return Column(
+
+          return form.items!.isNotEmpty?Column(
+
             children: [
               Expanded(
                 flex: 11,
@@ -113,13 +128,16 @@ class FormScreen extends StatelessWidget {
                 ),
               ),
               RoundedButton(
+                color: Colors.green,
                 text: 'Submit',
                 onPressed: () async {
                   await controller.submit(context);
                 },
               ),
             ],
-          );
+          ):const Center(child: Text("No Data Found",style: TextStyle(color: Constants.primaryColor,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,),));
         }
       },
     );
@@ -173,8 +191,13 @@ class FormScreen extends StatelessWidget {
         return Obx(
               () => ImageInput(
             onTap: () async {
-              final path = await controller.imagePickerService.pickImage();
-              controller.data['PHOTO$index']!.value = path;
+              try{
+                final path = await controller.imagePickerService.pickImage();
+                controller.data['PHOTO$index']!.value = path;
+              }catch(e){
+                print("=========>>>>>>>>Errror: ${e}");
+              }
+
             },
             isMandatory: item.mandatory ?? false,
             imagePath: controller.data['PHOTO$index']!.value,
@@ -219,7 +242,7 @@ class FormScreen extends StatelessWidget {
                 placeHolder: item.inputHint ?? 'Tap to Enter Text',
                 validator:
                 item.mandatory ?? true ? Validator.stringValidator : null,
-                readOnly: !isEditable,
+                readOnly: true,
               ),
             ),
             UiUtils.spaceHzt20,
@@ -231,7 +254,7 @@ class FormScreen extends StatelessWidget {
                 placeHolder: item.inputHint ?? 'Tap to Enter Text',
                 validator:
                 item.mandatory ?? true ? Validator.stringValidator : null,
-                readOnly: !isEditable,
+                readOnly: true,
               ),
             ),
           ],

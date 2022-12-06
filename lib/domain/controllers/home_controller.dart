@@ -75,79 +75,88 @@ class HomeController extends GetxController {
 
   Future<void> submitAudits(BuildContext context) async {
     final data = await storageService.getAllKeys();
-    List<String> keysToSend = [];
-    for (String key in data) {
-      if (key.contains('>>')) {
-        log('Key: $key');
-        keysToSend.add(key);
-      }
-    }
-    if (keysToSend.isEmpty) {
-      UiUtils.showSimpleDialog(
-        context: context,
-        title: 'Info',
-        content:
-            'No forms found, to complete audit, you have to fill some forms first!',
-      );
-      return;
-    }else{
-      loading.value = true;
-      for (String key in keysToSend) {
-        List<dynamic> listOfItems = storageService.get(key: key);
-        for (var item in listOfItems) {
-          /// TO-DO
-          int code = await sendJsonFile(item, key);
-          if (code == 200) {
-            storageService.remove(key: key);
-
-          }
+    try{
+      List<String> keysToSend = [];
+      for (String key in data) {
+        if (key.contains('>>')) {
+          log('Key: $key');
+          keysToSend.add(key);
         }
       }
-      if(isLocallySaved) {
-        isLocallySaved = false;
-        Get.rawSnackbar(
-          title: "No Internet!",
-          message:
-          "Data will be uploaded when you have a stable internet connection!",
-          icon: const Icon(
-            Icons.info,
-            color: Colors.white,
-          ),
-          backgroundColor: Constants.primaryColor,
-          borderRadius: 10,
-          margin: const EdgeInsets.all(10),
+      if (keysToSend.isEmpty) {
+        UiUtils.showSimpleDialog(
+          context: context,
+          title: 'Info',
+          content:
+          'No forms found, to complete audit, you have to fill some forms first!',
         );
-      }
-
-      var data = storageService.get(key: 'audit');
-      if(data != null){
-        storageService.save(key: "audit", value: data + 1 );
+        return;
       }else{
-        storageService.save(key: "audit", value: itemCount++);
-      }
+        loading.value = true;
+        for (String key in keysToSend) {
+          List<dynamic> listOfItems = storageService.get(key: key);
+          for (var item in listOfItems) {
+            /// TO-DO
+            int code = await sendJsonFile(item, key);
+            if (code == 200) {
+              storageService.remove(key: key);
 
-      if(Network.isNetworkAvailable.value == true){
-        itemCount = 1;
-        dashController.audits = [];
-        auditNumber = [];
-        storageService.remove(key: 'audit');
-        Get.rawSnackbar(
-          title: "SYNCED",
-          message: "Forms synced successfully",
-          backgroundColor: Constants.primaryColor,
-        );
-      }else{
-        Get.rawSnackbar(
-          title: "Submited",
-          message: "Forms submited successfully",
-          backgroundColor: Constants.primaryColor,
-        );
+            }
+          }
+        }
+        if(isLocallySaved) {
+          isLocallySaved = false;
+          Get.rawSnackbar(
+            title: "No Internet!",
+            message:
+            "Data will be uploaded when you have a stable internet connection!",
+            icon: const Icon(
+              Icons.info,
+              color: Colors.white,
+            ),
+            backgroundColor: Constants.primaryColor,
+            borderRadius: 10,
+            margin: const EdgeInsets.all(10),
+          );
+        }
+
+        var data = storageService.get(key: 'audit');
+        if(data != null){
+          storageService.save(key: "audit", value: data + 1 );
+        }else{
+          storageService.save(key: "audit", value: itemCount++);
+        }
+
+        if(Network.isNetworkAvailable.value == true){
+          itemCount = 1;
+          dashController.audits = [];
+          auditNumber = [];
+          storageService.remove(key: 'audit');
+          Get.rawSnackbar(
+            title: "SYNCED",
+            message: "Forms synced successfully",
+            backgroundColor: Constants.primaryColor,
+          );
+        }else{
+          Get.rawSnackbar(
+            title: "Connection Failed",
+            message: "No internet found try to save data locally.",
+            backgroundColor: Constants.primaryColor,
+          );
+        }
+        loading.value = false;
+        storageService.save(key: "sitesData", value: "submit");
+        storageService.remove(key: "sitesData");
+        Get.offAndToNamed(AppRoutes.dashboard);
       }
-      loading.value = false;
-      storageService.save(key: "sitesData", value: "submit");
-      storageService.remove(key: "sitesData");
-      Get.offAndToNamed(AppRoutes.dashboard);
+    }catch(e){
+      Get.rawSnackbar(
+        title: "Connection Failed",
+        message: "No internet found try to save data locally.",
+        backgroundColor: Constants.primaryColor,
+      );
     }
+    loading.value = false;
 
   }
 

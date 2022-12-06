@@ -13,6 +13,7 @@ class LocalStorageService extends GetxService {
   }
 
   dynamic get({required String key}) {
+
     if (hasKey(key: key)) {
       final data = _box.read(key);
       return data;

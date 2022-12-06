@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/review_controller.dart';
+import 'package:site_audit/offlineDatabase/view_data.dart';
 import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/ui_utils.dart';
@@ -19,7 +20,14 @@ class ReviewScreen extends StatefulWidget {
 }
 
 class _ReviewScreenState extends State<ReviewScreen> {
+  int? index = 0;
   final controller = Get.find<ReviewController>();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +51,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 ..._headingText(),
                 UiUtils.spaceVrt20,
                 getSubmittedFormsList(),
-                UiUtils.spaceVrt20,
+                //UiUtils.spaceVrt20,
+                const Spacer(),
                 _footerText(),
               ],
             ),
@@ -54,15 +63,20 @@ class _ReviewScreenState extends State<ReviewScreen> {
   }
 
   Widget getSubmittedFormsList() {
-    if (controller.formItems.value == null) {
+    index = controller.storageService.get(key: 'FormIndex') ?? 0;
+    if (index! < 1) {
       return const Expanded(
-        child: CustomErrorWidget(
-          errorText: 'No Forms submitted yet!',
-          type: ErrorType.emptyList,
+        child: Padding(
+          padding: EdgeInsets.only(left: 20,right: 20),
+          child: CustomErrorWidget(
+            errorText: 'No Audits for this Technology completed yet!',
+            type: ErrorType.emptyList,
+          ),
         ),
       );
     } else {
-      return Expanded(
+      return Center(child: Text("$index form is submitted",style: const TextStyle(color: Colors.black,fontSize: 18),));
+      /*controller.index == 0 ?Expanded(
         child: Obx(
           () => ListView.separated(
             padding: const EdgeInsets.all(10),
@@ -100,7 +114,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
             itemCount: controller.formItems.value!.length,
           ),
         ),
-      );
+      ):Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text("${controller.index} for is submited",style: TextStyle(color: Colors.black,fontSize: 16),),
+      );*/
     }
   }
 
@@ -138,18 +155,37 @@ class _ReviewScreenState extends State<ReviewScreen> {
             ),
           ),
           UiUtils.spaceVrt10,
-          RoundedButton(
-            text: 'Start Audit on New Item',
-            onPressed: () {
-              Get.toNamed(AppRoutes.form, arguments: {
-                'module': controller.module,
-                'subModule': controller.subModule,
-                'formName': controller.formName.value,
-              })?.whenComplete(() {
-                controller.refreshPage();
-                setState(() {});
-              });
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SizedBox(
+                width: 150,
+                child: RoundedButton(
+                  color: Colors.green,
+                  text: 'Start Audit on New Item',
+                  onPressed: () {
+                    Get.toNamed(AppRoutes.form, arguments: {
+                      'module': controller.module,
+                      'subModule': controller.subModule,
+                      'formName': controller.formName.value,
+                    })?.whenComplete(() {
+                      controller.refreshPage();
+                      setState(() {});
+                    });
+                  },
+                ),
+              ),
+              SizedBox(
+                width: 150,
+                child: RoundedButton(
+                  color: Colors.green,
+                  text: 'View Database',
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ViewData()));
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),

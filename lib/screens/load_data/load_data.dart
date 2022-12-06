@@ -26,18 +26,24 @@ class LoadData extends StatelessWidget {
             Obx(() {
               if (controller.loading.value) {
                 if (controller.totalForms.value == 0) {
-                  return const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation(
-                      Constants.primaryColor,
+                  return const Padding(
+                    padding: EdgeInsets.only(left: 50,right: 50),
+                    child: LinearProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation(
+                        Constants.primaryColor,
+                      ),
                     ),
                   );
                 } else {
-                  return CircularProgressIndicator(
-                    valueColor: const AlwaysStoppedAnimation(
-                      Constants.primaryColor,
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 50,right: 50),
+                    child: LinearProgressIndicator(
+                      valueColor: const AlwaysStoppedAnimation(
+                        Constants.primaryColor,
+                      ),
+                      value: controller.currentForm.value /
+                          controller.totalForms.value,
                     ),
-                    value: controller.currentForm.value /
-                        controller.totalForms.value,
                   );
                 }
               } else if (Network.isNetworkAvailable.value) {

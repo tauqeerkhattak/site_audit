@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class WidgetUtils {
@@ -56,8 +57,9 @@ class WidgetUtils {
   }) {
     DateFormat format = DateFormat('dd-MM-yyyy hh:mm a');
     return Container(
-      height: 20,
-      width: 20,
+      height: Get.height * 0.9,
+      width: Get.width,
+      //width: 20,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
@@ -66,9 +68,10 @@ class WidgetUtils {
         children: [
           Image.file(
             image,
-            fit: BoxFit.fill,
+            fit: BoxFit.cover,
+            height: Get.height * 0.9,
             // height: Get.height * 0.8,
-            // width: Get.width,
+             width: Get.width,
           ),
           Positioned(
             bottom: 60,

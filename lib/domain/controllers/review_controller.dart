@@ -16,6 +16,7 @@ class ReviewController extends GetxController {
   SubModule? subModule;
   int subModuleId = 0;
   Rxn<List<dynamic>> formItems = Rxn(<dynamic>[]);
+  int? index = 0;
 
   List<Datum> operators = <Datum>[].obs;
   List<Region> regions = <Region>[].obs;
@@ -35,6 +36,7 @@ class ReviewController extends GetxController {
   void onInit() {
     super.onInit();
     setData();
+    //index = storageService.get(key: "FormIndex");
   }
 
   void refreshPage() {

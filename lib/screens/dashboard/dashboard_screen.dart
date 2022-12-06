@@ -34,7 +34,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-        title: "Secure  Site Audit",
+        title: "Secure Site Audit",
         child:SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Column(
@@ -62,7 +62,7 @@ class DashboardScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         CustomErrorWidget(
-                          errorText: 'No audits found yet!',
+                          errorText: 'No Audits available!',
                           type: ErrorType.emptyList,
                         ),
                       ],
@@ -81,7 +81,7 @@ class DashboardScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 5,),
                         titleText(
-                          text: "${dashboardController.audits} audits need to be sync!",
+                          text: "${dashboardController.audits} Audit ready to sync!",
                           size: 16.0,
                         ),
                         /*SizedBox(
@@ -284,6 +284,7 @@ class DashboardScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2),
                   child: RoundedButton(
+                    color: Colors.green,
                       text: "Start New Audit",
                       width: 0.8,
                       fontScaleFactor: 16.0,

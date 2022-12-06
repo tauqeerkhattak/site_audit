@@ -38,7 +38,8 @@ class CustomCard extends StatelessWidget {
                 onPressed: onTap,
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(
-                    Constants.primaryColor,
+                    Colors.green,
+                    /*Constants.primaryColor,*/
                   ),
                   padding: MaterialStateProperty.all(
                     const EdgeInsets.all(10.0),

@@ -55,6 +55,8 @@ class AuthController extends GetxController {
     // TODO Uncomment this
     loginId.text = "NEXJAV001";
     password.text = "PASS001NEXJAV";
+    /*loginId.text = "";
+    password.text = "";*/
 
     getData();
   }

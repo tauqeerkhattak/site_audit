@@ -11,6 +11,7 @@ class RoundedButton extends StatelessWidget {
   final double? width;
   final VoidCallback? onPressed;
   final double? fontScaleFactor;
+
   const RoundedButton({
     Key? key,
     required this.text,
@@ -57,7 +58,7 @@ class RoundedButton extends StatelessWidget {
                   text,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: Get.textScaleFactor * (fontScaleFactor ?? 20.0),
+                    fontSize: Get.textScaleFactor * (fontScaleFactor ?? 12),
                     fontFamily: 'Ubuntu',
                     fontWeight: FontWeight.w500,
                   ),
