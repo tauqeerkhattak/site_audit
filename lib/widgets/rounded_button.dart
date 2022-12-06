@@ -52,17 +52,17 @@ class RoundedButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 0),
           child: loading!
               ? const CircularProgressIndicator(
-                  color: Colors.white,
-                )
+            color: Colors.white,
+          )
               : Text(
-                  text,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: Get.textScaleFactor * (fontScaleFactor ?? 12),
-                    fontFamily: 'Ubuntu',
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+            text,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: Get.textScaleFactor * (fontScaleFactor ?? 20.0),
+              fontFamily: 'Ubuntu',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ),
       ),
     );

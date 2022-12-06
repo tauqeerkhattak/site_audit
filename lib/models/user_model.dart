@@ -42,21 +42,21 @@ class Data {
 
   Data(
       {this.id,
-      this.auditCompanyId,
-      this.projectId,
-      this.status,
-      this.auditTeamId,
-      this.password,
-      this.engineerNameFull,
-      this.engineerMobileNumber,
-      this.engineerEmailAddress,
-      this.locationManagedFrom,
-      this.engineerSkills,
-      this.engineerCertifications,
-      this.engineerToolsCarried,
-      this.engineerIdCopy,
-      this.createdAt,
-      this.updatedAt});
+        this.auditCompanyId,
+        this.projectId,
+        this.status,
+        this.auditTeamId,
+        this.password,
+        this.engineerNameFull,
+        this.engineerMobileNumber,
+        this.engineerEmailAddress,
+        this.locationManagedFrom,
+        this.engineerSkills,
+        this.engineerCertifications,
+        this.engineerToolsCarried,
+        this.engineerIdCopy,
+        this.createdAt,
+        this.updatedAt});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];

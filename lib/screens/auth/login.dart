@@ -26,7 +26,7 @@ class LoginScreen extends StatelessWidget {
         SingleChildScrollView(
           // height: MediaQuery.of(context).size.height,
           padding:
-              const EdgeInsets.only(top: 50, left: 30, right: 30, bottom: 30),
+          const EdgeInsets.only(top: 50, left: 30, right: 30, bottom: 30),
           child: Form(
             key: controller.loginFormKey,
             child: Column(
@@ -89,7 +89,7 @@ class LoginScreen extends StatelessWidget {
                   height: 30,
                 ),
                 Obx(
-                  () => RoundedButton(
+                      () => RoundedButton(
                     text: 'Login',
                     onPressed: controller.handleLogin,
                     loading: controller.loading(),

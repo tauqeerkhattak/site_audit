@@ -53,31 +53,31 @@ flutter:
   uses-material-design: true
 
   assets:
-   - assets/images/
+    - assets/images/
   fonts:
-   - family: NanumGothic
-     fonts:
-       - asset: assets/fonts/Nanum_Gothic/NanumGothic-Regular.ttf
-         weight: 400
-       - asset: assets/fonts/Nanum_Gothic/NanumGothic-Bold.ttf
-         weight: 700
-       - asset: assets/fonts/Nanum_Gothic/NanumGothic-ExtraBold.ttf
-         weight: 800
-   - family: NanumMyeongjo
-     fonts:
-       - asset: assets/fonts/Nanum_Myeongjo/NanumMyeongjo-Regular.ttf
-         weight: 400
-       - asset: assets/fonts/Nanum_Myeongjo/NanumMyeongjo-Bold.ttf
-         weight: 700
-       - asset: assets/fonts/Nanum_Myeongjo/NanumMyeongjo-ExtraBold.ttf
-         weight: 800
-   - family: Ubuntu
-     fonts:
-       - asset: assets/fonts/Ubuntu/Ubuntu-Light.ttf
-         weight: 300
-       - asset: assets/fonts/Ubuntu/Ubuntu-Regular.ttf
-         weight: 400
-       - asset: assets/fonts/Ubuntu/Ubuntu-Medium.ttf
-         weight: 500
-       - asset: assets/fonts/Ubuntu/Ubuntu-Bold.ttf
-         weight: 700
+    - family: NanumGothic
+      fonts:
+        - asset: assets/fonts/Nanum_Gothic/NanumGothic-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Nanum_Gothic/NanumGothic-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Nanum_Gothic/NanumGothic-ExtraBold.ttf
+          weight: 800
+    - family: NanumMyeongjo
+      fonts:
+        - asset: assets/fonts/Nanum_Myeongjo/NanumMyeongjo-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Nanum_Myeongjo/NanumMyeongjo-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Nanum_Myeongjo/NanumMyeongjo-ExtraBold.ttf
+          weight: 800
+    - family: Ubuntu
+      fonts:
+        - asset: assets/fonts/Ubuntu/Ubuntu-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Ubuntu/Ubuntu-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Ubuntu/Ubuntu-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Ubuntu/Ubuntu-Bold.ttf
+          weight: 700

@@ -69,9 +69,8 @@ class WidgetUtils {
           Image.file(
             image,
             fit: BoxFit.cover,
-            height: Get.height * 0.9,
             // height: Get.height * 0.8,
-             width: Get.width,
+            width: Get.width,
           ),
           Positioned(
             bottom: 60,

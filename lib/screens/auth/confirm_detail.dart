@@ -24,7 +24,7 @@ class ConfirmDetail extends StatelessWidget {
         ),
         SingleChildScrollView(
           padding:
-              const EdgeInsets.only(left: 30, right: 30, top: 50, bottom: 30),
+          const EdgeInsets.only(left: 30, right: 30, top: 50, bottom: 30),
           child: Form(
             key: controller.formKey,
             child: Column(
@@ -62,7 +62,7 @@ class ConfirmDetail extends StatelessWidget {
                   height: 30,
                 ),
                 Obx(
-                  () => RoundedButton(
+                      () => RoundedButton(
                     text: 'Next',
                     onPressed: controller.updateEngineerDetails,
                     loading: controller.loading(),
