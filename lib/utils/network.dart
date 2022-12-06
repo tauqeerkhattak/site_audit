@@ -41,9 +41,9 @@ class Network {
 
   static multiPartRequest(
       {url,
-        required Map<String, String> payload,
-        headers,
-        List<http.MultipartFile>? files}) async {
+      required Map<String, String> payload,
+      headers,
+      List<http.MultipartFile>? files}) async {
     try {
       Map<String, String> apiHeaders = {
         'Content-Type': 'application/json; charset=UTF-8',
@@ -101,7 +101,9 @@ class Network {
       if (headers != null) {
         apiHeaders.addAll(headers);
       }
-      var body = json.decode(payload);
+      log('RuntimeType: ${payload.runtimeType} DATA: $payload');
+      String body = jsonEncode(payload);
+      log('Body: ${body.runtimeType}');
       Uri uri = Uri.http(
         Constants.baseUrl,
         url,

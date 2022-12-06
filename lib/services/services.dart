@@ -37,9 +37,10 @@ class AppService {
         return user;
       } else {
         Get.rawSnackbar(
-            title: "Unable to login",
-            message: "Please contact app admin",
-            backgroundColor: Colors.redAccent);
+          title: "Unable to login",
+          message: "Please contact app admin",
+          backgroundColor: Colors.redAccent,
+        );
         return null;
       }
     } catch (e) {
@@ -314,7 +315,7 @@ class AppService {
       headers: header,
     );
     if (response != null) {
-           return response;
+      return response;
       /*final res = jsonDecode(response);
       print("=========>Response$res");
       if (res['status'] == 200) {

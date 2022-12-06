@@ -86,7 +86,7 @@ class AuthController extends GetxController {
       try {
         FocusManager.instance.primaryFocus?.unfocus();
         loading.value = true;
-        var payload = {
+        Map<String, dynamic> payload = {
           "engineer_id": loginId.text,
           "password": password.text,
         };
@@ -186,10 +186,10 @@ class AuthController extends GetxController {
       storageService
           .save(key: siteDataStorageKey, value: staticValues)
           .then((value) {
-            storageService.save(key: "sitesData", value: "submit");
-            Get.offAllNamed(AppRoutes.home);
-            //Get.offUntil(AppRoutes.home, (route) => false);
-            //Get.offNamed(AppRoutes.home);
+        storageService.save(key: "sitesData", value: "submit");
+        Get.offAllNamed(AppRoutes.home);
+        //Get.offUntil(AppRoutes.home, (route) => false);
+        //Get.offNamed(AppRoutes.home);
         //Get.toNamed(AppRoutes.home);
       }).catchError((error) {
         UiUtils.showSnackBar(

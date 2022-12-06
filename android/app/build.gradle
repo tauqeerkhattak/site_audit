@@ -43,6 +43,8 @@ android {
         applicationId "com.example.site_audit"
         minSdkVersion 21
         targetSdkVersion 33
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
     }
 
     signingConfigs {
