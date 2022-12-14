@@ -67,7 +67,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     if (index! < 1) {
       return const Expanded(
         child: Padding(
-          padding: EdgeInsets.only(left: 20,right: 20),
+          padding: EdgeInsets.only(left: 20, right: 20),
           child: CustomErrorWidget(
             errorText: 'No Audits for this Technology completed yet!',
             type: ErrorType.emptyList,
@@ -75,49 +75,58 @@ class _ReviewScreenState extends State<ReviewScreen> {
         ),
       );
     } else {
-      return Center(child: Text("$index form is submitted",style: const TextStyle(color: Colors.black,fontSize: 18),));
-      /*controller.index == 0 ?Expanded(
-        child: Obx(
-          () => ListView.separated(
-            padding: const EdgeInsets.all(10),
-            itemBuilder: (context, index) {
-              return CustomCard(
-                title:
-                    '${controller.module?.moduleName} >> ${controller.subModule?.subModuleName} ${index + 1}',
-                onTap: () async {
-                  controller.formItem = FormModel.fromJson(
-                    controller.formItems.value![index],
-                  );
-                  // for (final item in controller.formItem!.items!) {
-                  //   log('ITEM: ${item.inputType} ${item.answer}');
-                  // }
-                  controller.setData();
-                  Get.toNamed(
-                    AppRoutes.form,
-                    arguments: {
-                      'module': controller.module,
-                      'subModule': controller.subModule,
-                      'reviewFormIndex': index,
-                      'reviewForm': controller.formItem,
-                      'formName': controller.formName.value,
-                    },
-                  );
-                  //   controller.refreshPage();
-                  // });
-                },
-                buttonText: 'Review Audit',
-              );
-            },
-            separatorBuilder: (context, index) {
-              return UiUtils.spaceVrt20;
-            },
-            itemCount: controller.formItems.value!.length,
-          ),
-        ),
-      ):Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text("${controller.index} for is submited",style: TextStyle(color: Colors.black,fontSize: 16),),
-      );*/
+      // return Center(
+      //     child: Text(
+      //   "$index form is submitted",
+      //   style: const TextStyle(color: Colors.black, fontSize: 18),
+      // ));
+      return controller.index == 0
+          ? Expanded(
+              child: Obx(
+                () => ListView.separated(
+                  padding: const EdgeInsets.all(10),
+                  itemBuilder: (context, index) {
+                    return CustomCard(
+                      title:
+                          '${controller.module?.moduleName} >> ${controller.subModule?.subModuleName} ${index + 1}',
+                      onTap: () async {
+                        controller.formItem = FormModel.fromJson(
+                          controller.formItems.value![index],
+                        );
+                        // for (final item in controller.formItem!.items!) {
+                        //   log('ITEM: ${item.inputType} ${item.answer}');
+                        // }
+                        controller.setData();
+                        Get.toNamed(
+                          AppRoutes.form,
+                          arguments: {
+                            'module': controller.module,
+                            'subModule': controller.subModule,
+                            'reviewFormIndex': index,
+                            'reviewForm': controller.formItem,
+                            'formName': controller.formName.value,
+                          },
+                        );
+                        //   controller.refreshPage();
+                        // });
+                      },
+                      buttonText: 'Review Audit',
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return UiUtils.spaceVrt20;
+                  },
+                  itemCount: controller.formItems.value!.length,
+                ),
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "${controller.index} for is submited",
+                style: TextStyle(color: Colors.black, fontSize: 16),
+              ),
+            );
     }
   }
 
@@ -155,37 +164,20 @@ class _ReviewScreenState extends State<ReviewScreen> {
             ),
           ),
           UiUtils.spaceVrt10,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              SizedBox(
-                width: 150,
-                child: RoundedButton(
-                  color: Colors.green,
-                  text: 'Start Audit on New Item',
-                  onPressed: () {
-                    Get.toNamed(AppRoutes.form, arguments: {
-                      'module': controller.module,
-                      'subModule': controller.subModule,
-                      'formName': controller.formName.value,
-                    })?.whenComplete(() {
-                      controller.refreshPage();
-                      setState(() {});
-                    });
-                  },
-                ),
-              ),
-              SizedBox(
-                width: 150,
-                child: RoundedButton(
-                  color: Colors.green,
-                  text: 'View Database',
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ViewData()));
-                  },
-                ),
-              ),
-            ],
+          RoundedButton(
+            width: 0.8,
+            color: Colors.green,
+            text: ' New Item',
+            onPressed: () {
+              Get.toNamed(AppRoutes.form, arguments: {
+                'module': controller.module,
+                'subModule': controller.subModule,
+                'formName': controller.formName.value,
+              })?.whenComplete(() {
+                controller.refreshPage();
+                setState(() {});
+              });
+            },
           ),
         ],
       ),

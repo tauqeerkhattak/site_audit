@@ -81,7 +81,6 @@ class FormController extends GetxController {
     }
   }
 
-
   void processMultiLevel(FormModel model) {
     List<Items> temp = model.items!.where((element) {
       return element.inputType == 'MULTILEVEL';
@@ -291,7 +290,7 @@ class FormController extends GetxController {
       List<DataBaseItem> dataBaseItem1 = [];
       DatabaseDb databaseDb = DatabaseDb();
       DataBaseModel dataBaseModel = DataBaseModel(
-         1,
+        1,
         form.value!.subModuleId,
         form.value!.subModuleName,
         form.value!.moduleName,
@@ -299,45 +298,45 @@ class FormController extends GetxController {
         dataBaseItem1,
       );
 
-      DataBaseItem? dataBaseItem;
-      DataBaseInputOption? dataBaseInputOption;
-      if(form.value!.items!.isNotEmpty){
-        for (var element in form.value!.items!) {
-           dataBaseItem = DataBaseItem(
-            1,
-            //element.mandatory,
-            element.inputDescription,
-            element.answer,
-            element.inputType,
-            element.inputParameter,
-            element.inputLength,
-            element.inputHint,
-            element.parentInputId,
-            element.filename,
-            element.inputLabel,
-           // dataBaseInputOption,
-          ) ;
-           dataBaseItem1.add(dataBaseItem);
-          if(element.inputOption != null){
-            for (var element in element.inputOption!) {
-               dataBaseInputOption = DataBaseInputOption(
-                element.inputItemParentId,
-                element.inputParentLevel,
-                element.inputOptions,
-              );
-            }
+      // DataBaseItem? dataBaseItem;
+      // DataBaseInputOption? dataBaseInputOption;
+      // if(form.value!.items!.isNotEmpty){
+      //   for (var element in form.value!.items!) {
+      //      dataBaseItem = DataBaseItem(
+      //       1,
+      //       //element.mandatory,
+      //       element.inputDescription,
+      //       element.answer,
+      //       element.inputType,
+      //       element.inputParameter,
+      //       element.inputLength,
+      //       element.inputHint,
+      //       element.parentInputId,
+      //       element.filename,
+      //       element.inputLabel,
+      //      // dataBaseInputOption,
+      //     ) ;
+      //      dataBaseItem1.add(dataBaseItem);
+      //     if(element.inputOption != null){
+      //       for (var element in element.inputOption!) {
+      //          dataBaseInputOption = DataBaseInputOption(
+      //           element.inputItemParentId,
+      //           element.inputParentLevel,
+      //           element.inputOptions,
+      //         );
+      //       }
 
-          }
+      //     }
 
-        }
-      }
-      databaseDb.save(dataBaseModel, dataBaseItem1, dataBaseInputOption!);
+      //   }
+      // }
+      // databaseDb.save(dataBaseModel, dataBaseItem1, dataBaseInputOption!);
 
       int counter = 1;
       int value = storageService.get(key: "FormIndex") ?? 0;
-      if(value == 0){
+      if (value == 0) {
         storageService.save(key: "FormIndex", value: counter++);
-      }else{
+      } else {
         int newValue = value + 1;
         storageService.save(key: "FormIndex", value: newValue);
       }
@@ -345,12 +344,12 @@ class FormController extends GetxController {
       Navigator.pop(context, 'popped');
 
       // saveJsonFileLocally();
-      /*await saveDataToLocalStorage().then((value) {
+      await saveDataToLocalStorage().then((value) {
         UiUtils.showSnackBar(
           message: 'Data is submitted successfully!',
         );
         Navigator.pop(context, 'popped');
-      });*/
+      });
     } else {
       log('NOT VALIDATED');
       UiUtils.showSnackBar(
