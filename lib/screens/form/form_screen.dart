@@ -23,7 +23,6 @@ import '../../utils/enums/input_parameter.dart';
 import '../../widgets/custom_date_time.dart';
 
 class FormScreen extends StatefulWidget {
-
   FormScreen({Key? key}) : super(key: key);
 
   @override
@@ -68,7 +67,7 @@ class _FormScreenState extends State<FormScreen> {
 
   Widget _bodyWidget(BuildContext context) {
     return Obx(
-          () {
+      () {
         if (controller.loading.value) {
           // controller.loading.value = false;
           return const Center(
@@ -82,62 +81,70 @@ class _FormScreenState extends State<FormScreen> {
           }
           FormModel form = controller.form.value!;
 
-          return form.items!.isNotEmpty?Column(
-
-            children: [
-              Expanded(
-                flex: 11,
-                child: Form(
-                  key: controller.formDataKey,
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: UiUtils.vertInsets8,
-                      child: Column(
-                        children: [
-                          _getMultiLevels(),
-                          ...List.generate(
-                            form.items!.length,
-                                (index) {
-                              Items item = form.items![index];
-                              InputType type = EnumHelper.inputTypeFromString(
-                                item.inputType,
-                              );
-                              InputParameter parameter =
-                              EnumHelper.inputParameterFromString(
-                                item.inputParameter,
-                              );
-                              return Column(
-                                children: [
-                                  UiUtils.spaceVrt10,
-                                  _inputWidget(
-                                    context: context,
-                                    type: type,
-                                    item: item,
-                                    index: index,
-                                    parameter: parameter,
-                                  ),
-                                  UiUtils.spaceVrt10,
-                                ],
-                              );
-                            },
+          return form.items!.isNotEmpty
+              ? Column(
+                  children: [
+                    Expanded(
+                      flex: 11,
+                      child: Form(
+                        key: controller.formDataKey,
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: UiUtils.vertInsets8,
+                            child: Column(
+                              children: [
+                                _getMultiLevels(),
+                                ...List.generate(
+                                  form.items!.length,
+                                  (index) {
+                                    Items item = form.items![index];
+                                    InputType type =
+                                        EnumHelper.inputTypeFromString(
+                                      item.inputType,
+                                    );
+                                    InputParameter parameter =
+                                        EnumHelper.inputParameterFromString(
+                                      item.inputParameter,
+                                    );
+                                    return Column(
+                                      children: [
+                                        UiUtils.spaceVrt10,
+                                        _inputWidget(
+                                          context: context,
+                                          type: type,
+                                          item: item,
+                                          index: index,
+                                          parameter: parameter,
+                                        ),
+                                        UiUtils.spaceVrt10,
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
+                    RoundedButton(
+                      color: Colors.green,
+                      text: 'Submit',
+                      onPressed: () async {
+                        await controller.submit(context);
+                      },
+                    ),
+                  ],
+                )
+              : const Center(
+                  child: Text(
+                  "No Data Found",
+                  style: TextStyle(
+                    color: Constants.primaryColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                ),
-              ),
-              RoundedButton(
-                color: Colors.green,
-                text: 'Submit',
-                onPressed: () async {
-                  await controller.submit(context);
-                },
-              ),
-            ],
-          ):const Center(child: Text("No Data Found",style: TextStyle(color: Constants.primaryColor,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,),));
+                ));
         }
       },
     );
@@ -189,15 +196,14 @@ class _FormScreenState extends State<FormScreen> {
         );
       case InputType.PHOTO:
         return Obx(
-              () => ImageInput(
+          () => ImageInput(
             onTap: () async {
-              try{
+              try {
                 final path = await controller.imagePickerService.pickImage();
                 controller.data['PHOTO$index']!.value = path;
-              }catch(e){
+              } catch (e) {
                 print("=========>>>>>>>>Errror: ${e}");
               }
-
             },
             isMandatory: item.mandatory ?? false,
             imagePath: controller.data['PHOTO$index']!.value,
@@ -209,7 +215,7 @@ class _FormScreenState extends State<FormScreen> {
         String? label = item.inputLabel;
         List<String> options = item.inputOption!.first.inputOptions!;
         return Obx(
-              () => CustomRadioButton(
+          () => CustomRadioButton(
             label: label,
             options: options,
             mandatory: item.mandatory ?? false,
@@ -241,7 +247,7 @@ class _FormScreenState extends State<FormScreen> {
                 mandatory: item.mandatory ?? false,
                 placeHolder: item.inputHint ?? 'Tap to Enter Text',
                 validator:
-                item.mandatory ?? true ? Validator.stringValidator : null,
+                    item.mandatory ?? true ? Validator.stringValidator : null,
                 readOnly: true,
               ),
             ),
@@ -253,7 +259,7 @@ class _FormScreenState extends State<FormScreen> {
                 mandatory: item.mandatory ?? false,
                 placeHolder: item.inputHint ?? 'Tap to Enter Text',
                 validator:
-                item.mandatory ?? true ? Validator.stringValidator : null,
+                    item.mandatory ?? true ? Validator.stringValidator : null,
                 readOnly: true,
               ),
             ),
@@ -269,9 +275,9 @@ class _FormScreenState extends State<FormScreen> {
           dateMask: 'dd-M-yyyy hh:mm a',
           suffixIcon: isEditable
               ? const Icon(
-            Icons.calendar_month,
-            color: Constants.primaryColor,
-          )
+                  Icons.calendar_month,
+                  color: Constants.primaryColor,
+                )
               : null,
           onSaved: (value) {
             if (value != null) {
@@ -297,9 +303,9 @@ class _FormScreenState extends State<FormScreen> {
           },
           suffixIcon: isEditable
               ? const Icon(
-            Icons.calendar_month,
-            color: Constants.primaryColor,
-          )
+                  Icons.calendar_month,
+                  color: Constants.primaryColor,
+                )
               : null,
           placeHolder: item.inputHint ?? 'Tap to select date and time',
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
@@ -333,9 +339,9 @@ class _FormScreenState extends State<FormScreen> {
           },
           suffixIcon: isEditable
               ? const Icon(
-            Icons.calendar_month,
-            color: Constants.primaryColor,
-          )
+                  Icons.calendar_month,
+                  color: Constants.primaryColor,
+                )
               : null,
           placeHolder: item.inputHint ?? 'Tap to select date and time',
           validator: item.mandatory ?? true ? Validator.stringValidator : null,
@@ -369,7 +375,7 @@ class _FormScreenState extends State<FormScreen> {
     return Column(
       children: List.generate(
         keys.length,
-            (itemIndex) {
+        (itemIndex) {
           List<Items> multiLevels = controller.multiLevels[itemIndex]!;
           List<Rxn<int>> optionList = controller.optionIndex[itemIndex]!;
           return CustomGridView(
@@ -382,7 +388,7 @@ class _FormScreenState extends State<FormScreen> {
             itemBuilder: (context, gridIndex) {
               final item = multiLevels[gridIndex];
               return Obx(
-                    () {
+                () {
                   final currentIndex = optionList[gridIndex].value;
                   return CustomDropdown<String?>(
                     label: item.inputLabel,
@@ -454,14 +460,14 @@ class _FormScreenState extends State<FormScreen> {
   }
 
   List<String> getItems(Items item, int? index) {
-    try{
+    try {
       if (index != null) {
         final options = item.inputOption![index].inputOptions;
         return options ?? [];
       } else {
         return [];
       }
-    }catch(e){
+    } catch (e) {
       return [];
     }
   }

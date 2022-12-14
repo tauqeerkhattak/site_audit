@@ -63,23 +63,25 @@ class FormController extends GetxController {
   }
 
   Future<void> getForms() async {
-    try {
-      final arguments = Get.arguments;
-      subModule = arguments['subModule'];
-      module = arguments['module'];
-      formName.value = arguments['formName'];
-      final key0 = '$formKey$projectId${subModule?.subModuleId}';
-      final storedData = storageService.get(key: key0);
-      final forms = jsonDecode(storedData);
-      form.value = FormModel.fromJson(forms[0]);
-      processMultiLevel(form.value!);
-      await assignControllersToFields();
-      fillForm();
-    } catch (e) {
-      log('Error in Forms: $e');
-      return;
-    }
+    final arguments = Get.arguments;
+    subModule = arguments['subModule'];
+    module = arguments['module'];
+    formName.value = arguments['formName'];
+    final key0 = '$formKey$projectId${subModule?.subModuleId}';
+    final storedData = storageService.get(key: key0);
+    print('$key0 key0');
+    List<String> keys = await storageService.getAllKeys();
+    print('$keys keys');
+    final forms = jsonDecode(storedData);
+    form.value = FormModel.fromJson(forms[0]);
+    processMultiLevel(form.value!);
+    await assignControllersToFields();
+    fillForm();
   }
+  // catch (e) {
+  //   log('Error in Forms: $e');
+  //   return;
+  // }
 
   void processMultiLevel(FormModel model) {
     List<Items> temp = model.items!.where((element) {

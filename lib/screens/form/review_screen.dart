@@ -81,7 +81,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
       //   style: const TextStyle(color: Colors.black, fontSize: 18),
       // ));
       return controller.index == 0
-          ? Expanded(
+          ? Container(
+              height: MediaQuery.of(context).size.height * 0.62,
               child: Obx(
                 () => ListView.separated(
                   padding: const EdgeInsets.all(10),
@@ -116,7 +117,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                   separatorBuilder: (context, index) {
                     return UiUtils.spaceVrt20;
                   },
-                  itemCount: controller.formItems.value!.length,
+                  itemCount: controller.formItems.value?.length ?? 0,
                 ),
               ),
             )
@@ -167,7 +168,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           RoundedButton(
             width: 0.8,
             color: Colors.green,
-            text: ' New Item',
+            text: 'Start Audit on New Item',
             onPressed: () {
               Get.toNamed(AppRoutes.form, arguments: {
                 'module': controller.module,
