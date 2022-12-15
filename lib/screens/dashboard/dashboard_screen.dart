@@ -15,14 +15,15 @@ import 'package:site_audit/widgets/rounded_button.dart';
 List auditNumber = [];
 int itemCount = 1;
 
-class Audit{
+class Audit {
   int number;
   String status;
 
   Audit(this.number, this.status);
 }
+
 class DashboardScreen extends StatelessWidget {
-   DashboardScreen({Key? key}) : super(key: key);
+  DashboardScreen({Key? key}) : super(key: key);
 
   final authController = Get.find<AuthController>();
 
@@ -30,12 +31,11 @@ class DashboardScreen extends StatelessWidget {
 
   final dashboardController = Get.put(DashboardController());
 
-
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
         title: "Secure Site Audit",
-        child:SizedBox(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -43,9 +43,12 @@ class DashboardScreen extends StatelessWidget {
             children: [
               //const Spacer(),
               Obx(() {
-                Network.isNetworkAvailable.value ? dashboardController.audits = null : dashboardController.audits;
-                dashboardController.audits = dashboardController.storageService.get(key: 'audit');
-                if(dashboardController.loading.value){
+                Network.isNetworkAvailable.value
+                    ? dashboardController.audits = null
+                    : dashboardController.audits;
+                dashboardController.audits =
+                    dashboardController.storageService.get(key: 'audit');
+                if (dashboardController.loading.value) {
                   return const Center(
                     child: Padding(
                       padding: EdgeInsets.all(8.0),
@@ -56,35 +59,38 @@ class DashboardScreen extends StatelessWidget {
                       ),
                     ),
                   );
-                }else{
-                  return
-                    dashboardController.audits == null ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        CustomErrorWidget(
+                } else {
+                  return dashboardController.audits == null
+                      ? CustomErrorWidget(
                           errorText: 'No Audits available!',
                           type: ErrorType.emptyList,
-                        ),
-                      ],
-                    ):Network.isNetworkAvailable.value
-                        ?Column(
-                          children: const [
-                          Icon(Icons.check_circle,color: Colors.blue,size: 50,),
-                          Text("Audit Succesfully Submited"),
-                      ],
-                    ):
-                    Obx(() => Column(
-                      children: [
-                        titleText(
-                          text: "No Internet Connection",
-                          size: 20.0,
-                        ),
-                        const SizedBox(height: 5,),
-                        titleText(
-                          text: "${dashboardController.audits} Audit ready to sync!",
-                          size: 16.0,
-                        ),
-                        /*SizedBox(
+                        )
+                      : Network.isNetworkAvailable.value
+                          ? Column(
+                              children: const [
+                                Icon(
+                                  Icons.check_circle,
+                                  color: Colors.blue,
+                                  size: 50,
+                                ),
+                                Text("Audit Succesfully Submited"),
+                              ],
+                            )
+                          : Obx(() => Column(
+                                children: [
+                                  titleText(
+                                    text: "No Internet Connection",
+                                    size: 20.0,
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  titleText(
+                                    text:
+                                        "${dashboardController.audits} Audit ready to sync!",
+                                    size: 16.0,
+                                  ),
+                                  /*SizedBox(
                           height: MediaQuery.of(context).size.height * 0.8,
                           child: ListView.separated(
                             padding: const EdgeInsets.all(10),
@@ -173,89 +179,117 @@ class DashboardScreen extends StatelessWidget {
                             itemCount: dashboardController.audits.length,
                           ),
                         ),*/
-                        /// TO-DO
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: PhysicalModel(
-                            elevation: 10.0,
-                            color: Colors.white.withRed(250),
-                            borderRadius: BorderRadius.circular(10),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 7,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '${dashboardController.audits} Audit is Submited',
-                                          textAlign: TextAlign.start,
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Obx(() =>Text(
-                                          Network.isNetworkAvailable.value
-                                              ? 'Online'
-                                              :'Offline',textAlign: TextAlign.start,))
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 4,
-                                    child: ElevatedButton(
-                                      onPressed: Network.isNetworkAvailable.value
-                                          ? (){}:(){
-                                        Get.rawSnackbar(
-                                          title: "No Internet!",
-                                          message:
-                                          "Data will be uploaded when you have a stable internet connection!",
-                                          icon: const Icon(
-                                            Icons.info,
-                                            color: Colors.white,
-                                          ),
-                                          backgroundColor: Constants.primaryColor,
-                                          borderRadius: 10,
-                                          margin: const EdgeInsets.all(10),
-                                        );
-                                      },
-                                      style: ButtonStyle(
-                                        backgroundColor: MaterialStateProperty.all(
-                                          Constants.primaryColor,
-                                        ),
-                                        padding: MaterialStateProperty.all(
-                                          const EdgeInsets.all(10.0),
-                                        ),
-                                      ),
-                                      child:
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children:  [
-                                          Obx(() =>Text(
-                                            Network.isNetworkAvailable.value
-                                                ? "Successfully" : "Sync",
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                                fontSize: 12
+                                  /// TO-DO
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: PhysicalModel(
+                                      elevation: 10.0,
+                                      color: Colors.white.withRed(250),
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 5),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 7,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '${dashboardController.audits} Audit is Submited',
+                                                    textAlign: TextAlign.start,
+                                                    style: const TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Obx(() => Text(
+                                                        Network.isNetworkAvailable
+                                                                .value
+                                                            ? 'Online'
+                                                            : 'Offline',
+                                                        textAlign:
+                                                            TextAlign.start,
+                                                      ))
+                                                ],
+                                              ),
                                             ),
-                                          ),),
-                                          Icon(Network.isNetworkAvailable.value
-                                              ? Icons.check_circle : Icons.rotate_left,color: Colors.white,size: 18,)
-                                        ],
+                                            Expanded(
+                                              flex: 4,
+                                              child: ElevatedButton(
+                                                onPressed: Network
+                                                        .isNetworkAvailable
+                                                        .value
+                                                    ? () {}
+                                                    : () {
+                                                        Get.rawSnackbar(
+                                                          title: "No Internet!",
+                                                          message:
+                                                              "Data will be uploaded when you have a stable internet connection!",
+                                                          icon: const Icon(
+                                                            Icons.info,
+                                                            color: Colors.white,
+                                                          ),
+                                                          backgroundColor:
+                                                              Constants
+                                                                  .primaryColor,
+                                                          borderRadius: 10,
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .all(10),
+                                                        );
+                                                      },
+                                                style: ButtonStyle(
+                                                  backgroundColor:
+                                                      MaterialStateProperty.all(
+                                                    Constants.primaryColor,
+                                                  ),
+                                                  padding:
+                                                      MaterialStateProperty.all(
+                                                    const EdgeInsets.all(10.0),
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    Obx(
+                                                      () => Text(
+                                                        Network.isNetworkAvailable
+                                                                .value
+                                                            ? "Successfully"
+                                                            : "Sync",
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: const TextStyle(
+                                                            fontSize: 12),
+                                                      ),
+                                                    ),
+                                                    Icon(
+                                                      Network.isNetworkAvailable
+                                                              .value
+                                                          ? Icons.check_circle
+                                                          : Icons.rotate_left,
+                                                      color: Colors.white,
+                                                      size: 18,
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ));
+                              ));
                 }
               }),
 
@@ -284,37 +318,32 @@ class DashboardScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2),
                   child: RoundedButton(
-                    color: Colors.green,
+                      color: Colors.green,
                       text: "Start New Audit",
                       width: 0.8,
                       fontScaleFactor: 16.0,
                       onPressed: () {
-                        if(Network.isNetworkAvailable.value == true){
+                        if (Network.isNetworkAvailable.value == true) {
                           itemCount = 1;
                           auditNumber = [];
                           dashboardController.audits = [];
-                          dashboardController.storageService.remove(key: 'audit');
+                          dashboardController.storageService
+                              .remove(key: 'audit');
                         }
                         Get.toNamed(AppRoutes.addSiteData);
-                      }
-
-                  ),
+                      }),
                 ),
               ),
             ],
           ),
-        )
-
-
-    );
+        ));
   }
 
   Widget titleText({required String? text, wight, size}) {
     return Text(
       text!,
       style:
-      TextStyle(fontSize: size ?? 14, fontWeight: wight ?? FontWeight.w500),
+          TextStyle(fontSize: size ?? 14, fontWeight: wight ?? FontWeight.w500),
     );
   }
 }
-

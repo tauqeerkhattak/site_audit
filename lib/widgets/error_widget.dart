@@ -16,30 +16,27 @@ class CustomErrorWidget extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: SizeConfig.screenWidth,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: SizeConfig.screenWidth * 0.4,
-            height: SizeConfig.screenWidth * 0.4,
-            child: Image.asset(
-              getAsset(),
-            ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(
+          getAsset(),
+
+          // fit: BoxFit.cover,
+          width: SizeConfig.screenWidth * 0.4,
+          height: SizeConfig.screenWidth * 0.4,
+        ),
+        UiUtils.spaceVrt20,
+        Text(
+          errorText,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: Constants.primaryColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
           ),
-          UiUtils.spaceVrt20,
-          Text(
-            errorText,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Constants.primaryColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
