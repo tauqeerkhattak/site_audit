@@ -364,6 +364,170 @@ class FormController extends GetxController {
     loading.value = false;
   }
 
+//sqf Submit
+  Future<void> sqfSubmit(BuildContext context) async {
+    String? path;
+    loading.value = true;
+    bool validate = formDataKey.currentState!.validate();
+    List<Items> items = form.value!.items!;
+    final keys = data.keys.where((element) {
+      return element != 'MULTILEVEL';
+    }).toList();
+    if (validate) {
+      for (int i = 0; i < items.length; i++) {
+        if (items[i].mandatory ?? false) {
+          validate = Validator.validateField(
+            data[keys[i]]!.value,
+            EnumHelper.inputTypeFromString(items[i].inputType),
+          );
+          if (!validate) {
+            break;
+          }
+        }
+      }
+    }
+    if (validate) {
+      log('Validated!');
+      for (int i = 0; i < items.length; i++) {
+        final type = EnumHelper.inputTypeFromString(items[i].inputType);
+        if (isTextController(type)) {
+          final controller = data[keys[i]]!.value;
+          items[i].answer = controller.text;
+        } else if (type == InputType.PHOTO) {
+          //path = data[keys[i]]!.value;
+          final imagePath = data[keys[i]]!.value;
+          if (imagePath != null && imagePath != '') {
+            if (imagePath.contains('base64')) {
+              items[i].answer = imagePath;
+            } else {
+              File? file = await saveImageToGallery(imagePath);
+              //File? file = File(imagePath);
+              if (file != null) {
+                /// TODO
+                String base64 = covertToBase64(file.path);
+                //String base64 = file.path;
+                items[i].filename = getFileName(file.path);
+                items[i].answer = base64;
+              } else {
+                ///TODO
+                String base64 = covertToBase64(imagePath);
+                //String base64 = imagePath;
+                items[i].filename = getFileName(imagePath);
+                items[i].answer = base64;
+              }
+            }
+          } else {
+            items[i].answer = data[keys[i]]!.value;
+          }
+        } else if (type == InputType.LOCATION) {
+          String answer = '';
+          final controllers = data[keys[i]]!.value;
+          for (final controller in controllers) {
+            answer += '${controller.text} ';
+          }
+          items[i].answer = answer;
+        } else if (type == InputType.TIME) {
+          final timeOfDay = data[keys[i]]!.value as TimeOfDay;
+          items[i].answer = timeOfDay.format(Get.context!);
+        } else {
+          if (keys[i] != InputType.MULTILEVEL.name) {
+            items[i].answer = data[keys[i]]!.value.toString();
+          }
+        }
+      }
+      Map<String, dynamic> staticValues = storageService.get(
+        key: siteDataStorageKey,
+      );
+      for (int cIndex = 0; cIndex < multiLevels.keys.length; cIndex++) {
+        final List<Items> multiLevelItems = multiLevels[cIndex] ?? [];
+        for (int gIndex = 0; gIndex < multiLevelItems.length; gIndex++) {
+          final Items item = multiLevelItems[gIndex];
+          item.answer = data['MULTILEVEL'][cIndex][gIndex].value;
+          form.value!.items!.add(item);
+        }
+      }
+      // for (int i = 0; i < multiLevels.length; i++) {
+      // multiLevels[i].answer = data['MULTILEVEL'][i].value;
+      // form.value!.items!.add(multiLevels[i]);
+      // }
+      form.value!.items = items;
+      form.value!.staticValues = staticValues;
+      List<DataBaseItem> dataBaseItem1 = [];
+      DatabaseDb databaseDb = DatabaseDb();
+      DataBaseModel dataBaseModel = DataBaseModel(
+        1,
+        form.value!.subModuleId,
+        form.value!.subModuleName,
+        form.value!.moduleName,
+        form.value!.projectId,
+        dataBaseItem1,
+      );
+
+      // DataBaseItem? dataBaseItem;
+      // DataBaseInputOption? dataBaseInputOption;
+      // if(form.value!.items!.isNotEmpty){
+      //   for (var element in form.value!.items!) {
+      //      dataBaseItem = DataBaseItem(
+      //       1,
+      //       //element.mandatory,
+      //       element.inputDescription,
+      //       element.answer,
+      //       element.inputType,
+      //       element.inputParameter,
+      //       element.inputLength,
+      //       element.inputHint,
+      //       element.parentInputId,
+      //       element.filename,
+      //       element.inputLabel,
+      //      // dataBaseInputOption,
+      //     ) ;
+      //      dataBaseItem1.add(dataBaseItem);
+      //     if(element.inputOption != null){
+      //       for (var element in element.inputOption!) {
+      //          dataBaseInputOption = DataBaseInputOption(
+      //           element.inputItemParentId,
+      //           element.inputParentLevel,
+      //           element.inputOptions,
+      //         );
+      //       }
+
+      //     }
+
+      //   }
+      // }
+      // databaseDb.save(dataBaseModel, dataBaseItem1, dataBaseInputOption!);
+
+      int counter = 1;
+      int value = storageService.get(key: "FormIndex") ?? 0;
+      if (value == 0) {
+        storageService.save(key: "FormIndex", value: counter++);
+      } else {
+        int newValue = value + 1;
+        storageService.save(key: "FormIndex", value: newValue);
+      }
+
+      Navigator.pop(context, 'popped');
+
+      // saveJsonFileLocally();
+      await saveDataToLocalStorage().then((value) {
+        UiUtils.showSnackBar(
+          message: 'Data is submitted successfully!',
+        );
+        Navigator.pop(context, 'popped');
+      });
+    } else {
+      log('NOT VALIDATED');
+      UiUtils.showSnackBar(
+        message: 'Please fill all the fields',
+        color: Theme.of(Get.context!).errorColor,
+      );
+    }
+
+    loading.value = false;
+  }
+
+//sqf submit
+
   String getImageName(DateTime now) {
     DateFormat format = DateFormat('yyyy-MM-dd_hh-mm-ss');
     final projectId = user?.data?.projectId;

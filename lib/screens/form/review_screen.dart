@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/review_controller.dart';
+import 'package:site_audit/models/DataBaseModel.dart';
+import 'package:site_audit/offlineDatabase/sqf_database.dart';
 import 'package:site_audit/offlineDatabase/view_data.dart';
 import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/utils/constants.dart';
@@ -19,6 +21,8 @@ class ReviewScreen extends StatefulWidget {
   State<ReviewScreen> createState() => _ReviewScreenState();
 }
 
+late Future<List<DataBaseModel>> sqfLiteData;
+
 class _ReviewScreenState extends State<ReviewScreen> {
   int? index = 0;
   final controller = Get.find<ReviewController>();
@@ -27,6 +31,19 @@ class _ReviewScreenState extends State<ReviewScreen> {
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  DBHelper? dbHelper;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    dbHelper = DBHelper();
+    loadsqfData();
+  }
+
+  loadsqfData() {
+    sqfLiteData = dbHelper!.getNotesList();
   }
 
   @override
@@ -81,45 +98,90 @@ class _ReviewScreenState extends State<ReviewScreen> {
       //   style: const TextStyle(color: Colors.black, fontSize: 18),
       // ));
       return controller.index == 0
-          ? Container(
-              height: MediaQuery.of(context).size.height * 0.62,
-              child: Obx(
-                () => ListView.separated(
-                  padding: const EdgeInsets.all(10),
-                  itemBuilder: (context, index) {
-                    return CustomCard(
-                      title:
-                          '${controller.module?.moduleName} >> ${controller.subModule?.subModuleName} ${index + 1}',
-                      onTap: () async {
-                        controller.formItem = FormModel.fromJson(
-                          controller.formItems.value![index],
-                        );
-                        // for (final item in controller.formItem!.items!) {
-                        //   log('ITEM: ${item.inputType} ${item.answer}');
-                        // }
-                        controller.setData();
-                        Get.toNamed(
-                          AppRoutes.form,
-                          arguments: {
-                            'module': controller.module,
-                            'subModule': controller.subModule,
-                            'reviewFormIndex': index,
-                            'reviewForm': controller.formItem,
-                            'formName': controller.formName.value,
+          ? Column(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.32,
+                  child: Obx(
+                    () => ListView.separated(
+                      padding: const EdgeInsets.all(10),
+                      itemBuilder: (context, index) {
+                        return CustomCard(
+                          title:
+                              '${controller.module?.moduleName} >> ${controller.subModule?.subModuleName} ${index + 1}',
+                          onTap: () async {
+                            controller.formItem = FormModel.fromJson(
+                              controller.formItems.value![index],
+                            );
+                            // for (final item in controller.formItem!.items!) {
+                            //   log('ITEM: ${item.inputType} ${item.answer}');
+                            // }
+                            controller.setData();
+                            Get.toNamed(
+                              AppRoutes.form,
+                              arguments: {
+                                'module': controller.module,
+                                'subModule': controller.subModule,
+                                'reviewFormIndex': index,
+                                'reviewForm': controller.formItem,
+                                'formName': controller.formName.value,
+                              },
+                            );
+                            //   controller.refreshPage();
+                            // });
                           },
+                          buttonText: 'Review Audit',
                         );
-                        //   controller.refreshPage();
-                        // });
                       },
-                      buttonText: 'Review Audit',
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return UiUtils.spaceVrt20;
-                  },
-                  itemCount: controller.formItems.value?.length ?? 0,
+                      separatorBuilder: (context, index) {
+                        return UiUtils.spaceVrt20;
+                      },
+                      itemCount: controller.formItems.value?.length ?? 0,
+                    ),
+                  ),
                 ),
-              ),
+                Container(
+                  height: 200,
+                  child: FutureBuilder(
+                      future: sqfLiteData,
+                      builder: (context,
+                          AsyncSnapshot<List<DataBaseModel>> snapshot) {
+                        return ListView.builder(
+                            itemCount: snapshot.data?.length ?? 0,
+                            itemBuilder: (context, index) {
+                              return CustomCard(
+                                title:
+                                    '${snapshot.data![index].module_name} >> ${snapshot.data![index].sub_module_name} ${index + 1}',
+                                onTap: () async {
+                                  // controller.formItem = FormModel.fromJson(
+                                  //   controller.formItems.value![index],
+                                  // );
+                                  // for (final item in controller.formItem!.items!) {
+                                  //   log('ITEM: ${item.inputType} ${item.answer}');
+                                  // }
+                                  controller.setData();
+                                  // Get.toNamed(
+                                  //   AppRoutes.form,
+                                  //   arguments: {
+                                  //     'module':
+                                  //         snapshot.data![index].module_name,
+                                  //     'subModule':
+                                  //         snapshot.data![index].sub_module_name,
+                                  //     'reviewFormIndex': index,
+                                  //     'reviewForm':
+                                  //         snapshot.data![index].sub_module_name,
+                                  //     'formName': '555',
+                                  //   },
+                                  // );
+                                  //   controller.refreshPage();
+                                  // });
+                                },
+                                buttonText: 'Review Audit',
+                              );
+                            });
+                      }),
+                )
+              ],
             )
           : Padding(
               padding: const EdgeInsets.all(8.0),

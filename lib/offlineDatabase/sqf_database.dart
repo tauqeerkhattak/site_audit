@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:site_audit/models/DataBaseModel.dart';
 import 'package:site_audit/models/form_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -29,17 +30,17 @@ class DBHelper {
     );
   }
 
-  Future<FormModel> insert(FormModel formModel) async {
+  Future<DataBaseModel> insert(DataBaseModel dbModel) async {
     var dbClient = await db;
-    await dbClient!.insert('v4_project_audit_information', formModel.toJson());
-    return formModel;
+    await dbClient!.insert('v4_project_audit_information', dbModel.toMap());
+    return dbModel;
   }
 
-  Future<List<FormModel>> getNotesList() async {
+  Future<List<DataBaseModel>> getNotesList() async {
     var dbClient = await db;
     final List<Map<String, Object?>> queryResult =
         await dbClient!.query('v4_project_audit_information');
-    return queryResult.map((e) => FormModel.fromJson(e)).toList();
+    return queryResult.map((e) => DataBaseModel.fromMap(e)).toList();
   }
 
   Future<int> deleteFunction(int id) async {

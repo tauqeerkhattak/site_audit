@@ -4,7 +4,9 @@ import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/form_controller.dart';
+import 'package:site_audit/models/DataBaseModel.dart';
 import 'package:site_audit/models/form_model.dart';
+import 'package:site_audit/offlineDatabase/sqf_database.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/enums/enum_helper.dart';
 import 'package:site_audit/utils/enums/input_type.dart';
@@ -30,6 +32,8 @@ class FormScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<FormScreen> {
+  Rxn<FormModel> form = Rxn();
+
   final controller = Get.find<FormController>();
 
   @override
@@ -38,8 +42,11 @@ class _FormScreenState extends State<FormScreen> {
     super.dispose();
   }
 
+  List<DataBaseItem> dataBaseItem1 = [];
   @override
   Widget build(BuildContext context) {
+    // Rxn<FormModel> form = Rxn();
+    // List<Items> items = form.value!.items!;
     return DefaultLayout(
       // title: getTitleText(),
       titleWidget: Obx(() => getTitleText()),
@@ -131,6 +138,24 @@ class _FormScreenState extends State<FormScreen> {
                       color: Colors.green,
                       text: 'Submit',
                       onPressed: () async {
+                        // List<Items> items = form.value!.items!;
+
+                        // Items item = form.items![index],
+
+                        DBHelper().insert(DataBaseModel(
+                          form.id,
+                          form.subModuleId,
+                          form.subModuleName,
+                          form.moduleName,
+                          form.projectId,
+                          dataBaseItem1,
+                        ));
+                        // DBHelper().insert(FormModel(
+                        //    subModuleId: controller.subModule!.subModuleId,
+                        //    subModuleName: controller.subModule!.subModuleName,
+                        //    projectId: controller.projectId!.length,
+
+                        //     moduleName: controller.module!.moduleName));
                         await controller.submit(context);
                       },
                     ),
