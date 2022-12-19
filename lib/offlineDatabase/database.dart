@@ -16,7 +16,7 @@ class DatabaseDb {
   static const String PROJECTID = 'project_id';
   static const String ITEMLIST = 'items';
   static const String ITEMID = 'id';
-  static const String MANDATORY =  'mandatory';
+  static const String MANDATORY = 'mandatory';
   static const String INPUTDESCRIPTION = 'inputDescription';
   static const String ANSWER = 'answer';
   static const String FILENAME = 'filename';
@@ -50,19 +50,25 @@ class DatabaseDb {
 
   _onCreate(Database db, int version) async {
     await db.execute(
-        "CREATE TABLE $TABLE ( $ID INTEGER, $SUBMODULEID INTEGER, $SUBMODULENAME TEXT, $MODULENAME TEXT, $PROJECTID INTEGER)",);
-    await db.execute("CREATE TABLE $ITEMTABLE ( $ITEMID INTEGER,/* $MANDATORY BOOL,*/ $INPUTDESCRIPTION TEXT, $ANSWER TEXT, $FILENAME TEXT, $INPUTTYPE TEXT, $INPUTPARAMETER TEXT, $INPUTLENGTH INTEGER, $INPUTHINT TEXT, $PARENTUNPUTID INTEGER, $INPUTLABEl TEXT)",);
+      "CREATE TABLE $TABLE ( $ID INTEGER, $SUBMODULEID INTEGER, $SUBMODULENAME TEXT, $MODULENAME TEXT, $PROJECTID INTEGER)",
+    );
+    await db.execute(
+      "CREATE TABLE $ITEMTABLE ( $ITEMID INTEGER,/* $MANDATORY BOOL,*/ $INPUTDESCRIPTION TEXT, $ANSWER TEXT, $FILENAME TEXT, $INPUTTYPE TEXT, $INPUTPARAMETER TEXT, $INPUTLENGTH INTEGER, $INPUTHINT TEXT, $PARENTUNPUTID INTEGER, $INPUTLABEl TEXT)",
+    );
 
-    await db.execute("CREATE TABLE $OPTIONTABLE ( $INPUTITEMPARENTID TEXT, $INPUTPARENTLEVEL TEXT, $INPUTOPTION TEXT ARRAY)",);
+    await db.execute(
+      "CREATE TABLE $OPTIONTABLE ( $INPUTITEMPARENTID TEXT, $INPUTPARENTLEVEL TEXT, $INPUTOPTION TEXT ARRAY)",
+    );
   }
 
-  Future<DataBaseModel> save(DataBaseModel dataBaseModel,List<DataBaseItem> dataBaseItem,DataBaseInputOption dataBaseInputOption) async {
+  Future<DataBaseModel> save(
+      DataBaseModel dataBaseModel, List<DataBaseItem> dataBaseItem) async {
     var dbClient = await db;
     dataBaseModel.id = await dbClient!.insert(TABLE, dataBaseModel.toMap());
-    if(dataBaseItem != null){
-      for(int i = 1; i < dataBaseItem.length; i++){
-        dataBaseItem[i].id = await dbClient.insert(ITEMTABLE, dataBaseItem[i].toMap());
-      }
+    for (int i = 1; i < dataBaseItem.length; i++) {
+      dataBaseItem[i].id =
+          await dbClient.insert(ITEMTABLE, dataBaseItem[i].toMap());
+
       /*if(dataBaseInputOption != null){
         dataBaseInputOption.inputItemParentId = await dbClient.insert(OPTIONTABLE, dataBaseInputOption.toMap());
       }*/
@@ -82,13 +88,20 @@ class DatabaseDb {
 
   Future<List<DataBaseModel>> getForm() async {
     var dbClient = await db;
-    List<Map> maps = await dbClient!.query(TABLE, columns: [ID,SUBMODULEID,SUBMODULENAME,MODULENAME,PROJECTID,ITEMID]);
+    List<Map> maps = await dbClient!.query(TABLE, columns: [
+      ID,
+      SUBMODULEID,
+      SUBMODULENAME,
+      MODULENAME,
+      PROJECTID,
+      ITEMID
+    ]);
     List<DataBaseModel>? employees = [];
     if (maps.isNotEmpty) {
       int i;
       for (i = 0; i < maps.length; i++) {
         employees.add(
-            DataBaseModel.fromMap(maps[i]),
+          DataBaseModel.fromMap(maps[i]),
           //DataBaseModel.fromMap(map[i]).items,
         );
       }

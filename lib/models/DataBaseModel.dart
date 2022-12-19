@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:site_audit/models/form_model.dart';
@@ -12,20 +11,20 @@ class DataBaseModel {
   List<DataBaseItem>? items;
 
   DataBaseModel(
-      this.id,
-      this.sub_module_id,
-      this.sub_module_name,
-      //this.static_values,
-      this.module_name,
-      this.project_id,
-      this.items,
-      );
+    this.id,
+    this.sub_module_id,
+    this.sub_module_name,
+    //this.static_values,
+    this.module_name,
+    this.project_id,
+    this.items,
+  );
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
       'id': id,
       'sub_module_id': sub_module_id,
-      'sub_module_name':sub_module_name,
+      'sub_module_name': sub_module_name,
       'module_name': module_name,
       'project_id': project_id,
       //items: List<Item>.from(json["items"].map((x) => Item.fromMap(x))),
@@ -42,7 +41,8 @@ class DataBaseModel {
     sub_module_name = map['sub_module_name'];
     module_name = map['module_name'];
     project_id = map['project_id'];
-    items = List<DataBaseItem>.from(map["items"].map((x) => DataBaseItem.fromMap(x)));
+    items = List<DataBaseItem>.from(
+        map["items"].map((x) => DataBaseItem.fromMap(x)));
     //static_values = map['static_values'];
     //items = map['items'];
   }
@@ -63,34 +63,34 @@ class DataBaseItem {
   //List<DataBaseItem>? inputOption;
 
   DataBaseItem(
-      this.id,
-        //this.mandatory,
-        this.inputDescription,
-        this.answer,
-        this.inputType,
-        this.inputParameter,
-        this.inputLength,
-        this.inputHint,
-        this.parentInputId,
-        this.inputLabel,
-        this.filename,
-        //this.inputOption
-      );
+    this.id,
+    //this.mandatory,
+    this.inputDescription,
+    this.answer,
+    this.inputType,
+    this.inputParameter,
+    this.inputLength,
+    this.inputHint,
+    this.parentInputId,
+    this.inputLabel,
+    this.filename,
+    //this.inputOption
+  );
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
-    'id' : id,
-    //'mandatory' : mandatory,
-    'inputDescription' : inputDescription,
-    'answer' : answer,
-    'filename' : filename,
-    'inputType' : inputType,
-    'inputParameter' : inputParameter,
-    'inputLength' : inputLength,
-    'inputHint' : inputHint,
-    'parentInputId' : parentInputId,
-    'inputLabel' : inputLabel,
-    //'inputOption' : inputOption,
+      'id': id,
+      //'mandatory' : mandatory,
+      'inputDescription': inputDescription,
+      'answer': answer,
+      'filename': filename,
+      'inputType': inputType,
+      'inputParameter': inputParameter,
+      'inputLength': inputLength,
+      'inputHint': inputHint,
+      'parentInputId': parentInputId,
+      'inputLabel': inputLabel,
+      //'inputOption' : inputOption,
     };
     return map;
   }
@@ -124,9 +124,9 @@ class DataBaseInputOption {
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
-      'inputItemParentId' : inputItemParentId,
-      'inputParentLevel' : inputParentLevel,
-      'inputOptions' : inputOptions,
+      'inputItemParentId': inputItemParentId,
+      'inputParentLevel': inputParentLevel,
+      'inputOptions': inputOptions,
     };
     return map;
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/review_controller.dart';
 import 'package:site_audit/models/DataBaseModel.dart';
+import 'package:site_audit/models/sqf_form_model.dart';
 import 'package:site_audit/offlineDatabase/sqf_database.dart';
 import 'package:site_audit/offlineDatabase/view_data.dart';
 import 'package:site_audit/routes/routes.dart';
@@ -21,7 +22,7 @@ class ReviewScreen extends StatefulWidget {
   State<ReviewScreen> createState() => _ReviewScreenState();
 }
 
-late Future<List<DataBaseModel>> sqfLiteData;
+Future<List<SqfFormModel>>? sqfLiteData;
 
 class _ReviewScreenState extends State<ReviewScreen> {
   int? index = 0;
@@ -145,13 +146,13 @@ class _ReviewScreenState extends State<ReviewScreen> {
                   child: FutureBuilder(
                       future: sqfLiteData,
                       builder: (context,
-                          AsyncSnapshot<List<DataBaseModel>> snapshot) {
+                          AsyncSnapshot<List<SqfFormModel>> snapshot) {
                         return ListView.builder(
-                            itemCount: snapshot.data?.length ?? 0,
+                            itemCount: 1,
                             itemBuilder: (context, index) {
                               return CustomCard(
                                 title:
-                                    '${snapshot.data![index].module_name} >> ${snapshot.data![index].sub_module_name} ${index + 1}',
+                                    '${snapshot.data![index].hint == null ? '00' : '0'} >> ${snapshot.data![index].input_type == null ? "00" : "0"}  ',
                                 onTap: () async {
                                   // controller.formItem = FormModel.fromJson(
                                   //   controller.formItems.value![index],
@@ -159,7 +160,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                   // for (final item in controller.formItem!.items!) {
                                   //   log('ITEM: ${item.inputType} ${item.answer}');
                                   // }
-                                  controller.setData();
+                                  // controller.setData();
                                   // Get.toNamed(
                                   //   AppRoutes.form,
                                   //   arguments: {
