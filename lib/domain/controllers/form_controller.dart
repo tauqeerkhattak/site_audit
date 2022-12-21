@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
@@ -10,8 +12,8 @@ import 'package:location/location.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:site_audit/models/DataBaseModel.dart';
-import 'package:site_audit/models/photos.dart';
 import 'package:site_audit/offlineDatabase/database.dart';
+
 import '../../models/form_model.dart';
 import '../../models/module_model.dart';
 import '../../models/user_model.dart';
@@ -68,6 +70,7 @@ class FormController extends GetxController {
       subModule = arguments['subModule'];
       module = arguments['module'];
       formName.value = arguments['formName'];
+      // form.value = arguments['form'];
       final key0 = '$formKey$projectId${subModule?.subModuleId}';
       final storedData = storageService.get(key: key0);
       print('$key0 key0');
@@ -208,6 +211,7 @@ class FormController extends GetxController {
     loading.value = true;
     bool validate = formDataKey.currentState!.validate();
     List<Items> items = form.value!.items!;
+
     final keys = data.keys.where((element) {
       return element != 'MULTILEVEL';
     }).toList();
@@ -233,19 +237,29 @@ class FormController extends GetxController {
           items[i].answer = controller.text;
         } else if (type == InputType.PHOTO) {
           //path = data[keys[i]]!.value;
-          final imagePath = data[keys[i]]!.value;
+          String? imagePath = data[keys[i]]!.value;
           if (imagePath != null && imagePath != '') {
+            final random = math.Random();
+            final imageRandNumber = random.nextInt(1000);
             if (imagePath.contains('base64')) {
-              items[i].answer = imagePath;
+              final imageBytes = base64Decode(imagePath.split(',').last);
+              File file = File.fromRawPath(imageBytes);
+              final path = await getApplicationDocumentsDirectory();
+              final newFile =
+                  await file.copy('${path.path}/image$imageRandNumber');
+              items[i].answer = newFile.path;
             } else {
               File? file = await saveImageToGallery(imagePath);
               //File? file = File(imagePath);
               if (file != null) {
                 /// TODO
-                String base64 = covertToBase64(file.path);
-                //String base64 = file.path;
-                items[i].filename = getFileName(file.path);
-                items[i].answer = base64;
+                // String base64 = covertToBase64(file.path);
+                // //String base64 = file.path;
+                // items[i].filename = getFileName(file.path);
+                final path = await getApplicationDocumentsDirectory();
+                final newFile =
+                    await file.copy('${path.path}/image$imageRandNumber');
+                items[i].answer = newFile.path;
               } else {
                 ///TODO
                 String base64 = covertToBase64(imagePath);
@@ -289,51 +303,36 @@ class FormController extends GetxController {
       // form.value!.items!.add(multiLevels[i]);
       // }
       form.value!.items = items;
+
       form.value!.staticValues = staticValues;
       List<DataBaseItem> dataBaseItem1 = [];
       DatabaseDb databaseDb = DatabaseDb();
-      DataBaseModel dataBaseModel = DataBaseModel(
-        1,
-        form.value!.subModuleId,
-        form.value!.subModuleName,
-        form.value!.moduleName,
-        form.value!.projectId,
-        dataBaseItem1,
-      );
-
-      // DataBaseItem? dataBaseItem;
-      // DataBaseInputOption? dataBaseInputOption;
-      // if(form.value!.items!.isNotEmpty){
-      //   for (var element in form.value!.items!) {
-      //      dataBaseItem = DataBaseItem(
-      //       1,
-      //       //element.mandatory,
-      //       element.inputDescription,
-      //       element.answer,
-      //       element.inputType,
-      //       element.inputParameter,
-      //       element.inputLength,
-      //       element.inputHint,
-      //       element.parentInputId,
-      //       element.filename,
-      //       element.inputLabel,
-      //      // dataBaseInputOption,
-      //     ) ;
-      //      dataBaseItem1.add(dataBaseItem);
-      //     if(element.inputOption != null){
-      //       for (var element in element.inputOption!) {
-      //          dataBaseInputOption = DataBaseInputOption(
-      //           element.inputItemParentId,
-      //           element.inputParentLevel,
-      //           element.inputOptions,
-      //         );
-      //       }
-
-      //     }
-
-      //   }
+      await databaseDb.initDb();
+      // for (int i = 0; i < items.length; i++) {
+      //   final dataToSql = items[i].toSQFLiteData(
+      //     formID: '1',
+      //     moduleID: '2',
+      //   );
+      //
       // }
-      // databaseDb.save(dataBaseModel, dataBaseItem1, dataBaseInputOption!);
+      int formID = 0;
+      int newCounter = 1;
+      int newValue = storageService.get(key: "formID") ?? 0;
+      if (newValue == 0) {
+        await storageService.save(key: "formID", value: newCounter++);
+      } else {
+        int newFormValue = newValue + 1;
+        await storageService.save(key: "formID", value: newFormValue);
+      }
+      formID = await storageService.get(key: "formID") ?? 0;
+      // log("formIDsssss   $formID");
+
+      final datas = await databaseDb.insertFormModel(items
+          .map((e) => e.toSQFLiteData(
+              formID: "${formID}", subModuleID: "${subModule?.subModuleId}"))
+          .toList());
+
+      log("isData Stored $datas");
 
       int counter = 1;
       int value = storageService.get(key: "FormIndex") ?? 0;
@@ -345,14 +344,20 @@ class FormController extends GetxController {
       }
 
       Navigator.pop(context, 'popped');
-
-      // saveJsonFileLocally();
       await saveDataToLocalStorage().then((value) {
         UiUtils.showSnackBar(
           message: 'Data is submitted successfully!',
         );
         Navigator.pop(context, 'popped');
       });
+      // saveJsonFileLocally();
+      // await saveDataToLocalStorage().then((value) {
+      //   UiUtils.showSnackBar(
+      //     message: 'Data is submitted successfully!',
+      //   );
+      //   Navigator.pop(context, 'popped');
+      // });
+
     } else {
       log('NOT VALIDATED');
       UiUtils.showSnackBar(

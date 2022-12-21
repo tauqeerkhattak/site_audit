@@ -34,8 +34,6 @@ class FormModel {
     }
   }
 
-
-
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
@@ -62,7 +60,6 @@ class FormModel {
     }
     return data;
   }
-
 }
 
 class Items extends Equatable {
@@ -93,19 +90,51 @@ class Items extends Equatable {
       this.filename,
       this.inputOption});
 
+  Map<String, dynamic> toSQFLiteData({
+    required String formID,
+    required String subModuleID,
+  }) {
+    return {
+      "engID": 1,
+      "projectID": 2,
+      "formID": formID,
+      "field_input_id": id,
+      "sub_module": subModuleID,
+      "input_type": inputType,
+      "answer": answer,
+      "photo": "",
+      "label": inputLabel,
+      "hint": inputHint,
+      "mandatory": mandatory ?? false ? 1 : 0,
+      "createdAt": DateTime.now().toIso8601String(),
+      "updatedAt": DateTime.now().toIso8601String(),
+      // "id": id,
+      // "mandatory": mandatory,
+      // "input_description": inputDescription,
+      // "answer": answer,
+      // "photo": "",
+      // "input_type": inputType,
+      // "input_parameter": inputParameter,
+      // "input_length": inputLength,
+      // "input_hint": inputHint,
+      // "input_label": inputLabel,
+      // "filename": filename
+    };
+  }
+
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
-      'id' : id,
-      'mandatory' : mandatory,
-      'inputDescription' : inputDescription,
-      'answer' : answer,
-      'filename' : filename,
-      'inputType' : inputType,
-      'inputParameter' : inputParameter,
-      'inputLength' : inputLength,
-      'inputHint' : inputHint,
-      'parentInputId' : parentInputId,
-      'inputLabel' : inputLabel,
+      'id': id,
+      'mandatory': mandatory,
+      'inputDescription': inputDescription,
+      'answer': answer,
+      'filename': filename,
+      'inputType': inputType,
+      'inputParameter': inputParameter,
+      'inputLength': inputLength,
+      'inputHint': inputHint,
+      'parentInputId': parentInputId,
+      'inputLabel': inputLabel,
       //'inputOption' : inputOption,
     };
     return map;
@@ -131,7 +160,7 @@ class Items extends Equatable {
     mandatory = json['mandatory'] == 1;
     inputDescription = json['input_description'];
     answer = json['answer'];
-      filename = json['filename'];
+    filename = json['filename'];
     inputType = json['input_type'];
     inputParameter = json['input_parameter'];
     inputLength = int.tryParse(json['input_length'].toString());
@@ -139,13 +168,13 @@ class Items extends Equatable {
     parentInputId = json['parent_input_id'];
     inputLabel = json['input_label'];
     if (json['input_option'] != null) {
-      inputOption = <InputOption>[] ;
+      inputOption = <InputOption>[];
       json['input_option'].forEach((v) {
         inputOption!.add(InputOption.fromJson(v));
       });
     }
   }
- /* Map<String, dynamic> toMap() {
+  /* Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
     'id' : id,
     'mandatory' : mandatory == 1;
@@ -167,8 +196,6 @@ class Items extends Equatable {
     };
     return map;
   }*/
-
-
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -213,9 +240,9 @@ class InputOption {
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
-      'inputItemParentId' : inputItemParentId,
-      'inputParentLevel' : inputParentLevel,
-      'inputOptions' : inputOptions,
+      'inputItemParentId': inputItemParentId,
+      'inputParentLevel': inputParentLevel,
+      'inputOptions': inputOptions,
     };
     return map;
   }

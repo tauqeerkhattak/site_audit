@@ -1,14 +1,17 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io' as io;
+
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:site_audit/models/DataBaseModel.dart';
-import 'package:site_audit/models/form_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseDb {
   static Database? _db;
   static const String TABLE = 'form_table';
+  static const String MODULEFORMS = 'module_forms';
+  static const String INPUTOPTIONS = 'input_options';
   static const String ID = 'id';
   static const String SUBMODULEID = 'sub_module_id';
   static const String SUBMODULENAME = 'sub_module_name';
@@ -48,17 +51,100 @@ class DatabaseDb {
     return db;
   }
 
-  _onCreate(Database db, int version) async {
-    await db.execute(
-      "CREATE TABLE $TABLE ( $ID INTEGER, $SUBMODULEID INTEGER, $SUBMODULENAME TEXT, $MODULENAME TEXT, $PROJECTID INTEGER)",
-    );
-    await db.execute(
-      "CREATE TABLE $ITEMTABLE ( $ITEMID INTEGER,/* $MANDATORY BOOL,*/ $INPUTDESCRIPTION TEXT, $ANSWER TEXT, $FILENAME TEXT, $INPUTTYPE TEXT, $INPUTPARAMETER TEXT, $INPUTLENGTH INTEGER, $INPUTHINT TEXT, $PARENTUNPUTID INTEGER, $INPUTLABEl TEXT)",
-    );
+  static Future<void> clearData() async {
+    await _db?.delete(TABLE);
+  }
 
-    await db.execute(
-      "CREATE TABLE $OPTIONTABLE ( $INPUTITEMPARENTID TEXT, $INPUTPARENTLEVEL TEXT, $INPUTOPTION TEXT ARRAY)",
-    );
+  _onCreate(Database db, int version) async {
+    await db.execute("""
+    CREATE TABLE $TABLE (
+     $ID integer primary key autoincrement,
+     engID integer,
+     projectID integer,
+     formID integer,
+     sub_module text,
+     field_input_id integer,
+     input_type text,
+     answer text,
+     photo blob,
+     label text,
+     hint text,
+     mandatory integer,
+     createdAt text,
+     updatedAt text
+     )
+    """);
+
+    await db.execute("""  CREATE TABLE $MODULEFORMS (
+    id integer primary key autoincrement,
+    input_id integer,
+    project_id integer,
+    sub_module_id integer,
+    mandatory integer,
+    input_description text,
+    input_type text,
+    input_parameter text,
+    input_length integer,
+    input_hint text,
+    parent_input_id integer,
+    input_label text,
+    input_option_id integer,
+    foreign key (input_option_id) references $INPUTOPTIONS(id)
+    )  """);
+
+    await db.execute(""" 
+    
+    create table $INPUTOPTIONS (
+    id integer primary key autoincrement,
+    input_item_parent_id integer,
+    input_parent_level integer,
+    input_option text
+    )
+    
+    """);
+
+    // await db.execute(
+    //   "CREATE TABLE $TABLE ( $ID INTEGER, $SUBMODULEID INTEGER, $SUBMODULENAME TEXT, $MODULENAME TEXT, $PROJECTID INTEGER)",
+    // );
+    // await db.execute(
+    //   "CREATE TABLE $ITEMTABLE ( $ITEMID INTEGER,/* $MANDATORY BOOL,*/ $INPUTDESCRIPTION TEXT, $ANSWER TEXT, $FILENAME TEXT, $INPUTTYPE TEXT, $INPUTPARAMETER TEXT, $INPUTLENGTH INTEGER, $INPUTHINT TEXT, $PARENTUNPUTID INTEGER, $INPUTLABEl TEXT)",
+    // );
+    //
+    // await db.execute(
+    //   "CREATE TABLE $OPTIONTABLE ( $INPUTITEMPARENTID TEXT, $INPUTPARENTLEVEL TEXT, $INPUTOPTION TEXT ARRAY)",
+    // );
+  }
+
+  Future<bool> insertFormModel(List<dynamic> items) async {
+    try {
+      final dbClient = await db;
+      if (dbClient != null) {
+        for (final item in items) {
+          // if (item['input_type'] == "PHOTO") {
+          //   final base64String = item['answer'];
+          //   item['photo'] = base64Decode(base64String);
+          //   item['answer'] = null;
+          // }
+          log("$item itemmmmmm");
+          await dbClient.insert(TABLE, item);
+        }
+      } else {
+        throw Exception("DB CLIENT ISSUE");
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<List<dynamic>> getFormModel({
+    formId,
+    moduleID,
+  }) async {
+    var dbClient = await db;
+    final List<dynamic> items = await dbClient!
+        .query(TABLE, where: 'sub_module = ?', whereArgs: ['$moduleID']);
+    return items;
   }
 
   Future<DataBaseModel> save(

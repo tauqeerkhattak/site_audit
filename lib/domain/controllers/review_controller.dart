@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/models/form_model.dart';
 import 'package:site_audit/models/static_drop_model.dart';
+import 'package:site_audit/offlineDatabase/database.dart';
 import 'package:site_audit/services/local_storage_service.dart';
 
 import '../../models/module_model.dart';
@@ -31,12 +34,50 @@ class ReviewController extends GetxController {
   Rxn<ClusterId?> currentCluster = Rxn<ClusterId?>();
   Rxn<SiteReference?> currentSite = Rxn<SiteReference?>();
   TextEditingController siteNameController = TextEditingController();
-
+  DatabaseDb? dbHelper;
   @override
   void onInit() {
     super.onInit();
+    dbHelper = DatabaseDb();
+    loadsqfData();
     setData();
     //index = storageService.get(key: "FormIndex");
+  }
+
+  Future<List<dynamic>>? sqfLiteData;
+
+  loadsqfData() {
+    final arguments = Get.arguments;
+    module = arguments['module'];
+    subModule = arguments['subModule'];
+
+    sqfLiteData = dbHelper!.getFormModel(moduleID: subModule?.subModuleId);
+  }
+
+  Future<Map<String, List<dynamic>>> getData() async {
+    Map<String, List<dynamic>> forms = {};
+    List<dynamic> temp = await sqfLiteData!;
+    List<dynamic> list = List.of(temp);
+    int i = 0;
+
+    while (list.isNotEmpty) {
+      final formId = list[i]['formID'];
+
+      final items = list.where((item) {
+        return item['formID'] == formId;
+      }).toList();
+
+      if (items.isNotEmpty) {
+        forms.addAll({'formNumber$i': items});
+        i++;
+      }
+      list.removeWhere((element) {
+        return element['formID'] == formId;
+      });
+    }
+    log('LENGTH: ${forms.values.length}');
+
+    return forms;
   }
 
   void refreshPage() {

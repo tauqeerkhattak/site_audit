@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:site_audit/offlineDatabase/database.dart';
 
 import 'routes/pages.dart';
 import 'routes/routes.dart';
@@ -16,6 +17,7 @@ void main() async {
   await PermissionUtil.request();
   final llo = Get.put(LocalStorageService());
   // await llo.clearAll();
+  await DatabaseDb.clearData();
   Get.put(ImagePickerService());
   runApp(const MyApp());
 }

@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/form_controller.dart';
 import 'package:site_audit/models/DataBaseModel.dart';
 import 'package:site_audit/models/form_model.dart';
-import 'package:site_audit/models/sqf_form_model.dart';
 import 'package:site_audit/offlineDatabase/sqf_database.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/enums/enum_helper.dart';
@@ -150,15 +149,16 @@ class _FormScreenState extends State<FormScreen> {
                       onPressed: () async {
                         //  List<Items> items = form.items!;
 
-                        dbHelper!.insert(SqfFormModel(
-                            eng_id: 1,
-                            form_id: 1,
-                            hint: 'check',
-                            id: 1,
-                            input_type: 'field',
-                            label: 'module',
-                            mandatory: 'test',
-                            value: '123'));
+                        // dbHelper!.insert(
+                        //     SqfFormModel(
+                        //     eng_id: 1,
+                        //     form_id: 1,
+                        //     hint: 'check',
+                        //     id: 1,
+                        //     input_type: 'field',
+                        //     label: 'module',
+                        //     mandatory: 'test',
+                        //     value: '123'));
 
                         // DBHelper().insert(FormModel(
                         //    subModuleId: controller.subModule!.subModuleId,
@@ -166,7 +166,7 @@ class _FormScreenState extends State<FormScreen> {
                         //    projectId: controller.projectId!.length,
 
                         //     moduleName: controller.module!.moduleName));
-                        // await controller.submit(context);
+                        await controller.submit(context);
                       },
                     ),
                   ],

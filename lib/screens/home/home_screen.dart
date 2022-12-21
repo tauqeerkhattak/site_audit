@@ -1,14 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/auth_controller.dart';
 import 'package:site_audit/domain/controllers/home_controller.dart';
-import 'package:site_audit/domain/controllers/load_controller.dart';
 import 'package:site_audit/models/module_model.dart';
 import 'package:site_audit/routes/routes.dart';
-import 'package:site_audit/screens/dashboard/dashboard_screen.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/network.dart';
 import 'package:site_audit/utils/size_config.dart';
@@ -37,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (backButtonHasNotBeenPressedOrSnackBarHasBeenClosed) {
       backButtonPressTime = now;
       return false;
-    }else{
+    } else {
       return true;
     }
     /*else{
@@ -69,14 +65,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }*/
     return true;
   }
+
   static const snackBarDuration = Duration(seconds: 3);
   DateTime? backButtonPressTime;
-
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => handleWillPop(context),/*() async {
+      onWillPop: () => handleWillPop(context),
+      /*() async {
         controller.animateBack();
         return true;
       },*/
@@ -125,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Obx(
       () {
         if (controller.loading.value) {
-          return  Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -135,7 +132,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     Constants.primaryColor,
                   ),
                 ),
-                SizedBox(height: 5,),
+                SizedBox(
+                  height: 5,
+                ),
                 Text("Uploading Audits"),
               ],
             ),
@@ -271,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-               /* RoundedButton(
+                /* RoundedButton(
                   text: 'Help',
                   color: Constants.primaryColor,
                   width: 0.4,
@@ -280,18 +279,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),*/
 
                 RoundedButton(
-                  text: 'Audit Close',
-                  color: Constants.successColor,
-                  width: 0.8,
-                  fontScaleFactor: 15,
-                  disabled: !Network.isNetworkAvailable.value,
-                  loading: controller.loading.value,
-                  // onPressed: () => controller.submitAudits(context),
-                  onPressed: () {
-                    controller.submitAudits(context);
-                    //Get.offAndToNamed(AppRoutes.dashboard);
-                  }
-                ),
+                    text: 'Audit Close',
+                    color: Constants.successColor,
+                    width: 0.8,
+                    fontScaleFactor: 15,
+                    disabled: !Network.isNetworkAvailable.value,
+                    loading: controller.loading.value,
+                    // onPressed: () => controller.submitAudits(context),
+                    onPressed: () {
+                      controller.submitAudits(context);
+                      //Get.offAndToNamed(AppRoutes.dashboard);
+                    }),
               ],
             ),
           ),
