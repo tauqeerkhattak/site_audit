@@ -9,6 +9,7 @@ import 'package:site_audit/services/local_storage_service.dart';
 
 import '../../models/module_model.dart';
 import '../../models/static_values.dart';
+import '../../routes/routes.dart';
 
 class ReviewController extends GetxController {
   RxBool loading = true.obs;
@@ -39,46 +40,86 @@ class ReviewController extends GetxController {
   void onInit() {
     super.onInit();
     dbHelper = DatabaseDb();
-    loadsqfData();
+    // loadsqfData();
     setData();
     //index = storageService.get(key: "FormIndex");
   }
 
-  Future<List<dynamic>>? sqfLiteData;
-
-  loadsqfData() {
-    final arguments = Get.arguments;
-    module = arguments['module'];
-    subModule = arguments['subModule'];
-
-    sqfLiteData = dbHelper!.getFormModel(moduleID: subModule?.subModuleId);
-  }
-
-  Future<Map<String, List<dynamic>>> getData() async {
-    Map<String, List<dynamic>> forms = {};
-    List<dynamic> temp = await sqfLiteData!;
-    List<dynamic> list = List.of(temp);
-    int i = 0;
-
-    while (list.isNotEmpty) {
-      final formId = list[i]['formID'];
-
-      final items = list.where((item) {
-        return item['formID'] == formId;
-      }).toList();
-
-      if (items.isNotEmpty) {
-        forms.addAll({'formNumber$i': items});
-        i++;
+  Future<void> onCardTap(int item) async {
+    log('ITEM: $item');
+    final rows = await dbHelper!.getFormByFormId(
+      formId: item,
+    );
+    if (rows.isNotEmpty) {
+      FormModel temp = FormModel();
+      List<Items> items = [];
+      for (final row in rows) {
+        Items singleItem = Items.fromJson(row);
+        if (singleItem.inputOptionId != null) {
+          final inputOption = await dbHelper!.getInputOptionsFromId(
+            singleItem.inputOptionId!,
+          );
+          String options = inputOption['input_option'];
+          final splitted =
+              options.replaceAll('[', '').replaceAll(']', '').split(',');
+          singleItem.inputOption = [
+            InputOption(
+              inputItemParentId: inputOption['input_item_parent_id'],
+              inputParentLevel: inputOption['input_parent_level'],
+              inputOptions: splitted,
+            ),
+          ];
+        }
+        if (singleItem.inputOption?.isNotEmpty ?? false) {
+          log('ANSWER: ${singleItem.answer} ${singleItem.inputOption!.first.inputOptions.toString()}');
+        }
+        items.add(singleItem);
       }
-      list.removeWhere((element) {
-        return element['formID'] == formId;
-      });
+      temp.items = items;
+      temp.subModuleId = rows.first['sub_module_id'];
+      temp.projectId = rows.first['project_id'];
+      temp.subModuleName = subModule?.subModuleName;
+      temp.moduleName = module?.moduleName;
+      Get.toNamed(
+        AppRoutes.form,
+        arguments: {
+          'module': module,
+          'subModule': subModule,
+          'reviewFormIndex': index,
+          'reviewForm': temp,
+          // 'formName': controller.formName.value,
+        },
+      );
+      refreshPage();
+      setData();
     }
-    log('LENGTH: ${forms.values.length}');
-
-    return forms;
   }
+
+  // Future<Map<String, List<dynamic>>> getData() async {
+  //   Map<String, List<dynamic>> forms = {};
+  //   List<dynamic> temp = await sqfLiteData!;
+  //   List<dynamic> list = List.of(temp);
+  //   int i = 0;
+  //
+  //   while (list.isNotEmpty) {
+  //     final formId = list[i]['form_id'];
+  //
+  //     final items = list.where((item) {
+  //       return item['form_id'] == formId;
+  //     }).toList();
+  //
+  //     if (items.isNotEmpty) {
+  //       forms.addAll({'formNumber$i': items});
+  //       i++;
+  //     }
+  //     list.removeWhere((element) {
+  //       return element['formID'] == formId;
+  //     });
+  //   }
+  //   log('LENGTH: ${forms.values.length}');
+  //
+  //   return forms;
+  // }
 
   void refreshPage() {
     final arguments = Get.arguments;

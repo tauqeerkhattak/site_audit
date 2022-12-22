@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/form_controller.dart';
 import 'package:site_audit/models/DataBaseModel.dart';
 import 'package:site_audit/models/form_model.dart';
-import 'package:site_audit/offlineDatabase/sqf_database.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/enums/enum_helper.dart';
 import 'package:site_audit/utils/enums/input_type.dart';
@@ -21,12 +20,11 @@ import 'package:site_audit/widgets/image_input.dart';
 import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
-import '../../offlineDatabase/database.dart';
 import '../../utils/enums/input_parameter.dart';
 import '../../widgets/custom_date_time.dart';
 
 class FormScreen extends StatefulWidget {
-  FormScreen({Key? key}) : super(key: key);
+  const FormScreen({Key? key}) : super(key: key);
 
   @override
   State<FormScreen> createState() => _FormScreenState();
@@ -34,16 +32,7 @@ class FormScreen extends StatefulWidget {
 
 class _FormScreenState extends State<FormScreen> {
   Rxn<FormModel> form = Rxn();
-  DatabaseDb? databaseDb;
-  DBHelper? dbHelper;
   final controller = Get.find<FormController>();
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    dbHelper = DBHelper();
-    databaseDb = DatabaseDb();
-  }
 
   @override
   void dispose() {

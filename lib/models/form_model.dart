@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:equatable/equatable.dart';
 
 class FormModel {
@@ -74,89 +76,71 @@ class Items extends Equatable {
   int? parentInputId;
   String? filename;
   String? inputLabel;
+  int? inputOptionId;
   List<InputOption>? inputOption;
 
-  Items(
-      {this.id,
-      this.mandatory,
-      this.inputDescription,
-      this.answer,
-      this.inputType,
-      this.inputParameter,
-      this.inputLength,
-      this.inputHint,
-      this.parentInputId,
-      this.inputLabel,
-      this.filename,
-      this.inputOption});
+  Items({
+    this.id,
+    this.mandatory,
+    this.inputDescription,
+    this.answer,
+    this.inputType,
+    this.inputParameter,
+    this.inputLength,
+    this.inputHint,
+    this.parentInputId,
+    this.inputLabel,
+    this.filename,
+    this.inputOption,
+  });
 
-  Map<String, dynamic> toSQFLiteData({
-    required String formID,
-    required String subModuleID,
+  Map<String, dynamic> toSqfFormatData({
+    required String projectId,
+    required String subModuleId,
+    int? inputOptionId,
   }) {
-    return {
-      "engID": 1,
-      "projectID": 2,
-      "formID": formID,
-      "field_input_id": id,
-      "sub_module": subModuleID,
-      "input_type": inputType,
-      "answer": answer,
-      "photo": "",
-      "label": inputLabel,
-      "hint": inputHint,
-      "mandatory": mandatory ?? false ? 1 : 0,
-      "createdAt": DateTime.now().toIso8601String(),
-      "updatedAt": DateTime.now().toIso8601String(),
-      // "id": id,
-      // "mandatory": mandatory,
-      // "input_description": inputDescription,
-      // "answer": answer,
-      // "photo": "",
-      // "input_type": inputType,
-      // "input_parameter": inputParameter,
-      // "input_length": inputLength,
-      // "input_hint": inputHint,
-      // "input_label": inputLabel,
-      // "filename": filename
+    return <String, dynamic>{
+      'input_id': id,
+      'project_id': projectId,
+      'sub_module_id': subModuleId,
+      'mandatory': mandatory ?? false ? 1 : 0,
+      'input_description': inputDescription,
+      'input_type': inputType,
+      'input_parameter': inputParameter,
+      'input_length': inputLength,
+      'input_hint': inputHint,
+      'parent_input_id': parentInputId,
+      'input_label': inputLabel,
+      'input_option_id': inputOptionId,
     };
   }
 
-  Map<String, dynamic> toMap() {
-    var map = <String, dynamic>{
-      'id': id,
-      'mandatory': mandatory,
-      'inputDescription': inputDescription,
+  Map<String, dynamic> toAnswerData({
+    required String projectId,
+    required String subModuleId,
+    required int formId,
+    int? inputOptionId,
+  }) {
+    return <String, dynamic>{
+      'input_id': id,
+      'form_id': formId,
+      'project_id': projectId,
+      'sub_module_id': subModuleId,
+      'mandatory': mandatory ?? false ? 1 : 0,
+      'input_description': inputDescription,
       'answer': answer,
-      'filename': filename,
-      'inputType': inputType,
-      'inputParameter': inputParameter,
-      'inputLength': inputLength,
-      'inputHint': inputHint,
-      'parentInputId': parentInputId,
-      'inputLabel': inputLabel,
-      //'inputOption' : inputOption,
+      'input_type': inputType,
+      'input_parameter': inputParameter,
+      'input_length': inputLength,
+      'input_hint': inputHint,
+      'parent_input_id': parentInputId,
+      'input_label': inputLabel,
+      'input_option_id': inputOptionId,
     };
-    return map;
-  }
-
-  Items.fromMap(Map<dynamic, dynamic> map) {
-    id = map['id'];
-    mandatory = map['mandatory'];
-    inputDescription = map['inputDescription'];
-    answer = map['answer'];
-    filename = map['filename'];
-    inputType = map['inputType'];
-    inputParameter = map['inputParameter'];
-    inputLength = map['inputLength'];
-    inputHint = map['inputHint'];
-    parentInputId = map['parentInputId'];
-    inputLabel = map['inputLabel'];
-    //inputOption = map['inputOption'];
   }
 
   Items.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['id'] ?? json['input_id'];
     mandatory = json['mandatory'] == 1;
     inputDescription = json['input_description'];
     answer = json['answer'];
@@ -167,6 +151,7 @@ class Items extends Equatable {
     inputHint = json['input_hint'];
     parentInputId = json['parent_input_id'];
     inputLabel = json['input_label'];
+    inputOptionId = json['input_option_id'];
     if (json['input_option'] != null) {
       inputOption = <InputOption>[];
       json['input_option'].forEach((v) {
@@ -174,28 +159,6 @@ class Items extends Equatable {
       });
     }
   }
-  /* Map<String, dynamic> toMap() {
-    var map = <String, dynamic>{
-    'id' : id,
-    'mandatory' : mandatory == 1;
-    'inputDescription' : input_description,
-    'answer' : answer,
-    'filename' : filename,
-    'inputType' : input_type,
-    'inputParameter' : input_parameter,
-    'inputLength' : int.tryParse(input_length.toString());
-    'inputHint' : input_hint,
-    'parentInputId' : parent_input_id,
-    'inputLabel' : input_label,
-    if ('input_option' != null) {
-    'inputOption' : <InputOption>[] ;
-    'input_option'.forEach((v) {
-    inputOption!.add(InputOption.fromJson(v));
-        });
-      }
-    };
-    return map;
-  }*/
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -235,22 +198,33 @@ class InputOption {
   int? inputParentLevel;
   List<String>? inputOptions;
 
-  InputOption(
-      {this.inputItemParentId, this.inputParentLevel, this.inputOptions});
+  InputOption({
+    this.inputItemParentId,
+    this.inputParentLevel,
+    this.inputOptions,
+  });
 
-  Map<String, dynamic> toMap() {
-    var map = <String, dynamic>{
-      'inputItemParentId': inputItemParentId,
-      'inputParentLevel': inputParentLevel,
-      'inputOptions': inputOptions,
-    };
-    return map;
+  String inputOptionsToString() {
+    String result = '[';
+    for (String inputData in inputOptions ?? []) {
+      if (inputOptions!.indexOf(inputData) == inputOptions!.length - 1) {
+        result += '$inputData]';
+      } else {
+        result += '$inputData,';
+      }
+    }
+    return result;
   }
 
-  InputOption.fromMap(Map<dynamic, dynamic> map) {
-    inputItemParentId = map['inputItemParentId'];
-    inputParentLevel = map['inputParentLevel'];
-    inputParentLevel = map['inputParentLevel'];
+  Map<String, dynamic> toSqfFormatData() {
+    for (String inn in inputOptions ?? []) {
+      log('INPUT OPTION LENGTH: ${inn.length}');
+    }
+    return <String, dynamic>{
+      'input_item_parent_id': inputItemParentId,
+      'input_parent_level': inputParentLevel,
+      'input_option': inputOptionsToString(),
+    };
   }
 
   InputOption.fromJson(Map<String, dynamic> json) {

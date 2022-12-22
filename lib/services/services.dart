@@ -14,10 +14,12 @@ import 'package:site_audit/services/local_storage_keys.dart';
 import 'package:site_audit/services/local_storage_service.dart';
 import 'package:site_audit/utils/network.dart';
 
+import '../offlineDatabase/database.dart';
 import 'apis.dart';
 
 class AppService {
   static final _storageService = Get.find<LocalStorageService>();
+  static final _databaseDb = DatabaseDb();
 
   // LOGIN ENGINEER
   static Future<Map<String, dynamic>?> login({payload}) async {
@@ -267,10 +269,11 @@ class AppService {
           headers: header,
         );
         if (response != null) {
-          await _storageService.save(key: key, value: response);
+          // await _storageService.save(key: key, value: response);
           List<dynamic> jsonList = jsonDecode(response);
-          FormModel? form;
-          form = FormModel.fromJson(jsonList[0]);
+          FormModel form = FormModel.fromJson(jsonList[0]);
+          final isSaved = await _databaseDb.saveFormModel(form,moduleId);
+          dev.log('Is Form Saved: $isSaved');
           return form;
         } else {
           return null;

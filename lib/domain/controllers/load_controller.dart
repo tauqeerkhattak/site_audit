@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:get/get.dart';
+import 'package:site_audit/offlineDatabase/database.dart';
 import 'package:site_audit/routes/routes.dart';
 import 'package:site_audit/services/local_storage_service.dart';
 
@@ -66,8 +67,10 @@ class LoadController extends GetxController {
 
   Future<void> getForms() async {
     int projectId = user.value!.data!.projectId!;
+    final dbClient = DatabaseDb();
     for (Module module in modules!) {
       for (SubModule subModule in module.subModules!) {
+        log('MODULE ID: ${subModule.subModuleId}');
         await AppService.getFormBySubModuleId(
           projectId: '$projectId',
           // moduleId: 1,

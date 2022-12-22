@@ -44,7 +44,6 @@ class FormController extends GetxController {
   Map<String, dynamic> data = <String, dynamic>{};
   ScreenshotController controller = ScreenshotController();
 
-  // List<Items> multiLevels = [];
   Map<int, List<Items>> multiLevels = <int, List<Items>>{};
   Map<int, List<Rxn<int>>> optionIndex = <int, List<Rxn<int>>>{};
 
@@ -71,14 +70,53 @@ class FormController extends GetxController {
       module = arguments['module'];
       formName.value = arguments['formName'];
       // form.value = arguments['form'];
-      final key0 = '$formKey$projectId${subModule?.subModuleId}';
-      final storedData = storageService.get(key: key0);
-      print('$key0 key0');
-      List<String> keys = await storageService.getAllKeys();
-      print('$keys keys');
-      final forms = jsonDecode(storedData);
-      form.value = FormModel.fromJson(forms[0]);
-      processMultiLevel(form.value!);
+      // final key0 = '$formKey$projectId${subModule?.subModuleId}';
+      // final storedData = storageService.get(key: key0);
+      // print('$key0 key0');
+      // List<String> keys = await storageService.getAllKeys();
+      // print('$keys keys');
+      // final forms = jsonDecode(storedData);
+      final databaseDb = DatabaseDb();
+      final rows = await databaseDb.getAllForms(subModule!.subModuleId!);
+      if (rows.isNotEmpty) {
+        FormModel temp = FormModel();
+        // FormModel temp = FormModel.fromJson({
+        //   'sub_module_id': subModule?.subModuleId,
+        //   'sub_module_name': subModule?.subModuleName,
+        //   'module_name': module?.moduleName,
+        //   'project_id': rows.first['project_id'],
+        //   'items': rows,
+        // });
+        // form.value = temp;
+        List<Items> items = [];
+        for (final row in rows) {
+          Items singleItem = Items.fromJson(row);
+          if (singleItem.inputOptionId != null) {
+            final inputOption = await databaseDb.getInputOptionsFromId(
+              singleItem.inputOptionId!,
+            );
+            String options = inputOption['input_option'];
+            final splitted =
+                options.replaceAll('[', '').replaceAll(']', '').split(',');
+            log('SPLIITEED: $splitted');
+            singleItem.inputOption = [
+              InputOption(
+                inputItemParentId: inputOption['input_item_parent_id'],
+                inputParentLevel: inputOption['input_parent_level'],
+                inputOptions: splitted,
+              ),
+            ];
+          }
+          items.add(singleItem);
+        }
+        temp.items = items;
+        temp.subModuleId = rows.first['sub_module_id'];
+        temp.projectId = rows.first['project_id'];
+        temp.subModuleName = subModule?.subModuleName;
+        temp.moduleName = module?.moduleName;
+        form.value = temp;
+      }
+      // processMultiLevel(form.value!);
       await assignControllersToFields();
       fillForm();
     } catch (e) {
@@ -305,43 +343,20 @@ class FormController extends GetxController {
       form.value!.items = items;
 
       form.value!.staticValues = staticValues;
-      List<DataBaseItem> dataBaseItem1 = [];
+
       DatabaseDb databaseDb = DatabaseDb();
-      await databaseDb.initDb();
-      // for (int i = 0; i < items.length; i++) {
-      //   final dataToSql = items[i].toSQFLiteData(
-      //     formID: '1',
-      //     moduleID: '2',
-      //   );
-      //
-      // }
-      int formID = 0;
-      int newCounter = 1;
-      int newValue = storageService.get(key: "formID") ?? 0;
-      if (newValue == 0) {
-        await storageService.save(key: "formID", value: newCounter++);
-      } else {
-        int newFormValue = newValue + 1;
-        await storageService.save(key: "formID", value: newFormValue);
+      int formId = storageService.get(key: 'formID') ?? 0;
+      final isSaved = await databaseDb.saveAnswerModel(
+        form.value!,
+        subModule!.subModuleId!,
+        formId,
+      );
+      if (isSaved) {
+        formId++;
+        log('integer form key: $formId');
+        await storageService.save(key: 'formID', value: formId);
       }
-      formID = await storageService.get(key: "formID") ?? 0;
-      // log("formIDsssss   $formID");
-
-      final datas = await databaseDb.insertFormModel(items
-          .map((e) => e.toSQFLiteData(
-              formID: "${formID}", subModuleID: "${subModule?.subModuleId}"))
-          .toList());
-
-      log("isData Stored $datas");
-
-      int counter = 1;
-      int value = storageService.get(key: "FormIndex") ?? 0;
-      if (value == 0) {
-        storageService.save(key: "FormIndex", value: counter++);
-      } else {
-        int newValue = value + 1;
-        storageService.save(key: "FormIndex", value: newValue);
-      }
+      log('IS ANSWER MMODEL SAVED: $isSaved');
 
       Navigator.pop(context, 'popped');
       await saveDataToLocalStorage().then((value) {
@@ -514,12 +529,12 @@ class FormController extends GetxController {
       Navigator.pop(context, 'popped');
 
       // saveJsonFileLocally();
-      await saveDataToLocalStorage().then((value) {
-        UiUtils.showSnackBar(
-          message: 'Data is submitted successfully!',
-        );
-        Navigator.pop(context, 'popped');
-      });
+      // await saveDataToLocalStorage().then((value) {
+      //   UiUtils.showSnackBar(
+      //     message: 'Data is submitted successfully!',
+      //   );
+      //   Navigator.pop(context, 'popped');
+      // });
     } else {
       log('NOT VALIDATED');
       UiUtils.showSnackBar(
