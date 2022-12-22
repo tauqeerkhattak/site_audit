@@ -76,6 +76,7 @@ class ReviewController extends GetxController {
         items.add(singleItem);
       }
       temp.items = items;
+      temp.id = rows.first['form_id'];
       temp.subModuleId = rows.first['sub_module_id'];
       temp.projectId = rows.first['project_id'];
       temp.subModuleName = subModule?.subModuleName;
@@ -90,36 +91,10 @@ class ReviewController extends GetxController {
           // 'formName': controller.formName.value,
         },
       );
-      refreshPage();
-      setData();
+      // refreshPage();
+      // setData();
     }
   }
-
-  // Future<Map<String, List<dynamic>>> getData() async {
-  //   Map<String, List<dynamic>> forms = {};
-  //   List<dynamic> temp = await sqfLiteData!;
-  //   List<dynamic> list = List.of(temp);
-  //   int i = 0;
-  //
-  //   while (list.isNotEmpty) {
-  //     final formId = list[i]['form_id'];
-  //
-  //     final items = list.where((item) {
-  //       return item['form_id'] == formId;
-  //     }).toList();
-  //
-  //     if (items.isNotEmpty) {
-  //       forms.addAll({'formNumber$i': items});
-  //       i++;
-  //     }
-  //     list.removeWhere((element) {
-  //       return element['formID'] == formId;
-  //     });
-  //   }
-  //   log('LENGTH: ${forms.values.length}');
-  //
-  //   return forms;
-  // }
 
   void refreshPage() {
     final arguments = Get.arguments;

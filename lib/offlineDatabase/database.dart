@@ -154,6 +154,40 @@ class DatabaseDb {
     }
   }
 
+  Future<bool> updateAnswerModel({
+    required FormModel model,
+    required int subModuleId,
+    required int formId,
+  }) async {
+    try {
+      final dbClient = await db;
+      if (dbClient != null) {
+        for (Items item in model.items ?? []) {
+          log('ANSWER WHILE UPDATE: ${item.answer} ${model.id}');
+          // await dbClient.rawUpdate(
+          //   'UPDATE $TABLE SET answer = ? WHERE form_id = ?',
+          //   ['${item.answer}', '${model.id}'],
+          // );
+          await dbClient.update(
+            TABLE,
+            {'answer': '${item.answer}'},
+            where: 'form_id = ? AND id = ?',
+            whereArgs: [
+              model.id,
+              item.id,
+            ],
+          );
+        }
+        return true;
+      } else {
+        throw Exception('Db Client is null');
+      }
+    } catch (e) {
+      log('Error updating AnswerModel: $e');
+      return false;
+    }
+  }
+
   Future<bool> saveAnswerModel(
       FormModel model, int subModuleId, int formId) async {
     try {

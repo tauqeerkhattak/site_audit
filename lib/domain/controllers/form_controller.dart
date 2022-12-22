@@ -245,7 +245,6 @@ class FormController extends GetxController {
   }
 
   Future<void> submit(BuildContext context) async {
-    String? path;
     loading.value = true;
     bool validate = formDataKey.currentState!.validate();
     List<Items> items = form.value!.items!;
@@ -345,26 +344,37 @@ class FormController extends GetxController {
       form.value!.staticValues = staticValues;
 
       DatabaseDb databaseDb = DatabaseDb();
-      int formId = storageService.get(key: 'formID') ?? 0;
-      final isSaved = await databaseDb.saveAnswerModel(
-        form.value!,
-        subModule!.subModuleId!,
-        formId,
-      );
-      if (isSaved) {
-        formId++;
-        log('integer form key: $formId');
-        await storageService.save(key: 'formID', value: formId);
+      final args = Get.arguments;
+      if (args['reviewForm'] != null) {
+        FormModel model = args['reviewForm'];
+        final isUpdated = await databaseDb.updateAnswerModel(
+          model: model,
+          subModuleId: subModule!.subModuleId!,
+          formId: model.id!,
+        );
+        log('IS UPDATED : $isUpdated');
+      } else {
+        int formId = storageService.get(key: 'formID') ?? 0;
+        final isSaved = await databaseDb.saveAnswerModel(
+          form.value!,
+          subModule!.subModuleId!,
+          formId,
+        );
+        if (isSaved) {
+          formId++;
+          log('integer form key: $formId');
+          await storageService.save(key: 'formID', value: formId);
+          await updateCheckboxes().then((value) {
+            UiUtils.showSnackBar(
+              message: 'Data is submitted successfully!',
+            );
+            Navigator.pop(context, 'popped');
+          });
+        }
       }
-      log('IS ANSWER MMODEL SAVED: $isSaved');
 
       Navigator.pop(context, 'popped');
-      await saveDataToLocalStorage().then((value) {
-        UiUtils.showSnackBar(
-          message: 'Data is submitted successfully!',
-        );
-        Navigator.pop(context, 'popped');
-      });
+
       // saveJsonFileLocally();
       // await saveDataToLocalStorage().then((value) {
       //   UiUtils.showSnackBar(
@@ -612,48 +622,18 @@ class FormController extends GetxController {
     );
   }
 
-  Future<void> saveDataToLocalStorage() async {
+  Future<void> updateCheckboxes() async {
     final moduleName = module!.moduleName!;
     final subModuleName = subModule!.subModuleName!;
-    final key = '$moduleName >> $subModuleName';
-
-    //  TODO: remaining work
-    final siteNameKey = form.value!.staticValues!['site_name'];
-
     form.value!.moduleName = moduleName;
-    if (storageService.hasKey(key: key)) {
-      List<dynamic> formData = storageService.get(key: key);
+
+    if (storageService.hasKey(key: moduleName)) {
       final moduleCount = storageService.get(key: moduleName);
-      final subModuleCount = storageService.get(key: subModuleName);
-      if (Get.arguments['reviewForm'] != null) {
-        final deleteIndex = Get.arguments['reviewFormIndex'];
-        formData.removeAt(deleteIndex);
-        formData.add(form.value!.toJson());
-        // await storageService.save(key: moduleName, value: moduleCount);
-        // await storageService.save(key: subModuleName, value: subModuleCount);
-      } else {
-        formData.add(form.value!.toJson());
-        await storageService.save(
-          key: moduleName,
-          value: moduleCount + 1,
-        );
-        await storageService.save(
-          key: subModuleName,
-          value: subModuleCount + 1,
-        );
-      }
-      await storageService.save(key: key, value: formData);
+      await storageService.save(key: moduleName, value: moduleCount + 1);
     } else {
-      await storageService
-          .save(key: key, value: <dynamic>[form.value!.toJson()]);
-      if (storageService.hasKey(key: moduleName)) {
-        final moduleCount = storageService.get(key: moduleName);
-        await storageService.save(key: moduleName, value: moduleCount + 1);
-      } else {
-        await storageService.save(key: moduleName, value: 1);
-      }
-      await storageService.save(key: subModuleName, value: 1);
+      await storageService.save(key: moduleName, value: 1);
     }
+    await storageService.save(key: subModuleName, value: 1);
   }
 
   Future<File?> saveImageToGallery(String imagePath) async {

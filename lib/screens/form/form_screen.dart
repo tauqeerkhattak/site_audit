@@ -21,6 +21,7 @@ import 'package:site_audit/widgets/input_field.dart';
 import 'package:site_audit/widgets/rounded_button.dart';
 
 import '../../utils/enums/input_parameter.dart';
+import '../../utils/widget_utils.dart';
 import '../../widgets/custom_date_time.dart';
 
 class FormScreen extends StatefulWidget {
@@ -85,6 +86,7 @@ class _FormScreenState extends State<FormScreen> {
             );
           }
           FormModel form = controller.form.value!;
+          final args = Get.arguments;
 
           return form.items!.isNotEmpty
               ? Column(
@@ -132,29 +134,11 @@ class _FormScreenState extends State<FormScreen> {
                         ),
                       ),
                     ),
+                    WidgetUtils.spaceVrt10,
                     RoundedButton(
                       color: Colors.green,
-                      text: 'Submit',
+                      text: args['reviewForm'] != null ? 'Update' : 'Submit',
                       onPressed: () async {
-                        //  List<Items> items = form.items!;
-
-                        // dbHelper!.insert(
-                        //     SqfFormModel(
-                        //     eng_id: 1,
-                        //     form_id: 1,
-                        //     hint: 'check',
-                        //     id: 1,
-                        //     input_type: 'field',
-                        //     label: 'module',
-                        //     mandatory: 'test',
-                        //     value: '123'));
-
-                        // DBHelper().insert(FormModel(
-                        //    subModuleId: controller.subModule!.subModuleId,
-                        //    subModuleName: controller.subModule!.subModuleName,
-                        //    projectId: controller.projectId!.length,
-
-                        //     moduleName: controller.module!.moduleName));
                         await controller.submit(context);
                       },
                     ),
