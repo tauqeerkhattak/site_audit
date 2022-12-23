@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -74,8 +75,9 @@ class HomeController extends GetxController {
   }
 
   Future<void> submitAudits(BuildContext context) async {
+    // TODO Yahan pr kaam krna hai Awais, thik hai?
     final data = await storageService.getAllKeys();
-    try{
+    try {
       List<String> keysToSend = [];
       for (String key in data) {
         if (key.contains('>>')) {
@@ -84,32 +86,29 @@ class HomeController extends GetxController {
         }
       }
       if (keysToSend.isEmpty) {
-        UiUtils.showSimpleDialog(
+        return UiUtils.showSimpleDialog(
           context: context,
           title: 'Info',
           content:
-          'No forms found, to complete audit, you have to fill some forms first!',
+              'No forms found, to complete audit, you have to fill some forms first!',
         );
-        return;
-      }else{
+      } else {
         loading.value = true;
         for (String key in keysToSend) {
           List<dynamic> listOfItems = storageService.get(key: key);
           for (var item in listOfItems) {
-            /// TO-DO
             int code = await sendJsonFile(item, key);
             if (code == 200) {
               storageService.remove(key: key);
-
             }
           }
         }
-        if(isLocallySaved) {
+        if (isLocallySaved) {
           isLocallySaved = false;
           Get.rawSnackbar(
             title: "No Internet!",
             message:
-            "Data will be uploaded when you have a stable internet connection!",
+                "Data will be uploaded when you have a stable internet connection!",
             icon: const Icon(
               Icons.info,
               color: Colors.white,
@@ -121,13 +120,13 @@ class HomeController extends GetxController {
         }
 
         var data = storageService.get(key: 'audit');
-        if(data != null){
-          storageService.save(key: "audit", value: data + 1 );
-        }else{
+        if (data != null) {
+          storageService.save(key: "audit", value: data + 1);
+        } else {
           storageService.save(key: "audit", value: itemCount++);
         }
 
-        if(Network.isNetworkAvailable.value == true){
+        if (Network.isNetworkAvailable.value == true) {
           itemCount = 1;
           dashController.audits = [];
           auditNumber = [];
@@ -137,7 +136,7 @@ class HomeController extends GetxController {
             message: "Forms synced successfully",
             backgroundColor: Constants.primaryColor,
           );
-        }else{
+        } else {
           Get.rawSnackbar(
             title: "Connection Failed",
             message: "No internet found try to save data locally.",
@@ -149,7 +148,7 @@ class HomeController extends GetxController {
         storageService.remove(key: "sitesData");
         Get.offAndToNamed(AppRoutes.dashboard);
       }
-    }catch(e){
+    } catch (e) {
       Get.rawSnackbar(
         title: "Connection Failed",
         message: "No internet found try to save data locally.",
@@ -157,7 +156,6 @@ class HomeController extends GetxController {
       );
     }
     loading.value = false;
-
   }
 
   Future<int> sendJsonFile(dynamic data, String key) async {
@@ -297,5 +295,4 @@ class HomeController extends GetxController {
       );
     }
   }
-
 }

@@ -36,34 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       return true;
     }
-    /*else{
-      Get.defaultDialog(
-        title: "Are you sure!",
-        middleText: "You want to close the app before the audit submit",
-        confirm: MaterialButton(onPressed: (){
-
-        },
-          //height: MediaQuery.of(context).size.height * 0.3,
-          minWidth: MediaQuery.of(context).size.width * 0.3,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          color: Colors.green,
-          child: const Text("Yes",style: TextStyle(color: Colors.white),),
-        ),
-        cancel: MaterialButton(onPressed: (){
-          Navigator.pop(context);
-        },
-          minWidth: MediaQuery.of(context).size.width * 0.3,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          color: Colors.red,
-          child: const Text("No",style: TextStyle(color: Colors.white),),
-        ),
-      );
-    }*/
-    return true;
   }
 
   static const snackBarDuration = Duration(seconds: 3);
@@ -73,10 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () => handleWillPop(context),
-      /*() async {
-        controller.animateBack();
-        return true;
-      },*/
       child: DefaultLayout(
         showBackButton: true,
         backButton: Obx(
@@ -255,7 +223,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: tileCard(
                     '${module.moduleName}',
                     moduleCount ?? 0,
-                    // index == 1 ? 6 : 12,
                   ),
                 );
               },
@@ -267,30 +234,16 @@ class _HomeScreenState extends State<HomeScreen> {
               bottom: 8,
               right: 8,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                /* RoundedButton(
-                  text: 'Help',
-                  color: Constants.primaryColor,
-                  width: 0.4,
-                  fontScaleFactor: 15,
-                  onPressed: () {},
-                ),*/
-
-                RoundedButton(
-                    text: 'Audit Close',
-                    color: Constants.successColor,
-                    width: 0.8,
-                    fontScaleFactor: 15,
-                    disabled: !Network.isNetworkAvailable.value,
-                    loading: controller.loading.value,
-                    // onPressed: () => controller.submitAudits(context),
-                    onPressed: () {
-                      controller.submitAudits(context);
-                      //Get.offAndToNamed(AppRoutes.dashboard);
-                    }),
-              ],
+            child: RoundedButton(
+              text: 'Audit Close',
+              color: Constants.successColor,
+              width: 0.8,
+              fontScaleFactor: 15,
+              disabled: !Network.isNetworkAvailable.value,
+              loading: controller.loading.value,
+              onPressed: () {
+                controller.submitAudits(context);
+              },
             ),
           ),
         ],

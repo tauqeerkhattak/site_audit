@@ -4,7 +4,6 @@ import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:site_audit/domain/controllers/form_controller.dart';
-import 'package:site_audit/models/DataBaseModel.dart';
 import 'package:site_audit/models/form_model.dart';
 import 'package:site_audit/utils/constants.dart';
 import 'package:site_audit/utils/enums/enum_helper.dart';
@@ -41,13 +40,9 @@ class _FormScreenState extends State<FormScreen> {
     super.dispose();
   }
 
-  List<DataBaseItem> dataBaseItem1 = [];
   @override
   Widget build(BuildContext context) {
-    // Rxn<FormModel> form = Rxn();
-    // List<Items> items = form.value!.items!;
     return DefaultLayout(
-      // title: getTitleText(),
       titleWidget: Obx(() => getTitleText()),
       backgroundImage: 'assets/images/hand-drawn-5g.jpg',
       child: Padding(
@@ -75,7 +70,6 @@ class _FormScreenState extends State<FormScreen> {
     return Obx(
       () {
         if (controller.loading.value) {
-          // controller.loading.value = false;
           return const Center(
             child: UiUtils.loadingIndicator,
           );
@@ -86,7 +80,6 @@ class _FormScreenState extends State<FormScreen> {
             );
           }
           FormModel form = controller.form.value!;
-          final args = Get.arguments;
 
           return form.items!.isNotEmpty
               ? Column(
@@ -137,7 +130,7 @@ class _FormScreenState extends State<FormScreen> {
                     WidgetUtils.spaceVrt10,
                     RoundedButton(
                       color: Colors.green,
-                      text: args['reviewForm'] != null ? 'Update' : 'Submit',
+                      text: _getButtonText(),
                       onPressed: () async {
                         await controller.submit(context);
                       },
@@ -146,16 +139,30 @@ class _FormScreenState extends State<FormScreen> {
                 )
               : const Center(
                   child: Text(
-                  "No Data Found",
-                  style: TextStyle(
-                    color: Constants.primaryColor,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    "No Data Found",
+                    style: TextStyle(
+                      color: Constants.primaryColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ));
+                );
         }
       },
     );
+  }
+
+  String _getButtonText() {
+    final args = Get.arguments;
+    if (args != null) {
+      if (args['reviewForm'] != null) {
+        return 'Update';
+      } else {
+        return 'Submit';
+      }
+    } else {
+      return 'Submit';
+    }
   }
 
   Widget _inputWidget({
@@ -210,7 +217,7 @@ class _FormScreenState extends State<FormScreen> {
                 final path = await controller.imagePickerService.pickImage();
                 controller.data['PHOTO$index']!.value = path;
               } catch (e) {
-                print("=========>>>>>>>>Errror: ${e}");
+                print("=========>>>>>>>>Errror: $e");
               }
             },
             isMandatory: item.mandatory ?? false,
